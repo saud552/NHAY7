@@ -69,6 +69,11 @@
         "value": "None",
         "required": true
       },
+      "SUPPORT_CHAT": {
+        "description": "رابط جروب الدعم.",
+        "value": "https://t.me/GY_19",
+        "required": true
+      },
       "CHANNEL_NAME": {
         "description": "اسم قناتك.",
         "value": "اقتباسات",
