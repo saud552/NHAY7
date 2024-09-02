@@ -6,6 +6,9 @@ from config import START_IMG_URL, OWNER_ID
 from pyrogram import Client, filters, emoji
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from ZeMusic import app
+import config
+
+lnk = "https://t.me/" + config.CHANNEL_LINK
 
 @app.on_message(filters.regex(r"^(السورس|سورس)$"))
 async def huhh(client: Client, message: Message):
@@ -18,7 +21,7 @@ async def huhh(client: Client, message: Message):
             [
                 [
                    InlineKeyboardButton(
-                        "𝚂𝙾𝚄𝚁𝙲𝙴 𝙺𝙸𝙽𝙶", url=f"https://t.me/EF_19"),
+                        text=config.CHANNEL_NAME, url=lnk),
                 ],
             ]
         ),
