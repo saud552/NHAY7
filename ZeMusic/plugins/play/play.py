@@ -31,6 +31,7 @@ Nem = config.BOT_NAME + " شغل"
             "play",
             "تشغيل",
             "شغل",
+            "فيديو",
             Nem,
             "play",
             "vplay",
