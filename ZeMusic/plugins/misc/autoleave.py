@@ -8,9 +8,10 @@ from ZeMusic import app
 from ZeMusic.core.call import Mody, autoend
 from ZeMusic.utils.database import get_client, is_active_chat, is_autoend
 
+AUTO_LEAVING_ASSISTANT = "True"
 
 async def auto_leave():
-    if config.AUTO_LEAVING_ASSISTANT == str(True):
+    if AUTO_LEAVING_ASSISTANT == str(True):
         while not await asyncio.sleep(1500):
             from ZeMusic.core.userbot import assistants
 
