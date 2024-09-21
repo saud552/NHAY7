@@ -14,7 +14,7 @@ async def chat_gpt(bot, message):
 
         if len(message.command) < 2:
             await message.reply_text(
-                "⟡ استخدم الأمر هكذا :\n\n ⟡ لوي + سؤالك"
+                "⟡ استخدم الأمر هكذا :\n\n ⟡ رون + سؤالك"
             )
         else:
             a = message.text.split(' ', 1)[1]
