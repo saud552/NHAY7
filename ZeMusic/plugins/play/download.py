@@ -6,7 +6,7 @@ import yt_dlp
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_search import YoutubeSearch
-from ZeMusic.platforms.Youtube import cookie_txt_file
+from ZeMusic.platforms.Youtube import get_ytdl_options
 from ZeMusic import app
 from ZeMusic.plugins.play.filters import command
 
@@ -15,12 +15,19 @@ def remove_if_exists(path):
         os.remove(path)
 
 lnk = "https://t.me/" + config.CHANNEL_LINK
-Nem = config.BOT_NAME + " ابحث"
+Nem = f"{config.BOT_NAME} ابحث"
+Nam = f"{config.BOT_NAME} بحث"
 
-@app.on_message(command(["song", "/song", "بحث", Nem]))
+@app.on_message(command(["song", "/song", "بحث", Nem, Nam]))
 async def song_downloader(client, message: Message):
-    query = " ".join(message.command[1:])
-    m = await message.reply_text("<b>⇜ جـارِ البحث ..</b>")
+    if message.text in ["song", "/song", "بحث", Nem, Nam]:
+        return
+    elif message.command[0] in config.BOT_NAME:
+        query = " ".join(message.command[2:])
+    else:
+        query = " ".join(message.command[1:])
+        
+    m = await message.reply_text("<b>جـارِ البحث ♪</b>")
     
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
@@ -51,12 +58,11 @@ async def song_downloader(client, message: Message):
         "keepvideo": False,
         "geo_bypass": True,
         "outtmpl": f"{title_clean}.%(ext)s",  # استخدام اسم نظيف للملف
-        "quiet": True,
-        "cookiefile": cookie_txt_file(),
     }
-
+    # استدعاء دالة get_ytdl_options وتحديث الخيارات بناءً على مخرجاتها
+    options = get_ytdl_options(ydl_opts, commandline=False)
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL(options) as ydl:
             info_dict = ydl.extract_info(link, download=True)  # التنزيل مباشرة
             audio_file = ydl.prepare_filename(info_dict)
 
