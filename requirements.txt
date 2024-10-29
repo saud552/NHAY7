@@ -20,9 +20,10 @@ speedtest-cli
 spotipy
 tgcrypto
 unidecode
-yt-dlp
-youtube-search
-youtube-search-python
 telegraph
 numpy
 wget
+git+https://github.com/yt-dlp/yt-dlp
+git+https://github.com/alexmercerind/youtube-search-python@main
+git+https://github.com/joetats/youtube_search@master
+git+https://github.com/Vivekkumar-IN/yt-dlp-youtube-oauth2
