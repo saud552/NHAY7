@@ -1,6 +1,6 @@
 {
-    "name": "سورس الملك ميوزك",
-    "description": "- مطـور السـورس : 𝙰𝙱𝙳𝚄𝙻𝙻𝙰𝙷",
+    "name": "سورس نجد ميوزك",
+    "description": "- مطـور السـورس : NGD",
     "logo": "https://telegra.ph/file/9838cadaf38e425f07367.jpg",
     "keywords": [
     "python3",
@@ -71,7 +71,7 @@
       },
       "SUPPORT_CHAT": {
         "description": "رابط جروب الدعم.",
-        "value": "https://t.me/GY_19",
+        "value": "https://t.me/YMMY8",
         "required": true
       },
       "CHANNEL_NAME": {
@@ -81,7 +81,7 @@
       },
       "CHANNEL_LINK": {
         "description": "يوزر قناتك بدون @.",
-        "value": "WG_19",
+        "value": "YMMY8",
         "required": true
       },
       "LOGGER_ID": {
