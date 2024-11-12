@@ -1,5 +1,6 @@
 import asyncio
 import os
+
 from datetime import datetime, timedelta
 from typing import Union
 
@@ -11,6 +12,7 @@ from pytgcalls.exceptions import (
     NoActiveGroupCall,
     TelegramServerError,
 )
+
 from pytgcalls.types import Update
 from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
 from pytgcalls.types.input_stream.quality import HighQualityAudio, MediumQualityVideo
@@ -38,6 +40,7 @@ from ZeMusic.utils.stream.autoclear import auto_clean
 from ZeMusic.utils.thumbnails import get_thumb
 from strings import get_string
 
+
 autoend = {}
 counter = {}
 
@@ -46,6 +49,7 @@ async def _clear_(chat_id):
     db[chat_id] = []
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
+
 
 
 class Call(PyTgCalls):
@@ -329,6 +333,7 @@ class Call(PyTgCalls):
             if users == 1:
                 autoend[chat_id] = datetime.now() + timedelta(minutes=1)
 
+    
     async def change_stream(self, client, chat_id):
         check = db.get(chat_id)
         popped = None
@@ -541,6 +546,7 @@ class Call(PyTgCalls):
                     db[chat_id][0]["mystic"] = run
                     db[chat_id][0]["markup"] = "stream"
 
+    
     async def ping(self):
         pings = []
         if config.STRING1:
@@ -568,6 +574,7 @@ class Call(PyTgCalls):
         if config.STRING5:
             await self.five.start()
 
+    
     async def decorators(self):
         @self.one.on_kicked()
         @self.two.on_kicked()
@@ -584,6 +591,7 @@ class Call(PyTgCalls):
         @self.three.on_left()
         @self.four.on_left()
         @self.five.on_left()
+        
         async def stream_services_handler(_, chat_id: int):
             await self.stop_stream(chat_id)
 
@@ -592,6 +600,7 @@ class Call(PyTgCalls):
         @self.three.on_stream_end()
         @self.four.on_stream_end()
         @self.five.on_stream_end()
+        
         async def stream_end_handler1(client, update: Update):
             if not isinstance(update, StreamAudioEnded):
                 return
