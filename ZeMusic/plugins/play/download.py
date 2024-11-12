@@ -19,7 +19,16 @@ from ZeMusic.utils.database import is_search_enabled, enable_search, disable_sea
 def remove_if_exists(path):
     if os.path.exists(path):
         os.remove(path)
-        
+  
+        def get_cookies_file():
+    folder_path = f"{os.getcwd()}/ZeMusic/utils/cookies"
+    txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
+    if not txt_files:
+        raise FileNotFoundError("No .txt files found in the specified folder.")
+    cookie_txt_file = random.choice(txt_files)
+    return cookie_txt_file
+
+      
 lnk = config.CHANNEL_LINK
 Nem = config.BOT_NAME + " ابحث"
 
