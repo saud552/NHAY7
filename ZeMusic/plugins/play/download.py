@@ -21,7 +21,7 @@ def remove_if_exists(path):
         os.remove(path)
   
         def get_cookies_file():
-    folder_path = f"{os.getcwd()}/ZeMusic/utils/cookies"
+    folder_path = f"{os.getcwd()}/cookies"
     txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
     if not txt_files:
         raise FileNotFoundError("No .txt files found in the specified folder.")
