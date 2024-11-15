@@ -1,16 +1,12 @@
 import os
 import re
+import requests
 import config
-import aiohttp
-import aiofiles
-from ZeMusic.platforms.Youtube import cookie_txt_file
-
 import yt_dlp
-from yt_dlp import YoutubeDL
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_search import YoutubeSearch
-
+from ZeMusic.platforms.Youtube import cookie_txt_file
 from ZeMusic import app
 from ZeMusic.plugins.play.filters import command
 from ZeMusic.utils.decorators import AdminActual
@@ -19,17 +15,9 @@ from ZeMusic.utils.database import is_search_enabled, enable_search, disable_sea
 def remove_if_exists(path):
     if os.path.exists(path):
         os.remove(path)
-  
-def get_cookies_file():
-    folder_path = f"{os.getcwd()}/cookies"
-    txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
-    if not txt_files:
-        raise FileNotFoundError("No .txt files found in the specified folder.")
-    cookie_txt_file = random.choice(txt_files)
-    return cookie_txt_file
 
       
-lnk = config.CHANNEL_LINK
+lnk = f"https://t.me/{config.CHANNEL_LINK}"
 Nem = config.BOT_NAME + " ابحث"
 
 @app.on_message(command(["song", "/song", "بحث", Nem,"يوت"]) & filters.group)
