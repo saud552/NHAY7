@@ -10,7 +10,6 @@ from yt_dlp import YoutubeDL
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_search import YoutubeSearch
-
 from ZeMusic import app
 from ZeMusic.plugins.play.filters import command
 from ZeMusic.utils.database import is_search_enabled1, enable_search1, disable_search1
@@ -18,12 +17,14 @@ from ZeMusic.utils.database import is_search_enabled1, enable_search1, disable_s
 def remove_if_exists(path):
     if os.path.exists(path):
         os.remove(path)
-        
-lnk = config.CHANNEL_LINK
+
+
+lnk = f"https://t.me/{config.CHANNEL_LINK}"
 Nem = config.BOT_NAME + " يوت"
 
 @app.on_message(command(["song", "/song", "بحث", Nem,"يوت"]) & filters.private)
 async def song_downloader1(client, message: Message):
+    
     if not await is_search_enabled1():
         return await message.reply_text("<b>⟡ عذراً عزيزي اليوتيوب معطل من قبل المطور</b>")
         
@@ -95,25 +96,6 @@ async def song_downloader1(client, message: Message):
                 ]
             ),
         )
-        try:
-            await app.send_audio(
-                chat_id="@vbbbbnnnm",  # معرف القناة التي تريد الإرسال إليها 
-                audio=audio_file,
-                caption=f"⟡ {app.mention}",
-                title=title,
-                performer=info_dict.get("uploader", "Unknown"),
-                thumb=thumb_name,
-                duration=dur,
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk),
-                        ],
-                    ]
-                ),
-            )
-        except:
-            pass
         await m.delete()
 
     except Exception as e:
@@ -135,6 +117,7 @@ async def disable_search_command1(client, message: Message):
         return
     await disable_search1()
     await message.reply_text("<b>⟡ تم تعطيل اليوتيوب بنجاح</b>")
+
 
 @app.on_message(command(["تفعيل اليوتيوب بالخاص"]) & filters.user(OWNER_ID))
 async def enable_search_command1(client, message: Message):
