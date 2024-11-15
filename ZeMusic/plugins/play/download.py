@@ -3,6 +3,8 @@ import re
 import requests
 import config
 import yt_dlp
+import aiohttp
+import aiofiles
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_search import YoutubeSearch
@@ -16,11 +18,10 @@ def remove_if_exists(path):
     if os.path.exists(path):
         os.remove(path)
 
-      
 lnk = f"https://t.me/{config.CHANNEL_LINK}"
 Nem = config.BOT_NAME + " ابحث"
 
-@app.on_message(command(["song", "/song", "بحث", Nem,"يوت"]) & filters.group)
+@app.on_message(command(["song", "/song", "بحث", Nem, "يوت"]) & filters.group)
 async def song_downloader(client, message: Message):
     chat_id = message.chat.id 
     if not await is_search_enabled(chat_id):
@@ -32,7 +33,7 @@ async def song_downloader(client, message: Message):
     try:
         results = YoutubeSearch(query, max_results=1).to_dict()
         if not results:
-            await m.edit("- لم يتم العثـور على نتائج حاول مجددا")
+            await m.edit(f"- لم يتم العثـور على نتائج حاول مجددا\n\nاستعلام البحث: {query}")
             return
 
         link = f"https://youtube.com{results[0]['url_suffix']}"
@@ -52,8 +53,8 @@ async def song_downloader(client, message: Message):
         duration = results[0]["duration"]
 
     except Exception as e:
-        await m.edit("- لم يتم العثـور على نتائج حاول مجددا")
-        print(str(e))
+        await m.edit(f"- لم يتم العثـور على نتائج حاول مجددا\n\nError: {str(e)}")
+        print(f"Error in search: {str(e)}")
         return
     
     await m.edit("<b>جاري التحميل ♪</b>")
@@ -98,14 +99,14 @@ async def song_downloader(client, message: Message):
 
     except Exception as e:
         await m.edit(f"error, wait for bot owner to fix\n\nError: {str(e)}")
-        print(e)
+        print(f"Error in downloading or sending audio: {str(e)}")
 
     # حذف الملفات المؤقتة
     try:
         remove_if_exists(audio_file)
         remove_if_exists(thumb_name)
     except Exception as e:
-        print(e)
+        print(f"Error in cleanup: {str(e)}")
 
 
 @app.on_message(command(["تعطيل اليوتيوب"]) & filters.group)
