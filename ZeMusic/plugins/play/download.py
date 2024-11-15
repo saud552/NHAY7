@@ -2,6 +2,8 @@ import os
 import re
 import requests
 import config
+import aiohttp
+import aiofiles
 import yt_dlp
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
