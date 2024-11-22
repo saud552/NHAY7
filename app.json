@@ -80,7 +80,7 @@
         "required": true
       },
       "CHANNEL_LINK": {
-        "description": "رابط قناتك.",
+        "description": "يوزر قناتك بدون @.",
         "value": "https://t.me/WG_19",
         "required": true
       },
