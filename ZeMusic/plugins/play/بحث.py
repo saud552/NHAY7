@@ -3,7 +3,7 @@ import re
 import config
 import aiohttp
 import aiofiles
-from ZeMusic.platforms.Youtube import cookie_txt_file
+from ZeMusic.platforms.Youtube import cookies
 from config import OWNER_ID
 import yt_dlp
 from yt_dlp import YoutubeDL
@@ -66,7 +66,7 @@ async def song_downloader1(client, message: Message):
         "geo_bypass": True,
         "outtmpl": f"{title_clean}.%(ext)s",  # استخدام اسم نظيف للملف
         "quiet": True,
-        "cookiefile": cookie_txt_file(),
+        "cookiefile": f"{cookies()}",
     }
 
     try:
