@@ -17,8 +17,8 @@ def remove_if_exists(path):
     if os.path.exists(path):
         os.remove(path)
 
-
-lnk = f"https://t.me/{config.CHANNEL_LINK}"
+channel = "KHAYAL70"
+lnk = f"https://t.me/{config.STORE_LINK}"
 Nem = config.BOT_NAME + " ابحث"
 
 @app.on_message(command(["song", "/song", "بحث", Nem,"يوت"]) & filters.channel)
@@ -78,7 +78,7 @@ async def song_downloader3(client, message: Message):
         # إرسال الصوت
         await message.reply_audio(
             audio=audio_file,
-            caption=f"⟡ {app.mention}",
+            caption=f"ᴍʏ ᴡᴏʀʟᴅ 𓏺 @{channel} ",
             title=title,
             performer=info_dict.get("uploader", "Unknown"),
             thumb=thumb_name,
@@ -86,7 +86,7 @@ async def song_downloader3(client, message: Message):
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk),
+                        InlineKeyboardButton(text=f"{app.mention}", url=lnk),
                     ],
                 ]
             ),
