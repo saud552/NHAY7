@@ -29,38 +29,64 @@
         "value": "",
         "required": false
       },
+      "GIT_TOKEN": {
+        "description": "كود توكن الحساب",
+        "value": "None",
+        "required": true
+      },
       "BOT_NAME": {
         "description": "اسم البوت بالعربي.",
         "value": "",
         "required": true
       },
-      "BOT_TOKEN": {
-        "description": "ضع هنا تكون البوت الذي صنعته من @BotFather.",
-        "value": "",
-        "required": true
-      },
       "START_IMG_URL": {
         "description": "رابط صوره start او اتركه كما هو.",
-        "value": "https://te.legra.ph/file/e8bdc13568a49de93b071.jpg",
+        "value": "https://graph.org/file/57036e277059ef8608dd3.jpg",
         "required": true
       },
-      "MONGO_DB_URI": {
-        "description": "لا تغيره. او قم بانشاء قاعده البيانات. الشرح https://t.me/EF_19/2.",
-        "value": "",
+      "CHANNEL_NAME": {
+        "description": "اسم قناتك.",
+        "value": "السورس",
+        "required": true
+      },
+      "CHANNEL_LINK": {
+        "description": "رابط قناتك بدون @.",
+        "value": "K55DD",
+        "required": true
+      },
+      "STORE_NAME": {
+        "description": "اسم متجرك.",
+        "value": "المتجر",
+        "required": true
+      },
+      "STORE_LINK": {
+        "description": "رابط المتجر.",
+        "value": "https://t.me/YMMYN",
+        "required": true
+      },
+      "CHANNEL_ASHTRAK": {
+        "description": "رابط قناة الاشتراك.",
+        "value": "https://t.me/YMMY8",
+        "required": true
+      },
+      "SUPPORT_CHAT": {
+        "description": "رابط قروب الدعم.",
+        "value": "https://t.me/YMMYN",
         "required": true
       },
       "OWNER_ID": {
-        "description": "ايدي المستخدم الذي ترغب في إضافته كـ مطور البوت",
-        "value": "5145609515",
+        "description": "اضف ايدي المستخدم الذي ترغب في إضافته كـ مطور البوت او كما هوا",
+        "value": "5901732027",
         "required": true
       },
       "STRING_SESSION": {
-        "description": "ضع هنا كود بايروجرام الحساب المساعد",
+        "description": "ضع هنا كود بايروجرام الحساب المساعد استخرجه من هذا البوت @t66bot",
         "value": "",
         "required": true
       },
       "HEROKU_API_KEY": {
-        "description": "هنا ضع الايبي كي الخاص بحساب هيروكو من هذا الرابط https://dashboard.heroku.com/account",
+        "description": 
+       "هنا ضع الايبي كي الخاص بحساب هيروكو من هذا الرابط https://dashboard.heroku.com/account",
         "value": "",
         "required": false
       },
@@ -68,35 +94,20 @@
         "description": "اسم التطبيق أول مربع كتبته خلي هنا نفسه وحروف صغيرة.",
         "value": "",
         "required": false
-      },
-      "GIT_TOKEN": {
-        "description": "كود توكن الحساب",
-        "value": "None",
-        "required": true
-      },
-      "CHANNEL_NAME": {
-        "description": "اسم قناتك.",
-        "value": "اقتباسات",
-        "required": true
-      },
-      "CHANNEL_LINK": {
-        "description": "يوزر قناتك بدون @.",
-        "value": "https://t.me/WG_19",
-        "required": true
-      },
-      "SUPPORT_CHAT": {
-        "description": "رابط قروب الدعم.",
-        "value": "https://t.me/WG_19",
-        "required": true
-      },
+       },
       "AUTO_LEAVING_ASSISTANT": {
-        "description": "اذا تريد ان يغادر الحساب المساعد بعد انتهاء المحادثه الصوتيه اكتب True .",
-        "value": "False",
+        "description": "اذا تريد ان يغادر الحساب المساعد بعد انتهاء المحادثه الصوتيه اكتب True ..",
+        "value": "True",
         "required": false
+        },
+      "MONGO_DB_URI": {
+        "description": "استضافتك من موقع https://cloud.mongodb.com ..",
+        "value": "",
+        "required": true
       },
       "LOGGER_ID": {
-        "description": "ادخل ايدي مجموعة السجل بجانب الرقم -100 فـي المربع〔 سوي مجموعة جديدة وروح لاعدادات المجموعة وخلي السجل ظاهر .. بعدها ارفع البوت والحساب المساعد إشـراف وافتـح المكالمه بعدها جيب ايدي المجموعة لهنا 〕.",
-        "value": "",
+        "description": "ادخــل ايــدي مجمـوعــة السجــل بجـانب الرقـم -100 فـي المربـع〔 سوي مجموعة جديدة وروح لاعدادات المجموعة وخلي السجل ظاهر .. بعدها ارفع البوت والحساب المساعد إشـراف وافتـح المكالمه بعدها جيب ايدي المجموعة لهنـا 〕..",
+        "value": "-1002034990746",
         "required": true
       }
     },
