@@ -2,8 +2,7 @@ from pyrogram.types import InlineKeyboardButton
 import config
 from ZeMusic import app
 
-lnk= "https://t.me/" +config.CHANNEL_LINK
-lnk= "https://t.me/" +config.STORE_LINK
+Lnk= "https://t.me/" +config.CHANNEL_LINK
 
 def start_panel(_):
     buttons = [
@@ -15,10 +14,8 @@ def start_panel(_):
         ],
         [InlineKeyboardButton(text="الأوامر", callback_data="zzzback")],
         [
-            InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
-            InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK)
-        ],
-        [InlineKeyboardButton(text="𝐃𝐞𝐯", user_id=config.OWNER_ID),
+            InlineKeyboardButton(text="𝐃𝐞𝐯", user_id=config.OWNER_ID),
+            InlineKeyboardButton(text=config.CHANNEL_NAME, url=Lnk),
         ],
     ]
     return buttons
@@ -34,10 +31,8 @@ def private_panel(_):
         ],
         [InlineKeyboardButton(text="الأوامر", callback_data="zzzback")],
         [
-            InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
-            InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK)
-        ],
-        [InlineKeyboardButton(text="𝐃𝐞𝐯", user_id=config.OWNER_ID),
+            InlineKeyboardButton(text="𝐃𝐞𝐯", user_id=config.OWNER_ID),
+            InlineKeyboardButton(text=config.CHANNEL_NAME, url=Lnk),
         ],
     ]
     return buttons
