@@ -78,7 +78,7 @@ async def song_downloader3(client, message: Message):
         # إرسال الصوت
         await message.reply_audio(
             audio=audio_file,
-            caption=f"ᴍʏ ᴡᴏʀʟᴅ 𓏺 @{channel} ",
+            rep=f"ᴍʏ ᴡᴏʀʟᴅ 𓏺 @{channel} ",
             title=title,
             performer=info_dict.get("uploader", "Unknown"),
             thumb=thumb_name,
@@ -86,7 +86,7 @@ async def song_downloader3(client, message: Message):
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton(text=f"{app.mention}", url=lnk),
+                        InlineKeyboardButton(text="sᴀᴜᴅ ♪", url=lnk),
                     ],
                 ]
             ),
