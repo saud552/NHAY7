@@ -91,7 +91,7 @@ async def song_downloader(client, message: Message):
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton(f"{app.mention}", url=lnk),
+                        InlineKeyboardButton(text="sᴀᴜᴅ ♪", url=lnk),
                     ],
                 ]
             ),
