@@ -4,7 +4,7 @@ from pyrogram.errors import ChatAdminRequired, UserNotParticipant, ChatWriteForb
 from ZeMusic import app
 import config
 
-Muntazer =config.CHANNEL_ASHTRAK
+Muntazer = config.CHANNEL_ASHTRAK
 @app.on_message(filters.incoming & filters.private, group=-1)
 async def must_join_channel(app: Client, msg: Message):
     if not Muntazer:
