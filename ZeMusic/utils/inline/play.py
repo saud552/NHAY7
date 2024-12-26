@@ -6,8 +6,7 @@ from pyrogram.types import InlineKeyboardButton
 
 from ZeMusic.utils.formatters import time_to_seconds
 
-lnk = f"https://t.me/{config.CHANNEL_LINK}"
-lnk = f"https://t.me/{config.STORE_LINK}"
+lnk= "https://t.me/" +config.CHANNEL_LINK
 def track_markup(_, videoid, user_id, channel, fplay):
     buttons = [
         [
@@ -35,46 +34,26 @@ def stream_markup_timer(_, chat_id, played, dur):
     duration_sec = time_to_seconds(dur)
     percentage = (played_sec / duration_sec) * 100
     umm = math.floor(percentage)
-    if 0 < umm <= 5:
-        bar = "▁▄▂▇▄▅▄▅▃"
-    elif 5 < umm < 10:
-        bar = "▁▃▇▂▅▇▄▅▃"
-    elif 10 <= umm < 15:
-        bar = "▃▁▇▂▅▃▄▃▅"
-    elif 15 <= umm < 20:
-        bar = "▃▄▂▄▇▅▃▅▁"
-    elif 20 <= umm < 25:
-        bar = "▁▃▄▂▇▃▄▅▃"
-    elif 25 <= umm < 30:
-        bar = "▃▁▄▂▅▃▇▃▅"
-    elif 30 <= umm < 35:
-        bar = "▁▇▄▂▅▄▅▃▄"
-    elif 35 <= umm < 40:
-        bar = "▁▃▅▇▂▅▄▃▇"
-    elif 40 <= umm < 45:
-        bar = "▃▅▂▅▇▁▄▃▁"
-    elif 45 < umm <= 50:
-        bar = "▁▄▂▇▄▅▄▅▃"
-    elif 50 < umm < 55:
-        bar = "▁▃▇▂▅▇▄▅▃"
-    elif 55 <= umm < 60:
-        bar = "▃▁▇▂▅▃▄▃▅"
-    elif 60 <= umm < 65:
-        bar = "▃▄▂▄▇▅▃▅▁"
-    elif 65 <= umm < 70:
-        bar = "▁▃▄▂▇▃▄▅▃"
-    elif 70 <= umm < 75:
-        bar = "▃▁▄▂▅▃▇▃▅"
-    elif 75 <= umm < 80:
-        bar = "▁▇▄▂▅▄▅▃▄"
-    elif 80 <= umm < 85:
-        bar = "▁▃▅▇▂▅▄▃▇"
-    elif 85 <= umm < 90:
-        bar = "▃▅▂▅▇▁▄▃▁"
-    elif 90 < umm < 95:
-        bar = "▁▃▇▂▅▇▄▅▃"
+    if 0 < umm <= 10:
+        bar = "◉—————————"
+    elif 10 < umm < 20:
+        bar = "—◉————————"
+    elif 20 <= umm < 30:
+        bar = "——◉———————"
+    elif 30 <= umm < 40:
+        bar = "———◉——————"
+    elif 40 <= umm < 50:
+        bar = "————◉—————"
+    elif 50 <= umm < 60:
+        bar = "—————◉————"
+    elif 60 <= umm < 70:
+        bar = "——————◉———"
+    elif 70 <= umm < 80:
+        bar = "———————◉——"
+    elif 80 <= umm < 95:
+        bar = "————————◉—"
     else:
-        bar = "▃▇▂▅▁▅▄▃▁"
+        bar = "—————————◉"
     buttons = [
                 [
             InlineKeyboardButton(
@@ -82,16 +61,14 @@ def stream_markup_timer(_, chat_id, played, dur):
                 callback_data="GetTimer",
             )
         ],[
-            InlineKeyboardButton(text="إستئناف ⋆", callback_data=f"ADMIN Resume|{chat_id}"),
+            InlineKeyboardButton(text="إستئناف", callback_data=f"ADMIN Resume|{chat_id}"),
             InlineKeyboardButton(text="إيقاف مؤقت", callback_data=f"ADMIN Pause|{chat_id}"),
-            InlineKeyboardButton(text="⋆ إعاده", callback_data=f"ADMIN Replay|{chat_id}"),
+            InlineKeyboardButton(text="إعاده", callback_data=f"ADMIN Replay|{chat_id}"),
         ],[
-            InlineKeyboardButton(text="⋆ تخطي ⋆", callback_data=f"ADMIN Skip|{chat_id}"),
-            InlineKeyboardButton(text="⋆ توقف ⋆", callback_data=f"ADMIN Stop|{chat_id}"),
+            InlineKeyboardButton(text="تخطي", callback_data=f"ADMIN Skip|{chat_id}"),
+            InlineKeyboardButton(text="توقف", callback_data=f"ADMIN Stop|{chat_id}"),
         ],[
-            InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK),
-            InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
-      ],
+            InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk)],
     ]
     return buttons
 
@@ -99,16 +76,14 @@ def stream_markup_timer(_, chat_id, played, dur):
 def stream_markup(_, chat_id):
     buttons = [
         [
-            InlineKeyboardButton(text="إستئناف ⋆", callback_data=f"ADMIN Resume|{chat_id}"),
+            InlineKeyboardButton(text="إستئناف", callback_data=f"ADMIN Resume|{chat_id}"),
             InlineKeyboardButton(text="إيقاف مؤقت", callback_data=f"ADMIN Pause|{chat_id}"),
-            InlineKeyboardButton(text="⋆ إعاده", callback_data=f"ADMIN Replay|{chat_id}"),
+            InlineKeyboardButton(text="إعاده", callback_data=f"ADMIN Replay|{chat_id}"),
         ],[
-            InlineKeyboardButton(text="⋆ تخطي ⋆", callback_data=f"ADMIN Skip|{chat_id}"),
-            InlineKeyboardButton(text="⋆ توقف ⋆", callback_data=f"ADMIN Stop|{chat_id}"),
+            InlineKeyboardButton(text="تخطي", callback_data=f"ADMIN Skip|{chat_id}"),
+            InlineKeyboardButton(text="توقف", callback_data=f"ADMIN Stop|{chat_id}"),
         ],[
-            InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK),
-            InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
-      ],
+            InlineKeyboardButton(text=config.CHANNEL_NAME, url=lnk)],
     ]
     return buttons
 
