@@ -10,6 +10,9 @@ load_dotenv()
 API_ID = int(getenv("API_ID","20036317"))
 API_HASH = getenv("API_HASH","986cb4ba434870a62fe96da3b5f6d411")
 
+Muntazer = getenv("muntazer", "CHANNEL_ASHTRAK")
+CHANNEL_ASHTRAK = getenv("CHANNEL_ASHTRAK", "K55DD")
+
 # Get your token from @BotFather on Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN")
 BOT_NAME = getenv("BOT_NAME","لارين")
@@ -33,7 +36,7 @@ HEROKU_API_KEY = getenv("HEROKU_API_KEY")
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
-    "https://github.com/hitlerxoox/NHAY7",
+    "https://github.com/saud552/NHAY7",
 )
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "master")
 APK = 5140000000
@@ -41,12 +44,15 @@ GIT_TOKEN = getenv(
     "GIT_TOKEN", None
 )  # Fill this variable if your upstream repository is private
 
-CHANNEL_NAME = getenv("CHANNEL_NAME", "𝐒𝐨𝐮𝐫𝐜𝐞 𝐋𝐨𝐋🧚‍♀")
-CHANNEL_LINK = getenv("CHANNEL_LINK", "YMMYn")
+CHANNEL_NAME = getenv("CHANNEL_NAME", "السورس")
+CHANNEL_LINK = getenv("CHANNEL_LINK", "K55DD")
+STORE_NAME = getenv("STORE_NAME", "المتجر")
+STORE_LINK = getenv("STORE_LINK", "https://t.me/YMMYN")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/K55DD")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/K55DD")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
-AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
+AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", True))
 
 
 # Get this credentials from https://developer.spotify.com/dashboard
