@@ -6,7 +6,7 @@ from pyrogram.errors import UserNotParticipant
 from ZeMusic import app
 import config
 
-channel = "YMMY8"
+channel = config.CHANNEL_ASHTRAK
 Nem = config.BOT_NAME + " شغل"
 async def subscription(_, __: Client, message: Message):
     user_id = message.from_user.id
