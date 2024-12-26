@@ -4,7 +4,7 @@ from pyrogram.errors import ChatAdminRequired, UserNotParticipant, ChatWriteForb
 from ZeMusic import app
 import config
 
-Muntazer =config.CHANNEL_LINK
+Muntazer =config.CHANNEL_ASHTRAK
 @app.on_message(filters.incoming & filters.private, group=-1)
 async def must_join_channel(app: Client, msg: Message):
     if not Muntazer:
@@ -23,7 +23,7 @@ async def must_join_channel(app: Client, msg: Message):
                     f"⟡ عزيزي {msg.from_user.mention} \n⟡ عليك الأشتراك في قناة البوت \n⟡ قناة البوت : @{Muntazer}.",
                     disable_web_page_preview=True,
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton(config.CHANNEL_NAME, url=link)]
+                        [InlineKeyboardButton(text="اضغط للإشتراك", url=link)]
                     ])
                 )
                 await msg.stop_propagation()
