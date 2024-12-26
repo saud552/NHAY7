@@ -71,7 +71,7 @@ def stream_markup_timer(_, chat_id, played, dur):
             InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK),
             InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
     ]
-    return buttons
+    
 
 
 def stream_markup(_, chat_id):
@@ -87,7 +87,7 @@ def stream_markup(_, chat_id):
             InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK),
             InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
     ]
-    return buttons
+    
 
 
 def playlist_markup(_, videoid, user_id, ptype, channel, fplay):
