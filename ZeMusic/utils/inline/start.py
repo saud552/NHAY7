@@ -3,7 +3,7 @@ import config
 from ZeMusic import app
 
 lnk= "https://t.me/" +config.CHANNEL_LINK
-lnk2= "https://t.me/" +config.STORE_LINK
+lnk= "https://t.me/" +config.STORE_LINK
 
 def start_panel(_):
     buttons = [
@@ -15,7 +15,7 @@ def start_panel(_):
         ],
         [InlineKeyboardButton(text="الأوامر", callback_data="zzzback")],
         [
-            InlineKeyboardButton(text=config.STORE_NAME, url2=config.STORE_LINK),
+            InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
             InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK)
         ],
         [InlineKeyboardButton(text="𝐃𝐞𝐯", user_id=config.OWNER_ID),
@@ -34,7 +34,7 @@ def private_panel(_):
         ],
         [InlineKeyboardButton(text="الأوامر", callback_data="zzzback")],
         [
-            InlineKeyboardButton(text=config.STORE_NAME, url2=config.STORE_LINK),
+            InlineKeyboardButton(text=config.STORE_NAME, url=config.STORE_LINK),
             InlineKeyboardButton(text=config.CHANNEL_NAME, url=config.CHANNEL_LINK)
         ],
         [InlineKeyboardButton(text="𝐃𝐞𝐯", user_id=config.OWNER_ID),
