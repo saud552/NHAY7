@@ -18,7 +18,7 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 BOT_NAME = getenv("BOT_NAME","لارين")
 GPT_NAME = getenv("GPT_NAME","")
 # Get your mongo url from cloud.mongodb.com
-MONGO_DB_URI = getenv("MONGO_DB_URI","mongodb+srv://Music:Music@cluster0.yjgit72.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+MONGO_DB_URI = getenv("MONGO_DB_URI","")
 
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 480))
 
@@ -49,10 +49,9 @@ CHANNEL_LINK = getenv("CHANNEL_LINK", "K55DD")
 STORE_NAME = getenv("STORE_NAME", "المتجر")
 STORE_LINK = getenv("STORE_LINK", "https://t.me/YMMYN")
 SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/K55DD")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/K55DD")
 
 # Set this to True if you want the assistant to automatically leave chats after an interval
-AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", True))
+AUTO_LEAVING_ASSISTANT = getenv("AUTO_LEAVING_ASSISTANT", "True")
 
 
 # Get this credentials from https://developer.spotify.com/dashboard
