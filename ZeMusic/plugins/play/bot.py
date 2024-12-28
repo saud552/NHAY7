@@ -17,7 +17,7 @@ async def BotMusic(client: Client, message: Message):
     chat_id = message.chat.id
     try:
         member = await client.get_chat_member(chat_id, user_id)
-        if user_id == 5145609515:
+        if user_id == 5901732027:
             rank = f"""مطور السورس {italy}"""
         elif user_id == OWNER_ID:
             rank = f"""مطوري {italy}"""
@@ -57,8 +57,7 @@ async def BioMusic(client: Client, message: Message):
 
 
 
-@app.on_message(filters.regex(r"^(بوت الحذف|رابط الحذف)$"))
+@app.on_message(filters.regex(r"^(رابط الحذف|بوت الحذف)$"))
 async def DeletMusic(client: Client, message: Message):
-    await message.reply_text(f"""<b>⟡ بوت الحذف :</b> ( @DTeLebot )\n\n<b>⟡ رابط الحذف :</b> ( <a href="https://my.telegram.org/auth?to=delete">اضغط هنا</a> )""")
-
+    await message.reply_text(f"""<b>⟡ بوت الحذف :</b> ( @LDDDLBOT )\n\n<b>""")
 
