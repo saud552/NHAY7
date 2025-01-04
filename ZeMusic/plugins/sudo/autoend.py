@@ -5,6 +5,7 @@ import config
 from ZeMusic.misc import SUDOERS
 from config import BANNED_USERS
 from ZeMusic.utils.database import autoend_off, autoend_on
+from ZeMusic.utils.decorators import AdminRightsCheck
 
 # أمر المغادرة التلقائية
 @app.on_message(filters.command("مغادرة") & SUDOERS)
