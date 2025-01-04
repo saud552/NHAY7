@@ -1,7 +1,7 @@
 from pyrogram import filters
 from pyrogram.types import Message
 from ZeMusic import app
-from config import STRING_SESSION
+from config
 from ZeMusic.misc import SUDOERS
 from ZeMusic.utils.database import autoend_off, autoend_on, AdminRightsCheck
 
@@ -27,10 +27,10 @@ async def auto_end_stream(_, message: Message):
 # أمر مغادرة الحساب المساعد
 @app.on_message(filters.command("المساعد غادر") & filters.group)
 @AdminRightsCheck
-async def leave_chat(_, message: Message, chat_id):
+async def leave_chat(_, message: Message, _, chat_id):
     try:
         user_mention = message.from_user.mention if message.from_user else "المشرف"
-        await STRING_SESSION.leave_chat(chat_id)
+        await config.STRING2.leave_chat(chat_id)
         await message.reply_text(f"تم مغادرة المجموعة بنجاح بواسطة {user_mention} ✅")
     except Exception as e:
         await message.reply_text(f"حدث خطأ أثناء المغادرة: {str(e)}")
@@ -38,10 +38,10 @@ async def leave_chat(_, message: Message, chat_id):
 # أمر انضمام الحساب المساعد
 @app.on_message(filters.command("المساعد انضم") & filters.group)
 @AdminRightsCheck
-async def join_chat(_, message: Message, chat_id):
+async def join_chat(_, message: Message, _, chat_id):
     try:
         user_mention = message.from_user.mention if message.from_user else "المشرف"
-        await STRING_SESSION.join_chat(chat_id)
+        await config.STRING2.join_chat(chat_id)
         await message.reply_text(f"تم الانضمام للمجموعة بنجاح بواسطة {user_mention} ✅")
     except Exception as e:
         await message.reply_text(f"حدث خطأ أثناء الانضمام: {str(e)}")
