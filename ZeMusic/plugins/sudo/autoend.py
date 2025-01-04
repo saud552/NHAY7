@@ -1,6 +1,7 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from ZeMusic import app, STRING_SESSION
+from ZeMusic import app
+from config import STRING_SESSION
 from ZeMusic.misc import SUDOERS
 from ZeMusic.utils.database import autoend_off, autoend_on, AdminRightsCheck
 
