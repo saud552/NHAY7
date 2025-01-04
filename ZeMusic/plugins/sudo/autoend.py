@@ -32,7 +32,7 @@ async def auto_end_stream(_, message: Message):
 async def leave_chat(_, message: Message, chat_id):
     try:
         user_mention = message.from_user.mention if message.from_user else "المشرف"
-        await config.STRING2.leave_chat(chat_id)
+        await config.STRING1.leave_chat(chat_id)
         await message.reply_text(f"تم مغادرة المجموعة بنجاح بواسطة {user_mention} ✅")
     except Exception as e:
         await message.reply_text(f"حدث خطأ أثناء المغادرة: {str(e)}")
@@ -43,7 +43,7 @@ async def leave_chat(_, message: Message, chat_id):
 async def join_chat(_, message: Message, chat_id):
     try:
         user_mention = message.from_user.mention if message.from_user else "المشرف"
-        await config.STRING2.join_chat(chat_id)
+        await config.STRING1.join_chat(chat_id)
         await message.reply_text(f"تم الانضمام للمجموعة بنجاح بواسطة {user_mention} ✅")
     except Exception as e:
         await message.reply_text(f"حدث خطأ أثناء الانضمام: {str(e)}")
