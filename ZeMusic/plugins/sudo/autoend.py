@@ -3,7 +3,8 @@ from pyrogram.types import Message
 from ZeMusic import app
 import config
 from ZeMusic.misc import SUDOERS
-from ZeMusic.utils.database import autoend_off, autoend_on, AdminRightsCheck
+from config import BANNED_USERS
+from ZeMusic.utils.database import autoend_off, autoend_on
 
 # أمر المغادرة التلقائية
 @app.on_message(filters.command("مغادرة") & SUDOERS)
@@ -25,7 +26,7 @@ async def auto_end_stream(_, message: Message):
         await message.reply_text(usage)
 
 # أمر مغادرة الحساب المساعد
-@app.on_message(filters.command("المساعد غادر") & filters.group)
+@app.on_message(filters.command("المساعد غادر") & filters.group & ~BANNED_USERS)
 @AdminRightsCheck
 async def leave_chat(_, message: Message, chat_id):
     try:
@@ -36,7 +37,7 @@ async def leave_chat(_, message: Message, chat_id):
         await message.reply_text(f"حدث خطأ أثناء المغادرة: {str(e)}")
 
 # أمر انضمام الحساب المساعد
-@app.on_message(filters.command("المساعد انضم") & filters.group)
+@app.on_message(filters.command("المساعد انضم") & filters.group & ~BANNED_USERS)
 @AdminRightsCheck
 async def join_chat(_, message: Message, chat_id):
     try:
