@@ -4,8 +4,10 @@ from ZeMusic import app
 import config
 from ZeMusic.misc import SUDOERS
 from config import BANNED_USERS
-from ZeMusic.utils.database import autoend_off, autoend_on, assistant
+from ZeMusic.utils.database import autoend_off, autoend_on
 from ZeMusic.utils.decorators import AdminRightsCheck
+from ZeMusic.core.userbot import assistants  # استدعاء المعطيات المتعلقة بـ assistant
+from ZeMusic.utils.functions import get_assistant  # استيراد وظيفة الحصول على الحساب المساعد
 
 # أمر المغادرة التلقائية
 @app.on_message(filters.command("مغادرة") & SUDOERS)
@@ -31,6 +33,8 @@ async def auto_end_stream(_, message: Message):
 @AdminRightsCheck
 async def leave_chat(_, message: Message, chat_id):
     try:
+        # استدعاء الحساب المساعد المناسب للمجموعة
+        assistant = await get_assistant(chat_id)
         user_mention = message.from_user.mention if message.from_user else "المشرف"
         await assistant.leave_chat(chat_id)
         await message.reply_text(f"تم مغادرة المجموعة بنجاح بواسطة {user_mention} ✅")
@@ -42,6 +46,8 @@ async def leave_chat(_, message: Message, chat_id):
 @AdminRightsCheck
 async def join_chat(_, message: Message, chat_id):
     try:
+        # استدعاء الحساب المساعد المناسب للمجموعة
+        assistant = await get_assistant(chat_id)
         user_mention = message.from_user.mention if message.from_user else "المشرف"
         await assistant.join_chat(chat_id)
         await message.reply_text(f"تم الانضمام للمجموعة بنجاح بواسطة {user_mention} ✅")
