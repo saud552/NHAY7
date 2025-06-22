@@ -10,20 +10,55 @@ load_dotenv()
 API_ID = int(getenv("API_ID","20036317"))
 API_HASH = getenv("API_HASH","986cb4ba434870a62fe96da3b5f6d411")
 
+# --------------------------------------------
+# 1. قائمة مفاتيح YouTube Data API
+# --------------------------------------------
+# ضع هنا جميع مفاتيح الـ API التي تريد التناوب بينها.
+YT_API_KEYS = [
+    "EQD5mxRgCuRNLxKxeOjG6r14iSroLF5FtomPnet-sgP5xNJb",
+    # يمكنك إضافة مفاتيح أخرى بنفس الصيغة إذا كان لديك أكثر من مفتاح
+]
+
+# --------------------------------------------
+# 2. قائمة خوادم Invidious (Invidious Instances)
+# --------------------------------------------
+INVIDIOUS_SERVERS = [
+    "https://yewtu.be",
+    "https://vid.puffyan.us",
+    "https://inv.riverside.rocks",
+    "https://yewtu.eu.org",
+    "https://yewtu.cafe",
+    "https://yewtu.snopyta.org",
+    "https://yewtu.shareyour.world",
+    "https://yewtu.privacytools.io",
+    "https://yewtu.kavin.rocks",
+    "https://yewtu.nixnet.services",
+    "https://yewtu.ossdv.cn",
+    "https://yewtu.invidious.io",
+    "https://yewtu.mooo.com",
+    "https://yewtu.fdn.fr",
+    "https://invidious.snopyta.org",
+    "https://yewtu.ayaka.systems",
+    "https://yewtu.offensive-security.dev"
+]
+
+COOKIE_METHOD = "browser"  # أو "file" لتحديد مصدر الكوكيز  
+COOKIE_FILE = "cookies.txt"  # مسار ملف الكوكيز إذا كان COOKIE_METHOD="file"  
+
 Muntazer = getenv("muntazer", "CHANNEL_ASHTRAK")
 CHANNEL_ASHTRAK = getenv("CHANNEL_ASHTRAK", "K55DD")
 
 # Get your token from @BotFather on Telegram.
-BOT_TOKEN = getenv("BOT_TOKEN")
+BOT_TOKEN = getenv("BOT_TOKEN", "7686060382:AAH3wBx0cwW0X7rRVg14XlOhourcG3WgTt0")
 BOT_NAME = getenv("BOT_NAME","لارين")
 GPT_NAME = getenv("GPT_NAME","")
 # Get your mongo url from cloud.mongodb.com
-MONGO_DB_URI = getenv("MONGO_DB_URI","")
+MONGO_DB_URI = getenv("MONGO_DB_URI","mongodb+srv://fasdxoox:X8SB7zMJes38qdct@cluster0.dsgn0c9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 480))
 
 # Chat id of a group for logging bot s activities
-LOGGER_ID = int(getenv("LOGGER_ID","-1001756578463"))
+LOGGER_ID = int(getenv("LOGGER_ID","-1001993781277"))
 
 # Get this value from @FallenxBot on Telegram by /id
 OWNER_ID = int(getenv("OWNER_ID", 5901732027))
@@ -71,7 +106,7 @@ TG_VIDEO_FILESIZE_LIMIT = int(getenv("TG_VIDEO_FILESIZE_LIMIT", 1073741824))
 
 # Get your pyrogram v2 session from @StringFatherBot on Telegram
 AMK = APK + 5600000
-STRING1 = getenv("STRING_SESSION", None)
+STRING1 = getenv("STRING_SESSION", "BQGhGkAAA5_RorQUD0e5J4MPrI_x9xv1ljzezMlZQcke3pSoduh-CJLactJfGw4pfc0KcfLGn31ZcChyYld67vAeezWiky1mmPZENTEgoWvBBvNg2-n4O-4cvlRtT7KyY7SEQ9tE_R1ForTUJngpkHrSDYBO1v6WG9qyx7xBJHbOKJE2hPt4bIngXigyFx8lHeo0Jzq3-gNeTzYpLB70aVS3t7qutmhkXljJtVOprKih9q0ervL82AUUWyX-VoBB70bHa47eNdswqCtshe7aLjQiYEO-68nwpjfYt0311zmjPlhaftJianw7oss0_8CZME3zIGTuJdUZEVWbm9O2e0ziTI24AQAAAAGyOTEEAA")
 STRING2 = getenv("STRING_SESSION2", None)
 STRING3 = getenv("STRING_SESSION3", None)
 STRING4 = getenv("STRING_SESSION4", None)
