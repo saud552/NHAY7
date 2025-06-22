@@ -1,44 +1,34 @@
 import os
+from typing import List
+
 import yaml
 
 languages = {}
 languages_present = {}
 
+
 def get_string(lang: str):
     return languages[lang]
 
-# تحديد المسار المطلق لمجلد اللغات
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-LANGS_DIR = "/storage/emulated/0/BotMusic/strings/langs"
 
-# التأكد من وجود مجلد اللغات
-if not os.path.isdir(LANGS_DIR):
-    print(f"مجلد اللغات غير موجود: {LANGS_DIR}")
-    exit()
-
-# تحميل ملفات اللغات
-for filename in os.listdir(LANGS_DIR):
+for filename in os.listdir(r"./strings/langs/"):
+    if "en" not in languages:
+        languages["en"] = yaml.safe_load(
+            open(r"./strings/langs/en.yml", encoding="utf8")
+        )
+        languages_present["en"] = languages["en"]["name"]
     if filename.endswith(".yml"):
-        lang_code = filename[:-4]
-        file_path = os.path.join(LANGS_DIR, filename)
-
-        try:
-            with open(file_path, encoding="utf8") as file:
-                data = yaml.safe_load(file)
-        except Exception as e:
-            print(f"فشل تحميل ملف اللغة {filename}: {e}")
-            exit()
-
-        if lang_code == "en":
-            languages["en"] = data
-            languages_present["en"] = data.get("name", "English")
-        else:
-            languages[lang_code] = data
-            for key, val in languages["en"].items():
-                languages[lang_code].setdefault(key, val)
-            languages_present[lang_code] = data.get("name", lang_code)
-
-# التأكد من وجود اللغة الإنجليزية
-if "en" not in languages:
-    print("اللغة الإنجليزية غير موجودة في ملفات اللغات.")
-    exit()
+        language_name = filename[:-4]
+        if language_name == "en":
+            continue
+        languages[language_name] = yaml.safe_load(
+            open(r"./strings/langs/" + filename, encoding="utf8")
+        )
+        for item in languages["en"]:
+            if item not in languages[language_name]:
+                languages[language_name][item] = languages["en"][item]
+    try:
+        languages_present[language_name] = languages[language_name]["name"]
+    except:
+        print("There is some issue with the language file inside bot.")
+        exit()
