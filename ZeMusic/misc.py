@@ -5,10 +5,12 @@ import heroku3
 from pyrogram import filters
 
 import config
-from ZeMusic.core.mongo import mongodb
+# لم يعد هناك استخدام لموديول mongo هنا
+# from ZeMusic.core.mongo import mongodb
 
 from .logging import LOGGER
 
+# قائمة السُوبر يوزرز (SUDOERS) تعتمد على فلتر المستخدم من Pyrogram
 SUDOERS = filters.user()
 
 HAPP = None
@@ -38,41 +40,40 @@ XCB = [
 
 
 def dbb():
+    """
+    تهيئة قاعدة بيانات محلية (في الذاكرة) للمسارات المؤقتة.
+    """
     global db
     db = {}
-    LOGGER(__name__).info(f"Local Database Initialized.")
+    LOGGER(__name__).info("Local Database Initialized.")
 
 
 async def sudo():
+    """
+    تجاوز خطوة تحميل قائمة sudoers من MongoDB.
+    الآن يقرأ فقط OWNER_ID و DAV من config.
+    """
     global SUDOERS
-    SUDOERS.add(config.DAV)
+    # نظّف أي مكونات سابقة
+    SUDOERS = filters.user()
+    # أضف المعرفات الثابتة من config
     SUDOERS.add(config.OWNER_ID)
-    sudoersdb = mongodb.sudoers
-    sudoers = await sudoersdb.find_one({"sudo": "sudo"})
-    sudoers = [] if not sudoers else sudoers["sudoers"]
-    if config.OWNER_ID not in sudoers:
-        sudoers.append(config.OWNER_ID)
-        sudoers.append(config.DAV)
-        await sudoersdb.update_one(
-            {"sudo": "sudo"},
-            {"$set": {"sudoers": sudoers}},
-            upsert=True,
-        )
-    if sudoers:
-        for user_id in sudoers:
-            SUDOERS.add(user_id)
-    LOGGER(__name__).info(f"تم رفع البيانات.")
+    SUDOERS.add(config.DAV)
+    LOGGER(__name__).info("✅ تجاوز sudo(): استخدام OWNER_ID و DAV بدون MongoDB")
 
 
 def heroku():
+    """
+    تكوين تطبيق Heroku إذا كنا على بيئة Heroku.
+    """
     global HAPP
-    if is_heroku:
+    if is_heroku():
         if config.HEROKU_API_KEY and config.HEROKU_APP_NAME:
             try:
                 Heroku = heroku3.from_key(config.HEROKU_API_KEY)
                 HAPP = Heroku.app(config.HEROKU_APP_NAME)
-                LOGGER(__name__).info(f"تم تكوين التطبيق.")
+                LOGGER(__name__).info("تم تكوين تطبيق Heroku.")
             except BaseException:
                 LOGGER(__name__).warning(
-                    f"Please make sure your Heroku API Key and Your App name are configured correctly in the heroku."
+                    "Please make sure your Heroku API Key and App name are configured correctly."
                 )
