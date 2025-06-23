@@ -1,15 +1,14 @@
 import logging
 
-# لو كان الملف يحتوي على منطق Mongo حقيقي، نعلّقه أو نحذفه
-# import motor.motor_asyncio
-
-# منسِّق لرسائل اللوج
 LOGGER = logging.getLogger(__name__)
 
 class DummyCollection:
-    """مجموعة زائفة تتجاهل كل العمليات."""
+    """مجموعة بيانات زائفة تتجاهل كل العمليات وتعيد None أو قيم فارغة."""
     async def find_one(self, *args, **kwargs):
         return None
+
+    async def find(self, *args, **kwargs):
+        return []
 
     async def update_one(self, *args, **kwargs):
         return None
@@ -21,13 +20,20 @@ class DummyCollection:
         return None
 
 class DummyDB:
-    """قاعدة بيانات زائفة بمجموعات sudoers و langs وغيرها."""
+    """
+    قاعدة بيانات زائفة بمجموعات:
+      - sudoers    (لـ sudo)
+      - langs      (لـ تخزين لغات الشات)
+      - adminauth  (لـ كائن authdb في database.py)
+      - ... يمكنك إضافة أي مجموعة أخرى يستخدمها كودك هنا
+    """
     def __init__(self):
         self.sudoers = DummyCollection()
         self.langs = DummyCollection()
-        # إذا كانت هناك مجموعات أخرى يستخدمها كودك فـ أعرضها هنا:
-        # self.some_other_collection = DummyCollection()
+        self.adminauth = DummyCollection()
+        # إذا كان لديك مجموعات أخرى تستوردها utils/database.py،
+        # كرّر السطر أعلاه مع اسم المجموعة.
         LOGGER.info("🔰 تم تهيئة MongoDB stub (DummyDB)")
 
-# اصدار كائن mongodb المستخدم عبر التطبيق
+# كائن mongodb الذي يستورده الكود في بقية التطبيق
 mongodb = DummyDB()
