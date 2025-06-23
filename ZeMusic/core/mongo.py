@@ -2,59 +2,35 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_DB_URI
 from ..logging import LOGGER
 
-# Dummy classes for fallback when real MongoDB is unavailable
-class DummyCollection:
-    def __init__(self):
-        self._data = []
+LOGGER(__name__).info("🔄 initializing MongoDB connection...")
 
-    async def find_one(self, *args, **kwargs):
-        return None
+mongodb = None
 
-    async def update_one(self, *args, **kwargs):
-        return None
+if MONGO_DB_URI:
+    try:
+        client = AsyncIOMotorClient(MONGO_DB_URI, serverSelectionTimeoutMS=5000)
+        # اختبار الاتصال:
+        client.admin.command("ping")
+        mongodb = client.Elhyba
+        LOGGER(__name__).info("✅ connected to MongoDB.")
+    except Exception as e:
+        LOGGER(__name__).warning(
+            f"⚠️ failed to connect to MongoDB, falling back to stub: {e}"
+        )
 
-    def find(self, *args, **kwargs):
-        return self
+if not mongodb:
+    # dummy stub for all collections used in the code:
+    class DummyCollection:
+        def __init__(self, name): self.name = name
+        async def find_one(self, *a, **k): return None
+        async def update_one(self, *a, **k): pass
+        def find(self, *a, **k): return self
+        async def __aiter__(self): return
+        async def next(self): raise StopAsyncIteration
 
-    def insert_one(self, *args, **kwargs):
-        return None
+    class DummyDB:
+        def __getattr__(self, name):
+            return DummyCollection(name)
 
-    async def delete_one(self, *args, **kwargs):
-        return None
-
-    def __aiter__(self):
-        self._iter = iter(self._data)
-        return self
-
-    async def __anext__(self):
-        try:
-            return next(self._iter)
-        except StopIteration:
-            raise StopAsyncIteration
-
-class DummyDB:
-    def __init__(self):
-        # استبانات لمجموعات قاعدة البيانات التي يستخدمها المشروع
-        self.sudoers = DummyCollection()
-        self.adminauth = DummyCollection()
-        self.gbans = DummyCollection()
-        self.lyrics = DummyCollection()
-        # يمكنك إضافة المزيد هنا حسب الحاجة
-
-    def __getattr__(self, name):
-        # أي اسم مجموعة غير معرّف سيعود باستبانة وهمية تلقائيًّا
-        return DummyCollection()
-
-# محاولة الاتصال بـ MongoDB الحقيقي
-LOGGER(__name__).info("🔰 Attempting MongoDB connection...")
-try:
-    _mongo_async_ = AsyncIOMotorClient(MONGO_DB_URI, serverSelectionTimeoutMS=5000)
-    # نختار قاعدة البيانات باسم Elhyba
-    mongodb = _mongo_async_["Elhyba"]
-    # نتحقق من الاتصال فعليًّا
-    _mongo_async_.server_info()
-    LOGGER(__name__).info("✔ Connected to MongoDB.")
-except Exception as e:
-    LOGGER(__name__).warning(f"MongoDB unavailable, using stub: {e}")
     mongodb = DummyDB()
-    LOGGER(__name__).info("✔ MongoDB stub initialized.")
+    LOGGER(__name__).info("🔰 using MongoDB stub (DummyDB).")
