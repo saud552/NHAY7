@@ -31,16 +31,28 @@ class MusicManager:
     async def play_music(self, chat_id: int, query: str, user_id: int) -> Dict[str, Any]:
         """تشغيل موسيقى - الوظيفة الرئيسية"""
         try:
+            # فحص وجود حسابات مساعدة نشطة
+            from ZeMusic.plugins.owner.assistants_handler import assistants_handler
+            user_name = "المستخدم"  # يمكن تحسين هذا للحصول على الاسم الحقيقي
+            
+            has_issue = await assistants_handler.check_no_assistants_and_notify(
+                user_id, user_name, chat_id
+            )
+            
+            if has_issue:
+                return {
+                    'success': False,
+                    'error': 'no_assistant',
+                    'message': f"⚠️ **عذراً {user_name}**\n\n🤖 لا توجد حسابات مساعدة نشطة حالياً\n📞 تم إرسال تنبيه للمطور"
+                }
+            
             # التحقق من وجود حساب مساعد متاح
             assistant = await self._get_available_assistant(chat_id)
             if not assistant:
                 return {
                     'success': False,
                     'error': 'no_assistant',
-                    'message': config.ASSISTANT_NOT_FOUND_MESSAGE.format(
-                        SUPPORT_CHAT=config.SUPPORT_CHAT,
-                        OWNER_ID=config.OWNER_ID
-                    )
+                    'message': "❌ جميع الحسابات المساعدة مشغولة حالياً\nيرجى المحاولة بعد قليل"
                 }
             
             # البحث عن الموسيقى

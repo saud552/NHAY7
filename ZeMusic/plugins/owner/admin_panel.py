@@ -90,8 +90,8 @@ class AdminPanel:
             return await force_subscribe_handler.show_force_subscribe_menu(user_id)
             
         elif callback_data == 'admin_assistants':
-            from ZeMusic.plugins.owner.owner_panel import owner_panel
-            return await owner_panel.show_assistants_panel(user_id)
+            from ZeMusic.plugins.owner.assistants_handler import assistants_handler
+            return await assistants_handler.show_assistants_panel(user_id)
             
         elif callback_data == 'admin_main':
             return await self.show_main_panel(user_id)

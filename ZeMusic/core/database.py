@@ -679,6 +679,73 @@ class DatabaseManager:
                 conn.commit()
         
         await asyncio.get_event_loop().run_in_executor(None, _log)
+    
+    async def add_assistant(self, session_string: str, name: str) -> int:
+        """إضافة حساب مساعد جديد"""
+        def _add():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    INSERT INTO assistants (session_string, name, is_active, added_date)
+                    VALUES (?, ?, 1, ?)
+                ''', (session_string, name, datetime.now().isoformat()))
+                conn.commit()
+                return cursor.lastrowid
+        
+        return await asyncio.get_event_loop().run_in_executor(None, _add)
+    
+    async def remove_assistant(self, assistant_id: int):
+        """حذف حساب مساعد"""
+        def _remove():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('DELETE FROM assistants WHERE assistant_id = ?', (assistant_id,))
+                conn.commit()
+        
+        await asyncio.get_event_loop().run_in_executor(None, _remove)
+    
+    async def get_assistants(self) -> List[Dict]:
+        """الحصول على قائمة الحسابات المساعدة"""
+        def _get():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    SELECT assistant_id, session_string, name, is_active, added_date as created_at, last_used as last_activity
+                    FROM assistants
+                    ORDER BY added_date DESC
+                ''')
+                rows = cursor.fetchall()
+                return [dict(row) for row in rows]
+        
+        return await asyncio.get_event_loop().run_in_executor(None, _get)
+    
+    async def get_assistant_by_id(self, assistant_id: int) -> Optional[Dict]:
+        """الحصول على معلومات حساب مساعد محدد"""
+        def _get():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    SELECT assistant_id, session_string, name, is_active, added_date as created_at, last_used as last_activity
+                    FROM assistants WHERE assistant_id = ?
+                ''', (assistant_id,))
+                row = cursor.fetchone()
+                return dict(row) if row else None
+        
+        return await asyncio.get_event_loop().run_in_executor(None, _get)
+    
+    async def update_assistant_activity(self, assistant_id: int):
+        """تحديث آخر نشاط للحساب المساعد"""
+        def _update():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE assistants 
+                    SET last_used = ? 
+                    WHERE assistant_id = ?
+                ''', (datetime.now().isoformat(), assistant_id))
+                conn.commit()
+        
+        await asyncio.get_event_loop().run_in_executor(None, _update)
 
 # إنشاء مثيل مدير قاعدة البيانات
 db = DatabaseManager()

@@ -11,6 +11,7 @@ from ZeMusic.plugins.owner.admin_panel import admin_panel
 from ZeMusic.plugins.owner.stats_handler import stats_handler
 from ZeMusic.plugins.owner.broadcast_handler import broadcast_handler
 from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
+from ZeMusic.plugins.owner.assistants_handler import assistants_handler
 
 class BasicCommandHandler:
     """معالج الأوامر الأساسية"""
@@ -465,6 +466,28 @@ class BasicCommandHandler:
                 # معالجة فحص الاشتراك للمستخدم
                 user_name = query.from_user.first_name or "المستخدم"
                 result = await force_subscribe_handler.handle_subscription_check(user_id, user_name)
+            
+            elif callback_data.startswith('assistants_'):
+                # معالجة أزرار إدارة الحسابات المساعدة
+                if callback_data == 'assistants_add':
+                    result = await assistants_handler.start_add_assistant(user_id)
+                elif callback_data == 'assistants_remove':
+                    result = await assistants_handler.start_remove_assistant(user_id)
+                elif callback_data == 'assistants_list':
+                    result = await assistants_handler.show_assistants_list(user_id)
+                elif callback_data == 'assistants_restart':
+                    result = await assistants_handler.restart_assistants(user_id)
+                elif callback_data == 'assistants_auto_leave_toggle':
+                    result = await assistants_handler.toggle_auto_leave(user_id)
+                elif callback_data == 'assistants_confirm_add':
+                    result = await assistants_handler.confirm_add_assistant(user_id)
+                elif callback_data.startswith('remove_assistant_'):
+                    assistant_id = int(callback_data.split('_')[-1])
+                    result = await assistants_handler.confirm_remove_assistant(user_id, assistant_id)
+                elif callback_data in ['assistants_cancel_add', 'assistants_cancel_remove']:
+                    result = await assistants_handler.show_assistants_panel(user_id)
+                else:
+                    result = await assistants_handler.show_assistants_panel(user_id)
             
             elif callback_data.startswith('owner_'):
                 # معالجة أزرار إدارة الحسابات المساعدة

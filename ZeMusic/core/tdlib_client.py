@@ -464,6 +464,47 @@ class TDLibManager:
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في تنظيف المساعدين: {e}")
     
+    def is_assistant_connected(self, assistant_id: int) -> bool:
+        """التحقق من اتصال حساب مساعد"""
+        try:
+            for assistant in self.assistants:
+                if assistant.assistant_id == assistant_id:
+                    return assistant.is_connected
+            return False
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في فحص اتصال الحساب المساعد: {e}")
+            return False
+    
+    def get_assistant_calls_count(self, assistant_id: int) -> int:
+        """الحصول على عدد المكالمات النشطة للحساب المساعد"""
+        try:
+            for assistant in self.assistants:
+                if assistant.assistant_id == assistant_id:
+                    return len(assistant.active_calls)
+            return 0
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في حساب مكالمات الحساب المساعد: {e}")
+            return 0
+    
+    async def restart_assistants(self) -> bool:
+        """إعادة تشغيل جميع الحسابات المساعدة"""
+        try:
+            # إيقاف الحسابات الحالية
+            for assistant in self.assistants:
+                await assistant.stop()
+            
+            self.assistants.clear()
+            
+            # إعادة تحميل من قاعدة البيانات
+            await self.load_assistants_from_database()
+            
+            LOGGER(__name__).info("✅ تم إعادة تشغيل جميع الحسابات المساعدة")
+            return True
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في إعادة تشغيل الحسابات المساعدة: {e}")
+            return False
+    
     async def stop_all(self):
         """إيقاف جميع العملاء"""
         try:

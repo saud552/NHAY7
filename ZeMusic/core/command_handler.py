@@ -98,6 +98,62 @@ class TDLibCommandHandler:
                         await self.commands[command](mock_update, None)
                         return
                 
+                # معالجة session strings والأسماء للحسابات المساعدة
+                elif sender_id == config.OWNER_ID:
+                    from ZeMusic.plugins.owner.assistants_handler import assistants_handler
+                    
+                    # فحص إذا كان المطور في جلسة إضافة حساب مساعد
+                    if sender_id in assistants_handler.pending_sessions:
+                        session = assistants_handler.pending_sessions[sender_id]
+                        
+                        if session['step'] == 'waiting_session_string':
+                            # معالجة session string
+                            result = await assistants_handler.process_session_string(sender_id, text)
+                            
+                            # إرسال الرد
+                            bot_client = tdlib_manager.bot_client
+                            if bot_client and bot_client.is_connected and result:
+                                keyboard = None
+                                if result.get('keyboard'):
+                                    keyboard = self._convert_keyboard_for_tdlib(result['keyboard'])
+                                
+                                await bot_client.client.call_method('sendMessage', {
+                                    'chat_id': chat_id,
+                                    'input_message_content': {
+                                        '@type': 'inputMessageText',
+                                        'text': {
+                                            '@type': 'formattedText',
+                                            'text': result['message']
+                                        }
+                                    },
+                                    'reply_markup': keyboard
+                                })
+                            return
+                        
+                        elif session['step'] == 'waiting_name':
+                            # معالجة اسم الحساب المساعد
+                            result = await assistants_handler.process_assistant_name(sender_id, text)
+                            
+                            # إرسال الرد
+                            bot_client = tdlib_manager.bot_client
+                            if bot_client and bot_client.is_connected and result:
+                                keyboard = None
+                                if result.get('keyboard'):
+                                    keyboard = self._convert_keyboard_for_tdlib(result['keyboard'])
+                                
+                                await bot_client.client.call_method('sendMessage', {
+                                    'chat_id': chat_id,
+                                    'input_message_content': {
+                                        '@type': 'inputMessageText',
+                                        'text': {
+                                            '@type': 'formattedText',
+                                            'text': result['message']
+                                        }
+                                    },
+                                    'reply_markup': keyboard
+                                })
+                            return
+                
                 # معالجة الرسائل العادية (للإذاعة مثلاً)
                 await self.handle_regular_message(mock_update, message)
             
