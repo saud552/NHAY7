@@ -1,6 +1,6 @@
 # \activevc معرفه المكالمات المشغله حاليا
-from pyrogram import filters
-from pyrogram.types import Message
+from ZeMusic.pyrogram_compatibility import filters
+from ZeMusic.pyrogram_compatibility.types import Message
 from unidecode import unidecode
 
 from ZeMusic import app

@@ -2,7 +2,7 @@ import math
 import config
 from ZeMusic import app 
 
-from pyrogram.types import InlineKeyboardButton
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardButton
 
 from ZeMusic.utils.formatters import time_to_seconds
 

@@ -7,8 +7,8 @@ import logging
 from typing import Union
 from itertools import cycle
 
-from pyrogram.enums import MessageEntityType
-from pyrogram.types import Message
+from ZeMusic.pyrogram_compatibility.enums import MessageEntityType
+from ZeMusic.pyrogram_compatibility.types import Message
 from youtubesearchpython.__future__ import VideosSearch
 from yt_dlp import YoutubeDL
 

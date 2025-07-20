@@ -1,5 +1,5 @@
-from pyrogram.enums import MessageEntityType
-from pyrogram.types import Message, User
+from ZeMusic.pyrogram_compatibility.enums import MessageEntityType
+from ZeMusic.pyrogram_compatibility.types import Message, User
 
 from ZeMusic import app
 

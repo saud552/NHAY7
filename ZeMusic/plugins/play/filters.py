@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from pyrogram import filters
+from ZeMusic.pyrogram_compatibility import filters
 
 
 other_filters = filters.group  & ~filters.via_bot & ~filters.forwarded

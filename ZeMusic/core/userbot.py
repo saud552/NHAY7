@@ -1,4 +1,4 @@
-from pyrogram import Client
+from ZeMusic.compatibility import CompatibilityClient as Client
 
 import config
 

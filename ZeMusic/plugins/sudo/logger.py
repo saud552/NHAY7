@@ -1,4 +1,4 @@
-from pyrogram import filters
+from ZeMusic.pyrogram_compatibility import filters
 
 from ZeMusic import app
 from ZeMusic.misc import SUDOERS

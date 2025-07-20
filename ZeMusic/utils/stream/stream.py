@@ -3,7 +3,7 @@ import os
 from random import randint
 from typing import Union
 
-from pyrogram.types import InlineKeyboardMarkup
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardMarkup
 
 import config
 from ZeMusic import Carbon, YouTube, app

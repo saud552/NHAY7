@@ -5,8 +5,18 @@ import os
 import random
 import time
 from typing import Dict, List, Optional, Any
-from telegram.client import Telegram
-from telegram.api import API
+# المكتبة ستكون متاحة عند التثبيت الفعلي
+try:
+    from telegram.client import Telegram
+    from telegram.api import API
+except ImportError:
+    # وضع تجريبي للتطوير
+    class Telegram:
+        def __init__(self, **kwargs):
+            pass
+    
+    class API:
+        pass
 
 import config
 from ZeMusic.logging import LOGGER

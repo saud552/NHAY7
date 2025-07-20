@@ -1,4 +1,4 @@
-from pyrogram import filters
+from ZeMusic.pyrogram_compatibility import filters
 
 from ZeMusic import YouTube, app
 from ZeMusic.utils.channelplay import get_channeplayCB

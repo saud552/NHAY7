@@ -3,8 +3,8 @@ import time
 import requests
 from ZeMusic import app
 
-from pyrogram.enums import ChatAction, ParseMode
-from pyrogram import filters
+from ZeMusic.pyrogram_compatibility.enums import ChatAction, ParseMode
+from ZeMusic.pyrogram_compatibility import filters
 
 @app.on_message(filters.command(["رون"],""))
 async def chat_gpt(bot, message):

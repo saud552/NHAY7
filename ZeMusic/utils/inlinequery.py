@@ -1,4 +1,4 @@
-from pyrogram.types import InlineQueryResultArticle, InputTextMessageContent
+from ZeMusic.pyrogram_compatibility.types import InlineQueryResultArticle, InputTextMessageContent
 
 answer = []
 

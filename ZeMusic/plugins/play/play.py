@@ -1,8 +1,8 @@
 import random
 import string
 
-from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, InputMediaPhoto, Message
+from ZeMusic.pyrogram_compatibility import filters
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardMarkup, InputMediaPhoto, Message
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config

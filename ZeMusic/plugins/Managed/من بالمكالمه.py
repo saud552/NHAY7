@@ -1,7 +1,7 @@
-from pyrogram import filters, Client
+from ZeMusic.pyrogram_compatibility import filters, Client
 from ZeMusic import app
 import asyncio
-from pyrogram.types import VideoChatEnded, Message
+from ZeMusic.pyrogram_compatibility.types import VideoChatEnded, Message
 from pytgcalls import PyTgCalls, StreamType
 from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
 from ZeMusic.core.call import Mody

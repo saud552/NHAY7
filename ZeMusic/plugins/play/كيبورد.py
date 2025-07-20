@@ -1,8 +1,8 @@
 import asyncio
-from pyrogram import Client, filters
+from ZeMusic.pyrogram_compatibility import Client, filters
 from strings.filters import command
 from ZeMusic.utils.decorators import AdminActual
-from pyrogram.types import (
+from ZeMusic.pyrogram_compatibility.types import (
     CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,

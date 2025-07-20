@@ -1,6 +1,6 @@
-from pyrogram import filters
-from pyrogram.enums import ChatMembersFilter, ChatMemberStatus, ChatType
-from pyrogram.types import Message
+from ZeMusic.pyrogram_compatibility import filters
+from ZeMusic.pyrogram_compatibility.enums import ChatMembersFilter, ChatMemberStatus, ChatType
+from ZeMusic.pyrogram_compatibility.types import Message
 
 from ZeMusic import app
 from ZeMusic.utils.database import set_cmode

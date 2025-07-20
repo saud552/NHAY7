@@ -2,7 +2,8 @@ import socket
 import time
 
 import heroku3
-from pyrogram import filters
+from ZeMusic.compatibility import TDLibFilters
+filters = TDLibFilters()
 
 import config
 from .logging import LOGGER
