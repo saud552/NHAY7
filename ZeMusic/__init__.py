@@ -1,26 +1,25 @@
-from ZeMusic.core.bot import Mody
-from ZeMusic.core.dir import dirr
-from ZeMusic.core.git import git
-from ZeMusic.core.userbot import Userbot
-from ZeMusic.misc import dbb, heroku
-
+import asyncio
+import time
+from pyrogram import Client
 from .logging import LOGGER
 
-dirr()
-git()
-dbb()
-heroku()
+# تهيئة قاعدة البيانات
+async def init_database():
+    """تهيئة قاعدة البيانات SQLite"""
+    try:
+        from .core.database import db
+        LOGGER(__name__).info("✅ تم تهيئة قاعدة البيانات SQLite بنجاح")
+        return True
+    except Exception as e:
+        LOGGER(__name__).error(f"❌ خطأ في تهيئة قاعدة البيانات: {e}")
+        return False
 
-app = Mody()
-userbot = Userbot()
+# متغيرات عامة
+SUDOERS = []
+OWNER_ID = None
+userbot = None
 
+# تحديد وقت بدء التشغيل
+StartTime = time.time()
 
-from .platforms import *
-
-Apple = AppleAPI()
-Carbon = CarbonAPI()
-SoundCloud = SoundAPI()
-Spotify = SpotifyAPI()
-Resso = RessoAPI()
-Telegram = TeleAPI()
-YouTube = YouTubeAPI()
+LOGGER(__name__).info("🎵 تم تحميل ZeMusic Bot بنجاح")

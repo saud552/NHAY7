@@ -98,11 +98,23 @@ async def bot_stats(client, CallbackQuery, _):
     total = hdd.total / (1024.0**3)
     used = hdd.used / (1024.0**3)
     free = hdd.free / (1024.0**3)
-    call = await mongodb.command("dbstats")
-    datasize = call["dataSize"] / 1024
-    storage = call["storageSize"] / 1024
-    served_chats = len(await get_served_chats())
-    served_users = len(await get_served_users())
+    # إحصائيات قاعدة البيانات الجديدة SQLite
+    from ZeMusic.core.database import db
+    import os
+    
+    # حجم ملف قاعدة البيانات
+    try:
+        db_size = os.path.getsize(db.db_path) / 1024  # بالكيلوبايت
+        datasize = db_size
+        storage = db_size
+    except:
+        datasize = 0
+        storage = 0
+    
+    # إحصائيات المستخدمين والمجموعات
+    stats = await db.get_stats()
+    served_chats = stats['chats']
+    served_users = stats['users']
     text = _["gstats_5"].format(
         app.mention,
         len(ALL_MODULES),

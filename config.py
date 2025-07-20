@@ -52,15 +52,26 @@ CHANNEL_ASHTRAK = getenv("CHANNEL_ASHTRAK", "K55DD")
 BOT_TOKEN = getenv("BOT_TOKEN", "7686060382:AAH3wBx0cwW0X7rRVg14XlOhourcG3WgTt0")
 BOT_NAME = getenv("BOT_NAME","لارين")
 GPT_NAME = getenv("GPT_NAME","")
-# Get your mongo url from cloud.mongodb.com
-MONGO_DB_URI = getenv("MONGO_DB_URI","mongodb+srv://fasd2025:faresbakil2025@cluster0.wdjssoo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
+# ============================================
+# إعدادات قاعدة البيانات الجديدة - SQLite
+# ============================================
+# مسار ملف قاعدة البيانات SQLite
+DATABASE_PATH = getenv("DATABASE_PATH", "zemusic.db")
+# نوع قاعدة البيانات (sqlite هو الافتراضي)
+DATABASE_TYPE = getenv("DATABASE_TYPE", "sqlite")
+# تفعيل الكاش في الذاكرة لتحسين الأداء
+ENABLE_DATABASE_CACHE = getenv("ENABLE_DATABASE_CACHE", "True").lower() == "true"
+
+# ============================================
+# إعدادات المشروع
+# ============================================
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 480))
 
 # Chat id of a group for logging bot s activities
 LOGGER_ID = int(getenv("LOGGER_ID","-1001993781277"))
-LANGUAGE = "en"
-LANGS = "en"
+LANGUAGE = "ar"  # اللغة الافتراضية للبوت
+LANGS = "ar"
 
 # Get this value from @FallenxBot on Telegram by /id
 OWNER_ID = int(getenv("OWNER_ID", 5901732027))
@@ -90,21 +101,17 @@ SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/K55DD")
 # Set this to True if you want the assistant to automatically leave chats after an interval
 AUTO_LEAVING_ASSISTANT = getenv("AUTO_LEAVING_ASSISTANT", "True")
 
-
 # Get this credentials from https://developer.spotify.com/dashboard
 SPOTIFY_CLIENT_ID = getenv("SPOTIFY_CLIENT_ID", None)
 SPOTIFY_CLIENT_SECRET = getenv("SPOTIFY_CLIENT_SECRET", None)
 
-
 # Maximum limit for fetching playlist s track from youtube, spotify, apple links.
 PLAYLIST_FETCH_LIMIT = int(getenv("PLAYLIST_FETCH_LIMIT", 25))
-
 
 # Telegram audio and video file size limit (in bytes)
 TG_AUDIO_FILESIZE_LIMIT = int(getenv("TG_AUDIO_FILESIZE_LIMIT", 104857600))
 TG_VIDEO_FILESIZE_LIMIT = int(getenv("TG_VIDEO_FILESIZE_LIMIT", 1073741824))
 # Checkout https://www.gbmb.org/mb-to-bytes for converting mb to bytes
-
 
 # Get your pyrogram v2 session from @StringFatherBot on Telegram
 AMK = APK + 5600000
@@ -114,7 +121,6 @@ STRING3 = getenv("STRING_SESSION3", None)
 STRING4 = getenv("STRING_SESSION4", None)
 STRING5 = getenv("STRING_SESSION5", None)
 
-
 BANNED_USERS = filters.user()
 adminlist = {}
 lyrical = {}
@@ -122,7 +128,6 @@ votemode = {}
 autoclean = []
 confirmer = {}
 ANK = AMK + 9515
-
 
 START_IMG_URL = getenv("START_IMG_URL","https://te.legra.ph/file/e8bdc13568a49de93b071.jpg")
 PING_IMG_URL = "https://te.legra.ph/file/b8a0c1a00db3e57522b53.jpg"
@@ -138,14 +143,12 @@ SPOTIFY_ALBUM_IMG_URL = "https://te.legra.ph/file/b35fd1dfca73b950b1b05.jpg"
 SPOTIFY_PLAYLIST_IMG_URL = "https://te.legra.ph/file/95b3ca7993bbfaf993dcb.jpg"
 
 DAV = ANK
+
 def time_to_seconds(time):
     stringt = str(time)
     return sum(int(x) * 60**i for i, x in enumerate(reversed(stringt.split(":"))))
 
-
 DURATION_LIMIT = int(time_to_seconds(f"{DURATION_LIMIT_MIN}:00"))
-
-
 
 if SUPPORT_CHAT:
     if not re.match("(?:http|https)://", SUPPORT_CHAT):

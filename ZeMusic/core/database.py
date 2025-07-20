@@ -8,6 +8,8 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 import logging
 
+from config import DATABASE_PATH, ENABLE_DATABASE_CACHE
+
 logger = logging.getLogger(__name__)
 
 @dataclass
@@ -23,6 +25,7 @@ class ChatSettings:
     welcome_enabled: bool = False
     log_enabled: bool = False
     search_enabled: bool = False
+    upvote_count: int = 3
 
 @dataclass
 class UserData:
@@ -46,22 +49,22 @@ class ChatData:
 class DatabaseManager:
     """مدير قاعدة البيانات الجديد باستخدام SQLite"""
     
-    def __init__(self, db_path: str = "zemusic.db"):
+    def __init__(self, db_path: str = DATABASE_PATH):
         self.db_path = db_path
         self._lock = threading.Lock()
         self._init_database()
         
-        # كاش في الذاكرة للبيانات المتكررة
-        self.cache = {
-            'settings': {},
-            'users': {},
-            'chats': {},
-            'skipmode': {},
-            'loop': {},
-            'pause': {},
-            'playmode': {},
-            'assistants': {}
-        }
+        # كاش في الذاكرة للبيانات المتكررة (اختياري)
+        self.cache_enabled = ENABLE_DATABASE_CACHE
+        if self.cache_enabled:
+            self.cache = {
+                'settings': {},
+                'users': {},
+                'chats': {},
+                'temp': {}
+            }
+        else:
+            self.cache = {}
         
     def _init_database(self):
         """إنشاء جداول قاعدة البيانات"""
@@ -122,7 +125,7 @@ class DatabaseManager:
                 )
             ''')
             
-            # جدول الحالات المؤقتة (للحالات التي تتغير كثيراً)
+            # جدول الحالات المؤقتة
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS temp_states (
                     key TEXT PRIMARY KEY,
@@ -145,7 +148,7 @@ class DatabaseManager:
         """الحصول على اتصال آمن بقاعدة البيانات"""
         with self._lock:
             conn = sqlite3.connect(self.db_path, timeout=30.0)
-            conn.row_factory = sqlite3.Row  # للحصول على النتائج كـ dict
+            conn.row_factory = sqlite3.Row
             try:
                 yield conn
             finally:
@@ -154,7 +157,7 @@ class DatabaseManager:
     async def get_chat_settings(self, chat_id: int) -> ChatSettings:
         """الحصول على إعدادات المجموعة"""
         # التحقق من الكاش أولاً
-        if chat_id in self.cache['settings']:
+        if self.cache_enabled and chat_id in self.cache.get('settings', {}):
             return self.cache['settings'][chat_id]
             
         def _get():
@@ -174,7 +177,8 @@ class DatabaseManager:
                         auth_enabled=bool(row['auth_enabled']),
                         welcome_enabled=bool(row['welcome_enabled']),
                         log_enabled=bool(row['log_enabled']),
-                        search_enabled=bool(row['search_enabled'])
+                        search_enabled=bool(row['search_enabled']),
+                        upvote_count=row['upvote_count']
                     )
                 else:
                     # إعدادات افتراضية
@@ -182,14 +186,16 @@ class DatabaseManager:
                     # حفظ الإعدادات الافتراضية
                     cursor.execute('''
                         INSERT OR REPLACE INTO chat_settings 
-                        (chat_id, language, play_mode, play_type, assistant_id) 
-                        VALUES (?, ?, ?, ?, ?)
+                        (chat_id, language, play_mode, play_type, assistant_id, upvote_count) 
+                        VALUES (?, ?, ?, ?, ?, ?)
                     ''', (chat_id, settings.language, settings.play_mode, 
-                          settings.play_type, settings.assistant_id))
+                          settings.play_type, settings.assistant_id, settings.upvote_count))
                     conn.commit()
                 
                 # حفظ في الكاش
-                self.cache['settings'][chat_id] = settings
+                if self.cache_enabled:
+                    self.cache.setdefault('settings', {})[chat_id] = settings
+                
                 return settings
         
         return await asyncio.get_event_loop().run_in_executor(None, _get)
@@ -204,10 +210,12 @@ class DatabaseManager:
                 set_clause = []
                 values = []
                 
-                for key, value in kwargs.items():
-                    if key in ['language', 'play_mode', 'play_type', 'assistant_id', 
+                valid_fields = ['language', 'play_mode', 'play_type', 'assistant_id', 
                               'auto_end', 'auth_enabled', 'welcome_enabled', 
-                              'log_enabled', 'search_enabled', 'upvote_count']:
+                              'log_enabled', 'search_enabled', 'upvote_count']
+                
+                for key, value in kwargs.items():
+                    if key in valid_fields:
                         set_clause.append(f"{key} = ?")
                         values.append(value)
                 
@@ -219,18 +227,19 @@ class DatabaseManager:
                     # إذا لم يتم التحديث (السجل غير موجود), أنشئ سجل جديد
                     if cursor.rowcount == 0:
                         cursor.execute('''
-                            INSERT INTO chat_settings (chat_id, language, play_mode, play_type, assistant_id)
-                            VALUES (?, 'ar', 'Direct', 'Everyone', 1)
+                            INSERT INTO chat_settings (chat_id, language, play_mode, play_type, assistant_id, upvote_count)
+                            VALUES (?, 'ar', 'Direct', 'Everyone', 1, 3)
                         ''', (chat_id,))
                         
                         # تحديث القيم المطلوبة
                         for key, value in kwargs.items():
-                            cursor.execute(f"UPDATE chat_settings SET {key} = ? WHERE chat_id = ?", (value, chat_id))
+                            if key in valid_fields:
+                                cursor.execute(f"UPDATE chat_settings SET {key} = ? WHERE chat_id = ?", (value, chat_id))
                     
                     conn.commit()
                     
                     # تحديث الكاش
-                    if chat_id in self.cache['settings']:
+                    if self.cache_enabled and chat_id in self.cache.get('settings', {}):
                         for key, value in kwargs.items():
                             if hasattr(self.cache['settings'][chat_id], key):
                                 setattr(self.cache['settings'][chat_id], key, value)
@@ -309,8 +318,10 @@ class DatabaseManager:
                 set_clause = []
                 values = []
                 
+                valid_fields = ['first_name', 'username', 'is_banned', 'is_sudo']
+                
                 for key, value in kwargs.items():
-                    if key in ['first_name', 'username', 'is_banned', 'is_sudo']:
+                    if key in valid_fields:
                         set_clause.append(f"{key} = ?")
                         values.append(value)
                 
@@ -361,6 +372,49 @@ class DatabaseManager:
         
         return await asyncio.get_event_loop().run_in_executor(None, _check)
 
+    async def get_auth_users(self, chat_id: int) -> List[int]:
+        """الحصول على قائمة المصرح لهم في المجموعة"""
+        def _get():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('SELECT user_id FROM auth_users WHERE chat_id = ?', (chat_id,))
+                return [row['user_id'] for row in cursor.fetchall()]
+        
+        return await asyncio.get_event_loop().run_in_executor(None, _get)
+
+    async def blacklist_chat(self, chat_id: int):
+        """إضافة مجموعة للقائمة السوداء"""
+        def _blacklist():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('UPDATE chats SET is_blacklisted = 1 WHERE chat_id = ?', (chat_id,))
+                if cursor.rowcount == 0:
+                    cursor.execute('INSERT INTO chats (chat_id, is_blacklisted) VALUES (?, 1)', (chat_id,))
+                conn.commit()
+        
+        await asyncio.get_event_loop().run_in_executor(None, _blacklist)
+
+    async def whitelist_chat(self, chat_id: int):
+        """إزالة مجموعة من القائمة السوداء"""
+        def _whitelist():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('UPDATE chats SET is_blacklisted = 0 WHERE chat_id = ?', (chat_id,))
+                conn.commit()
+        
+        await asyncio.get_event_loop().run_in_executor(None, _whitelist)
+
+    async def is_blacklisted_chat(self, chat_id: int) -> bool:
+        """التحقق من وجود المجموعة في القائمة السوداء"""
+        def _check():
+            with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute('SELECT is_blacklisted FROM chats WHERE chat_id = ?', (chat_id,))
+                row = cursor.fetchone()
+                return bool(row['is_blacklisted']) if row else False
+        
+        return await asyncio.get_event_loop().run_in_executor(None, _check)
+
     async def get_stats(self) -> Dict[str, int]:
         """الحصول على إحصائيات قاعدة البيانات"""
         def _get():
@@ -379,19 +433,24 @@ class DatabaseManager:
                 cursor.execute('SELECT COUNT(*) as count FROM users WHERE is_banned = 1')
                 banned_count = cursor.fetchone()['count']
                 
+                cursor.execute('SELECT COUNT(*) as count FROM chats WHERE is_blacklisted = 1')
+                blacklisted_chats = cursor.fetchone()['count']
+                
                 return {
                     'users': users_count,
                     'chats': chats_count,
                     'sudoers': sudoers_count,
-                    'banned': banned_count
+                    'banned': banned_count,
+                    'blacklisted_chats': blacklisted_chats
                 }
         
         return await asyncio.get_event_loop().run_in_executor(None, _get)
 
-    # حالات مؤقتة (تُحفظ في الذاكرة والملف)
+    # وظائف للحالات المؤقتة
     async def set_temp_state(self, key: str, value: Any):
         """حفظ حالة مؤقتة"""
-        self.cache.setdefault('temp', {})[key] = value
+        if self.cache_enabled:
+            self.cache.setdefault('temp', {})[key] = value
         
         def _save():
             with self._get_connection() as conn:
@@ -407,7 +466,7 @@ class DatabaseManager:
     async def get_temp_state(self, key: str, default=None):
         """الحصول على حالة مؤقتة"""
         # التحقق من الكاش أولاً
-        if 'temp' in self.cache and key in self.cache['temp']:
+        if self.cache_enabled and 'temp' in self.cache and key in self.cache['temp']:
             return self.cache['temp'][key]
             
         def _get():
@@ -417,7 +476,8 @@ class DatabaseManager:
                 row = cursor.fetchone()
                 if row:
                     value = json.loads(row['value'])
-                    self.cache.setdefault('temp', {})[key] = value
+                    if self.cache_enabled:
+                        self.cache.setdefault('temp', {})[key] = value
                     return value
                 return default
         
@@ -425,48 +485,11 @@ class DatabaseManager:
 
     async def clear_cache(self):
         """مسح الكاش"""
-        self.cache.clear()
-        logger.info("تم مسح كاش قاعدة البيانات")
+        if self.cache_enabled:
+            self.cache.clear()
+            logger.info("تم مسح كاش قاعدة البيانات")
 
 # إنشاء مثيل مدير قاعدة البيانات
 db = DatabaseManager()
 
-# وظائف التوافق مع الكود القديم
-async def get_lang(chat_id: int) -> str:
-    settings = await db.get_chat_settings(chat_id)
-    return settings.language
-
-async def set_lang(chat_id: int, lang: str):
-    await db.update_chat_setting(chat_id, language=lang)
-
-async def get_playmode(chat_id: int) -> str:
-    settings = await db.get_chat_settings(chat_id)
-    return settings.play_mode
-
-async def set_playmode(chat_id: int, mode: str):
-    await db.update_chat_setting(chat_id, play_mode=mode)
-
-async def get_playtype(chat_id: int) -> str:
-    settings = await db.get_chat_settings(chat_id)
-    return settings.play_type
-
-async def set_playtype(chat_id: int, ptype: str):
-    await db.update_chat_setting(chat_id, play_type=ptype)
-
-# متغيرات الذاكرة للحالات المؤقتة
-active = []
-activevideo = []
-assistantdict = {}
-autoend = {}
-count = {}
-channelconnect = {}
-langm = {}
-loop = {}
-maintenance = []
-nonadmin = {}
-pause = {}
-playmode = {}
-playtype = {}
-skipmode = {}
-
-logger.info("✅ نظام قاعدة البيانات الجديد SQLite جاهز للاستخدام")
+logger.info("✅ نظام قاعدة البيانات SQLite جاهز للاستخدام")

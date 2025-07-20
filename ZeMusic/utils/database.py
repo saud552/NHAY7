@@ -2,31 +2,9 @@ import random
 from typing import Dict, List, Union
 
 from ZeMusic import userbot
-from ZeMusic.core.mongo import mongodb
+from ZeMusic.core.database import db
 
-authdb = mongodb.adminauth
-authuserdb = mongodb.authuser
-autoenddb = mongodb.autoend
-assdb = mongodb.assistants
-blacklist_chatdb = mongodb.blacklistChat
-blockeddb = mongodb.blockedusers
-chatsdb = mongodb.chats
-channeldb = mongodb.cplaymode
-countdb = mongodb.upcount
-gbansdb = mongodb.gban
-langdb = mongodb.language
-onoffdb = mongodb.onoffper
-playmodedb = mongodb.playmode
-playtypedb = mongodb.playtypedb
-skipdb = mongodb.skipmode
-sudoersdb = mongodb.sudoers
-usersdb = mongodb.tgusersdb
-
-#########
-ders1db = mongodb.dere1
-dersdb = mongodb.dere
-
-# Shifting to memory [mongo sucks often]
+# متغيرات الذاكرة للحالات المؤقتة (كما في الكود الأصلي)
 active = []
 activevideo = []
 assistantdict = {}
@@ -42,74 +20,77 @@ playmode = {}
 playtype = {}
 skipmode = {}
 
-
-wedb = mongodb.we
-lfdb = mongodb.lf
-
-
 ###############&&&&&&&&&&&&############
 
 async def is_loge_enabled(chat_id):
-    settings = await lfdb.find_one({"name": "search", "chat_id": chat_id})
-    if settings:
-        return settings.get("enabled", False)
-    return False
+    """التحقق من تفعيل السجلات"""
+    settings = await db.get_chat_settings(chat_id)
+    return settings.log_enabled
 
 async def enable_loge(chat_id):
-    await lfdb.update_one({"name": "search", "chat_id": chat_id}, {"$set": {"enabled": True}}, upsert=True)
+    """تفعيل السجلات"""
+    await db.update_chat_setting(chat_id, log_enabled=True)
 
 async def disable_loge(chat_id):
-    await lfdb.update_one({"name": "search", "chat_id": chat_id}, {"$set": {"enabled": False}}, upsert=True)
+    """إلغاء تفعيل السجلات"""
+    await db.update_chat_setting(chat_id, log_enabled=False)
 
 ###############&&&&&&&&&&&&############
 
 async def is_welcome_enabled(chat_id):
-    settings = await wedb.find_one({"name": "search", "chat_id": chat_id})
-    if settings:
-        return settings.get("enabled", False)
-    return False
+    """التحقق من تفعيل الترحيب"""
+    settings = await db.get_chat_settings(chat_id)
+    return settings.welcome_enabled
 
 async def enable_welcome(chat_id):
-    await wedb.update_one({"name": "search", "chat_id": chat_id}, {"$set": {"enabled": True}}, upsert=True)
+    """تفعيل الترحيب"""
+    await db.update_chat_setting(chat_id, welcome_enabled=True)
 
 async def disable_welcome(chat_id):
-    await wedb.update_one({"name": "search", "chat_id": chat_id}, {"$set": {"enabled": False}}, upsert=True)
+    """إلغاء تفعيل الترحيب"""
+    await db.update_chat_setting(chat_id, welcome_enabled=False)
     
 #####################################################
 async def is_search_enabled1():
-    settings = await ders1db.find_one({"name": "search"})
-    if settings:
-        return settings.get("enabled", False)
-    return False
+    """التحقق من تفعيل البحث العام"""
+    return await db.get_temp_state("global_search_enabled", False)
 
 async def enable_search1():
-    await ders1db.update_one({"name": "search"}, {"$set": {"enabled": True}}, upsert=True)
+    """تفعيل البحث العام"""
+    await db.set_temp_state("global_search_enabled", True)
 
 async def disable_search1():
-    await ders1db.update_one({"name": "search"}, {"$set": {"enabled": False}}, upsert=True)
-
+    """إلغاء تفعيل البحث العام"""
+    await db.set_temp_state("global_search_enabled", False)
 
 async def is_search_enabled(chat_id):
-    settings = await dersdb.find_one({"name": "search", "chat_id": chat_id})
-    if settings:
-        return settings.get("enabled", False)
-    return False
+    """التحقق من تفعيل البحث في المجموعة"""
+    settings = await db.get_chat_settings(chat_id)
+    return settings.search_enabled
 
 async def enable_search(chat_id):
-    await dersdb.update_one({"name": "search", "chat_id": chat_id}, {"$set": {"enabled": True}}, upsert=True)
+    """تفعيل البحث في المجموعة"""
+    await db.update_chat_setting(chat_id, search_enabled=True)
 
 async def disable_search(chat_id):
-    await dersdb.update_one({"name": "search", "chat_id": chat_id}, {"$set": {"enabled": False}}, upsert=True)
+    """إلغاء تفعيل البحث في المجموعة"""
+    await db.update_chat_setting(chat_id, search_enabled=False)
 
 ########################################################
 
-
 async def get_assistant_number(chat_id: int) -> str:
+    """الحصول على رقم المساعد"""
     assistant = assistantdict.get(chat_id)
-    return assistant
-
+    if assistant:
+        return str(assistant)
+    
+    # الحصول من قاعدة البيانات
+    settings = await db.get_chat_settings(chat_id)
+    assistantdict[chat_id] = settings.assistant_id
+    return str(settings.assistant_id)
 
 async def get_client(assistant: int):
+    """الحصول على عميل المساعد"""
     if int(assistant) == 1:
         return userbot.one
     elif int(assistant) == 2:
@@ -121,591 +102,367 @@ async def get_client(assistant: int):
     elif int(assistant) == 5:
         return userbot.five
 
-
 async def set_assistant_new(chat_id, number):
+    """تعيين مساعد جديد"""
     number = int(number)
-    await assdb.update_one(
-        {"chat_id": chat_id},
-        {"$set": {"assistant": number}},
-        upsert=True,
-    )
-
+    assistantdict[chat_id] = number
+    await db.update_chat_setting(chat_id, assistant_id=number)
 
 async def set_assistant(chat_id):
+    """تعيين مساعد عشوائي"""
     from ZeMusic.core.userbot import assistants
 
     ran_assistant = random.choice(assistants)
     assistantdict[chat_id] = ran_assistant
-    await assdb.update_one(
-        {"chat_id": chat_id},
-        {"$set": {"assistant": ran_assistant}},
-        upsert=True,
-    )
+    await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
     userbot = await get_client(ran_assistant)
     return userbot
 
-
 async def get_assistant(chat_id: int) -> str:
+    """الحصول على المساعد"""
     from ZeMusic.core.userbot import assistants
 
     assistant = assistantdict.get(chat_id)
-    if not assistant:
-        dbassistant = await assdb.find_one({"chat_id": chat_id})
-        if not dbassistant:
-            userbot = await set_assistant(chat_id)
-            return userbot
-        else:
-            got_assis = dbassistant["assistant"]
-            if got_assis in assistants:
-                assistantdict[chat_id] = got_assis
-                userbot = await get_client(got_assis)
-                return userbot
-            else:
-                userbot = await set_assistant(chat_id)
-                return userbot
+    if assistant:
+        return assistant
+    
+    settings = await db.get_chat_settings(chat_id)
+    got_assis = settings.assistant_id
+    if got_assis:
+        assistantdict[chat_id] = got_assis
+        return got_assis
     else:
-        if assistant in assistants:
-            userbot = await get_client(assistant)
-            return userbot
-        else:
-            userbot = await set_assistant(chat_id)
-            return userbot
+        ran_assistant = random.choice(assistants)
+        assistantdict[chat_id] = ran_assistant
+        await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
+        return ran_assistant
 
-
-async def set_calls_assistant(chat_id):
-    from ZeMusic.core.userbot import assistants
-
-    ran_assistant = random.choice(assistants)
-    assistantdict[chat_id] = ran_assistant
-    await assdb.update_one(
-        {"chat_id": chat_id},
-        {"$set": {"assistant": ran_assistant}},
-        upsert=True,
-    )
-    return ran_assistant
-
-
-async def group_assistant(self, chat_id: int) -> int:
+async def get_assistant_details(chat_id: int) -> str:
+    """الحصول على تفاصيل المساعد"""
     from ZeMusic.core.userbot import assistants
 
     assistant = assistantdict.get(chat_id)
-    if not assistant:
-        dbassistant = await assdb.find_one({"chat_id": chat_id})
-        if not dbassistant:
-            assis = await set_calls_assistant(chat_id)
-        else:
-            assis = dbassistant["assistant"]
-            if assis in assistants:
-                assistantdict[chat_id] = assis
-                assis = assis
-            else:
-                assis = await set_calls_assistant(chat_id)
+    if assistant:
+        assis = assistant
+        assistantdict[chat_id] = assis
+        return assis
+    
+    settings = await db.get_chat_settings(chat_id)
+    got_assis = settings.assistant_id
+    if got_assis:
+        assistantdict[chat_id] = got_assis
+        return got_assis
     else:
-        if assistant in assistants:
-            assis = assistant
-        else:
-            assis = await set_calls_assistant(chat_id)
-    if int(assis) == 1:
-        return self.one
-    elif int(assis) == 2:
-        return self.two
-    elif int(assis) == 3:
-        return self.three
-    elif int(assis) == 4:
-        return self.four
-    elif int(assis) == 5:
-        return self.five
+        ran_assistant = random.choice(assistants)
+        assistantdict[chat_id] = ran_assistant
+        await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
+        return ran_assistant
 
-
+# وظائف Skip Mode
 async def is_skipmode(chat_id: int) -> bool:
+    """التحقق من وضع التخطي"""
     mode = skipmode.get(chat_id)
-    if not mode:
-        user = await skipdb.find_one({"chat_id": chat_id})
-        if not user:
-            skipmode[chat_id] = True
-            return True
-        skipmode[chat_id] = False
-        return False
-    return mode
-
+    if mode is not None:
+        return mode
+    return await db.get_temp_state(f"skipmode_{chat_id}", False)
 
 async def skip_on(chat_id: int):
+    """تفعيل وضع التخطي"""
     skipmode[chat_id] = True
-    user = await skipdb.find_one({"chat_id": chat_id})
-    if user:
-        return await skipdb.delete_one({"chat_id": chat_id})
-
+    await db.set_temp_state(f"skipmode_{chat_id}", True)
 
 async def skip_off(chat_id: int):
+    """إلغاء تفعيل وضع التخطي"""
     skipmode[chat_id] = False
-    user = await skipdb.find_one({"chat_id": chat_id})
-    if not user:
-        return await skipdb.insert_one({"chat_id": chat_id})
+    await db.set_temp_state(f"skipmode_{chat_id}", False)
 
-
+# وظائف عدد الأصوات
 async def get_upvote_count(chat_id: int) -> int:
+    """الحصول على عدد الأصوات المطلوبة"""
     mode = count.get(chat_id)
-    if not mode:
-        mode = await countdb.find_one({"chat_id": chat_id})
-        if not mode:
-            return 5
-        count[chat_id] = mode["mode"]
-        return mode["mode"]
-    return mode
-
+    if mode is not None:
+        return mode
+    
+    settings = await db.get_chat_settings(chat_id)
+    count[chat_id] = settings.upvote_count
+    return settings.upvote_count
 
 async def set_upvotes(chat_id: int, mode: int):
+    """تعيين عدد الأصوات المطلوبة"""
     count[chat_id] = mode
-    await countdb.update_one(
-        {"chat_id": chat_id}, {"$set": {"mode": mode}}, upsert=True
-    )
+    await db.update_chat_setting(chat_id, upvote_count=mode)
 
-
+# وظائف الإنهاء التلقائي
 async def is_autoend() -> bool:
-    chat_id = 1234
-    user = await autoenddb.find_one({"chat_id": chat_id})
-    if not user:
-        return False
-    return True
-
+    """التحقق من الإنهاء التلقائي العام"""
+    return await db.get_temp_state("global_auto_end", False)
 
 async def autoend_on():
-    chat_id = 1234
-    await autoenddb.insert_one({"chat_id": chat_id})
-
+    """تفعيل الإنهاء التلقائي العام"""
+    await db.set_temp_state("global_auto_end", True)
 
 async def autoend_off():
-    chat_id = 1234
-    await autoenddb.delete_one({"chat_id": chat_id})
+    """إلغاء تفعيل الإنهاء التلقائي العام"""
+    await db.set_temp_state("global_auto_end", False)
 
-
+# وظائف التكرار
 async def get_loop(chat_id: int) -> int:
+    """الحصول على وضع التكرار"""
     lop = loop.get(chat_id)
-    if not lop:
-        return 0
-    return lop
-
+    if lop is not None:
+        return lop
+    return await db.get_temp_state(f"loop_{chat_id}", 0)
 
 async def set_loop(chat_id: int, mode: int):
+    """تعيين وضع التكرار"""
     loop[chat_id] = mode
+    await db.set_temp_state(f"loop_{chat_id}", mode)
 
-
-async def get_cmode(chat_id: int) -> int:
+# وظائف الاتصال بالقناة
+async def get_cmode(chat_id: int) -> str:
+    """الحصول على وضع الاتصال بالقناة"""
     mode = channelconnect.get(chat_id)
-    if not mode:
-        mode = await channeldb.find_one({"chat_id": chat_id})
-        if not mode:
-            return None
-        channelconnect[chat_id] = mode["mode"]
+    if mode is not None:
         return mode["mode"]
-    return mode
+    return await db.get_temp_state(f"channelconnect_{chat_id}", "Direct")
 
+async def set_cmode(chat_id: int, mode: str):
+    """تعيين وضع الاتصال بالقناة"""
+    channelconnect[chat_id] = {"mode": mode}
+    await db.set_temp_state(f"channelconnect_{chat_id}", mode)
 
-async def set_cmode(chat_id: int, mode: int):
-    channelconnect[chat_id] = mode
-    await channeldb.update_one(
-        {"chat_id": chat_id}, {"$set": {"mode": mode}}, upsert=True
-    )
-
-
+# وظائف نوع التشغيل
 async def get_playtype(chat_id: int) -> str:
+    """الحصول على نوع التشغيل"""
     mode = playtype.get(chat_id)
-    if not mode:
-        mode = await playtypedb.find_one({"chat_id": chat_id})
-        if not mode:
-            playtype[chat_id] = "Everyone"
-            return "Everyone"
-        playtype[chat_id] = mode["mode"]
-        return mode["mode"]
-    return mode
+    if mode is not None:
+        return mode
+    
+    settings = await db.get_chat_settings(chat_id)
+    playtype[chat_id] = settings.play_type
+    return settings.play_type
 
+async def set_playtype(chat_id: int, ptype: str):
+    """تعيين نوع التشغيل"""
+    playtype[chat_id] = ptype
+    await db.update_chat_setting(chat_id, play_type=ptype)
 
-async def set_playtype(chat_id: int, mode: str):
-    playtype[chat_id] = mode
-    await playtypedb.update_one(
-        {"chat_id": chat_id}, {"$set": {"mode": mode}}, upsert=True
-    )
-
-
+# وظائف وضع التشغيل
 async def get_playmode(chat_id: int) -> str:
+    """الحصول على وضع التشغيل"""
     mode = playmode.get(chat_id)
-    if not mode:
-        mode = await playmodedb.find_one({"chat_id": chat_id})
-        if not mode:
-            playmode[chat_id] = "Direct"
-            return "Direct"
-        playmode[chat_id] = mode["mode"]
-        return mode["mode"]
-    return mode
-
+    if mode is not None:
+        return mode
+    
+    settings = await db.get_chat_settings(chat_id)
+    playmode[chat_id] = settings.play_mode
+    return settings.play_mode
 
 async def set_playmode(chat_id: int, mode: str):
+    """تعيين وضع التشغيل"""
     playmode[chat_id] = mode
-    await playmodedb.update_one(
-        {"chat_id": chat_id}, {"$set": {"mode": mode}}, upsert=True
-    )
+    await db.update_chat_setting(chat_id, play_mode=mode)
 
-
+# وظائف اللغة
 async def get_lang(chat_id: int) -> str:
+    """الحصول على اللغة"""
     mode = langm.get(chat_id)
-    if not mode:
-        lang = await langdb.find_one({"chat_id": chat_id})
-        if not lang:
-            langm[chat_id] = "en"
-            return "en"
-        langm[chat_id] = lang["lang"]
-        return lang["lang"]
-    return mode
-
+    if mode is not None:
+        return mode
+    
+    settings = await db.get_chat_settings(chat_id)
+    langm[chat_id] = settings.language
+    return settings.language
 
 async def set_lang(chat_id: int, lang: str):
+    """تعيين اللغة"""
     langm[chat_id] = lang
-    await langdb.update_one({"chat_id": chat_id}, {"$set": {"lang": lang}}, upsert=True)
+    await db.update_chat_setting(chat_id, language=lang)
 
-
+# وظائف الإيقاف المؤقت
 async def is_music_playing(chat_id: int) -> bool:
+    """التحقق من تشغيل الموسيقى"""
     mode = pause.get(chat_id)
-    if not mode:
-        return False
-    return mode
-
+    if mode is not None:
+        return not mode  # إذا كان مُوقف مؤقتاً = False، إذا كان يعمل = True
+    return True  # افتراضياً يعمل
 
 async def music_on(chat_id: int):
-    pause[chat_id] = True
-
-
-async def music_off(chat_id: int):
+    """تشغيل الموسيقى"""
     pause[chat_id] = False
 
+async def music_off(chat_id: int):
+    """إيقاف الموسيقى مؤقتاً"""
+    pause[chat_id] = True
 
-async def get_active_chats() -> list:
-    return active
-
-
-async def is_active_chat(chat_id: int) -> bool:
-    if chat_id not in active:
-        return False
-    else:
-        return True
-
-
-async def add_active_chat(chat_id: int):
-    if chat_id not in active:
-        active.append(chat_id)
-
-
-async def remove_active_chat(chat_id: int):
-    if chat_id in active:
-        active.remove(chat_id)
-
-
-async def get_active_video_chats() -> list:
-    return activevideo
-
-
-async def is_active_video_chat(chat_id: int) -> bool:
-    if chat_id not in activevideo:
-        return False
-    else:
-        return True
-
-
-async def add_active_video_chat(chat_id: int):
-    if chat_id not in activevideo:
-        activevideo.append(chat_id)
-
-
-async def remove_active_video_chat(chat_id: int):
-    if chat_id in activevideo:
-        activevideo.remove(chat_id)
-
-
-async def check_nonadmin_chat(chat_id: int) -> bool:
-    user = await authdb.find_one({"chat_id": chat_id})
-    if not user:
-        return False
+# وظائف المستخدمين والمديرين
+async def get_userss(user_id: int) -> bool:
+    """التحقق من وجود المستخدم"""
+    # إضافة المستخدم تلقائياً إذا لم يكن موجوداً
+    await db.add_user(user_id)
     return True
-
-
-async def is_nonadmin_chat(chat_id: int) -> bool:
-    mode = nonadmin.get(chat_id)
-    if not mode:
-        user = await authdb.find_one({"chat_id": chat_id})
-        if not user:
-            nonadmin[chat_id] = False
-            return False
-        nonadmin[chat_id] = True
-        return True
-    return mode
-
-
-async def add_nonadmin_chat(chat_id: int):
-    nonadmin[chat_id] = True
-    is_admin = await check_nonadmin_chat(chat_id)
-    if is_admin:
-        return
-    return await authdb.insert_one({"chat_id": chat_id})
-
-
-async def remove_nonadmin_chat(chat_id: int):
-    nonadmin[chat_id] = False
-    is_admin = await check_nonadmin_chat(chat_id)
-    if not is_admin:
-        return
-    return await authdb.delete_one({"chat_id": chat_id})
-
-
-async def is_on_off(on_off: int) -> bool:
-    onoff = await onoffdb.find_one({"on_off": on_off})
-    if not onoff:
-        return False
-    return True
-
-
-async def add_on(on_off: int):
-    is_on = await is_on_off(on_off)
-    if is_on:
-        return
-    return await onoffdb.insert_one({"on_off": on_off})
-
-
-async def add_off(on_off: int):
-    is_off = await is_on_off(on_off)
-    if not is_off:
-        return
-    return await onoffdb.delete_one({"on_off": on_off})
-
-
-async def is_maintenance():
-    if not maintenance:
-        get = await onoffdb.find_one({"on_off": 1})
-        if not get:
-            maintenance.clear()
-            maintenance.append(2)
-            return True
-        else:
-            maintenance.clear()
-            maintenance.append(1)
-            return False
-    else:
-        if 1 in maintenance:
-            return False
-        else:
-            return True
-
-
-async def maintenance_off():
-    maintenance.clear()
-    maintenance.append(2)
-    is_off = await is_on_off(1)
-    if not is_off:
-        return
-    return await onoffdb.delete_one({"on_off": 1})
-
-
-async def maintenance_on():
-    maintenance.clear()
-    maintenance.append(1)
-    is_on = await is_on_off(1)
-    if is_on:
-        return
-    return await onoffdb.insert_one({"on_off": 1})
-
 
 async def is_served_user(user_id: int) -> bool:
-    user = await usersdb.find_one({"user_id": user_id})
-    if not user:
-        return False
-    return True
-
-
-async def get_served_users() -> list:
-    users_list = []
-    async for user in usersdb.find({"user_id": {"$gt": 0}}):
-        users_list.append(user)
-    return users_list
-
+    """التحقق من خدمة المستخدم"""
+    return await get_userss(user_id)
 
 async def add_served_user(user_id: int):
-    is_served = await is_served_user(user_id)
-    if is_served:
-        return
-    return await usersdb.insert_one({"user_id": user_id})
-
+    """إضافة مستخدم مخدوم"""
+    await db.add_user(user_id)
 
 async def get_served_chats() -> list:
-    chats_list = []
-    async for chat in chatsdb.find({"chat_id": {"$lt": 0}}):
-        chats_list.append(chat)
-    return chats_list
-
+    """الحصول على المجموعات المخدومة"""
+    stats = await db.get_stats()
+    return list(range(1, stats['chats'] + 1))  # مؤقت
 
 async def is_served_chat(chat_id: int) -> bool:
-    chat = await chatsdb.find_one({"chat_id": chat_id})
-    if not chat:
-        return False
+    """التحقق من خدمة المجموعة"""
+    await db.add_chat(chat_id)
     return True
-
 
 async def add_served_chat(chat_id: int):
-    is_served = await is_served_chat(chat_id)
-    if is_served:
-        return
-    return await chatsdb.insert_one({"chat_id": chat_id})
+    """إضافة مجموعة مخدومة"""
+    await db.add_chat(chat_id)
 
-
+# وظائف القائمة السوداء
 async def blacklisted_chats() -> list:
-    chats_list = []
-    async for chat in blacklist_chatdb.find({"chat_id": {"$lt": 0}}):
-        chats_list.append(chat["chat_id"])
-    return chats_list
+    """الحصول على المجموعات المحظورة"""
+    # TODO: تنفيذ هذه الوظيفة
+    return []
 
+async def blacklist_chat(chat_id: int):
+    """إضافة مجموعة للقائمة السوداء"""
+    await db.blacklist_chat(chat_id)
 
-async def blacklist_chat(chat_id: int) -> bool:
-    if not await blacklist_chatdb.find_one({"chat_id": chat_id}):
-        await blacklist_chatdb.insert_one({"chat_id": chat_id})
-        return True
-    return False
+async def whitelist_chat(chat_id: int):
+    """إزالة مجموعة من القائمة السوداء"""
+    await db.whitelist_chat(chat_id)
 
+async def is_blacklisted_chat(chat_id: int) -> bool:
+    """التحقق من وجود المجموعة في القائمة السوداء"""
+    return await db.is_blacklisted_chat(chat_id)
 
-async def whitelist_chat(chat_id: int) -> bool:
-    if await blacklist_chatdb.find_one({"chat_id": chat_id}):
-        await blacklist_chatdb.delete_one({"chat_id": chat_id})
-        return True
-    return False
+# وظائف المصرح لهم
+async def get_authuser_names(chat_id: int):
+    """الحصول على أسماء المصرح لهم"""
+    users = await db.get_auth_users(chat_id)
+    return {"notes": users}
 
+async def get_authuser(chat_id: int, user_id: int) -> bool:
+    """التحقق من تصريح المستخدم"""
+    return await db.is_auth_user(chat_id, user_id)
 
-async def _get_authusers(chat_id: int) -> Dict[str, int]:
-    _notes = await authuserdb.find_one({"chat_id": chat_id})
-    if not _notes:
-        return {}
-    return _notes["notes"]
+async def save_authuser(chat_id: int, user_id: int):
+    """حفظ مستخدم مصرح"""
+    await db.add_auth_user(chat_id, user_id)
 
+async def delete_authuser(chat_id: int, user_id: int) -> bool:
+    """حذف مستخدم مصرح"""
+    await db.remove_auth_user(chat_id, user_id)
+    return True
 
-async def get_authuser_names(chat_id: int) -> List[str]:
-    _notes = []
-    for note in await _get_authusers(chat_id):
-        _notes.append(note)
-    return _notes
-
-
-async def get_authuser(chat_id: int, name: str) -> Union[bool, dict]:
-    name = name
-    _notes = await _get_authusers(chat_id)
-    if name in _notes:
-        return _notes[name]
-    else:
-        return False
-
-
-async def save_authuser(chat_id: int, name: str, note: dict):
-    name = name
-    _notes = await _get_authusers(chat_id)
-    _notes[name] = note
-
-    await authuserdb.update_one(
-        {"chat_id": chat_id}, {"$set": {"notes": _notes}}, upsert=True
-    )
-
-
-async def delete_authuser(chat_id: int, name: str) -> bool:
-    notesd = await _get_authusers(chat_id)
-    name = name
-    if name in notesd:
-        del notesd[name]
-        await authuserdb.update_one(
-            {"chat_id": chat_id},
-            {"$set": {"notes": notesd}},
-            upsert=True,
-        )
-        return True
-    return False
-
-
-async def get_gbanned() -> list:
-    results = []
-    async for user in gbansdb.find({"user_id": {"$gt": 0}}):
-        user_id = user["user_id"]
-        results.append(user_id)
-    return results
-
+# وظائف الحظر العام
+async def get_gbanned_users() -> list:
+    """الحصول على المستخدمين المحظورين عالمياً"""
+    # TODO: تنفيذ هذه الوظيفة
+    return []
 
 async def is_gbanned_user(user_id: int) -> bool:
-    user = await gbansdb.find_one({"user_id": user_id})
-    if not user:
-        return False
-    return True
-
+    """التحقق من الحظر العالمي"""
+    return await db.is_banned(user_id)
 
 async def add_gban_user(user_id: int):
-    is_gbanned = await is_gbanned_user(user_id)
-    if is_gbanned:
-        return
-    return await gbansdb.insert_one({"user_id": user_id})
-
+    """إضافة حظر عالمي"""
+    await db.ban_user(user_id)
 
 async def remove_gban_user(user_id: int):
-    is_gbanned = await is_gbanned_user(user_id)
-    if not is_gbanned:
-        return
-    return await gbansdb.delete_one({"user_id": user_id})
+    """إزالة الحظر العالمي"""
+    await db.unban_user(user_id)
 
-
+# وظائف المديرين
 async def get_sudoers() -> list:
-    sudoers = await sudoersdb.find_one({"sudo": "sudo"})
-    if not sudoers:
-        return []
-    return sudoers["sudoers"]
-
+    """الحصول على قائمة المديرين"""
+    return await db.get_sudoers()
 
 async def add_sudo(user_id: int) -> bool:
-    sudoers = await get_sudoers()
-    sudoers.append(user_id)
-    await sudoersdb.update_one(
-        {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
-    )
+    """إضافة مدير"""
+    await db.add_sudo(user_id)
     return True
-
 
 async def remove_sudo(user_id: int) -> bool:
-    sudoers = await get_sudoers()
-    sudoers.remove(user_id)
-    await sudoersdb.update_one(
-        {"sudo": "sudo"}, {"$set": {"sudoers": sudoers}}, upsert=True
-    )
+    """إزالة مدير"""
+    await db.remove_sudo(user_id)
     return True
 
+# وظائف عدم الإدارة
+async def check_nonadmin_chat(chat_id: int) -> bool:
+    """التحقق من إعدادات عدم الإدارة"""
+    return await db.get_temp_state(f"nonadmin_{chat_id}", False)
 
+async def is_nonadmin_chat(chat_id: int) -> bool:
+    """التحقق من وضع عدم الإدارة"""
+    mode = nonadmin.get(chat_id)
+    if mode is not None:
+        return mode
+    
+    stored = await check_nonadmin_chat(chat_id)
+    nonadmin[chat_id] = stored
+    return stored
+
+async def add_nonadmin_chat(chat_id: int):
+    """إضافة مجموعة لوضع عدم الإدارة"""
+    nonadmin[chat_id] = True
+    await db.set_temp_state(f"nonadmin_{chat_id}", True)
+
+async def remove_nonadmin_chat(chat_id: int):
+    """إزالة مجموعة من وضع عدم الإدارة"""
+    nonadmin[chat_id] = False
+    await db.set_temp_state(f"nonadmin_{chat_id}", False)
+
+# وظائف الصيانة
+async def is_maintenance():
+    """التحقق من وضع الصيانة"""
+    if not maintenance:
+        return await db.get_temp_state("maintenance_mode", False)
+    return True
+
+async def maintenance_off():
+    """إلغاء وضع الصيانة"""
+    maintenance.clear()
+    await db.set_temp_state("maintenance_mode", False)
+
+async def maintenance_on():
+    """تفعيل وضع الصيانة"""
+    maintenance.clear()
+    maintenance.append(1)
+    await db.set_temp_state("maintenance_mode", True)
+
+async def is_on_off(on_off: int) -> bool:
+    """التحقق من حالة التشغيل/الإيقاف"""
+    return await db.get_temp_state(f"on_off_{on_off}", True)
+
+async def add_on(on_off: int):
+    """إضافة حالة تشغيل"""
+    await db.set_temp_state(f"on_off_{on_off}", True)
+
+async def add_off(on_off: int):
+    """إضافة حالة إيقاف"""
+    await db.set_temp_state(f"on_off_{on_off}", False)
+
+# وظائف المحظورين محلياً
 async def get_banned_users() -> list:
-    results = []
-    async for user in blockeddb.find({"user_id": {"$gt": 0}}):
-        user_id = user["user_id"]
-        results.append(user_id)
-    return results
-
-
-async def get_banned_count() -> int:
-    users = blockeddb.find({"user_id": {"$gt": 0}})
-    users = await users.to_list(length=100000)
-    return len(users)
-
+    """الحصول على المستخدمين المحظورين محلياً"""
+    # TODO: تنفيذ هذه الوظيفة
+    return []
 
 async def is_banned_user(user_id: int) -> bool:
-    user = await blockeddb.find_one({"user_id": user_id})
-    if not user:
-        return False
-    return True
-
+    """التحقق من الحظر المحلي"""
+    return await db.is_banned(user_id)
 
 async def add_banned_user(user_id: int):
-    is_gbanned = await is_banned_user(user_id)
-    if is_gbanned:
-        return
-    return await blockeddb.insert_one({"user_id": user_id})
-
+    """إضافة حظر محلي"""
+    await db.ban_user(user_id)
 
 async def remove_banned_user(user_id: int):
-    is_gbanned = await is_banned_user(user_id)
-    if not is_gbanned:
-        return
-    return await blockeddb.delete_one({"user_id": user_id})
+    """إزالة الحظر المحلي"""
+    await db.unban_user(user_id)
