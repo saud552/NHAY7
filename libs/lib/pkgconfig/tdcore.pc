@@ -1,0 +1,9 @@
+prefix=/workspace/tdlib/tdlib
+
+Name: tdcore
+Description: Telegram Library - Core
+Version: 1.8.51
+
+CFlags: -I"${prefix}/include"
+Libs: -L"${prefix}/lib" -ltdcore
+Requires.private: tdapi tdnet tddb tdactor tde2e tdutils tdmtproto

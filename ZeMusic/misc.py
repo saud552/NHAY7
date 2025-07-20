@@ -5,9 +5,6 @@ import heroku3
 from pyrogram import filters
 
 import config
-# لم يعد هناك استخدام لموديول mongo هنا
-# from ZeMusic.core.mongo import mongodb
-
 from .logging import LOGGER
 
 # قائمة السُوبر يوزرز (SUDOERS) تعتمد على فلتر المستخدم من Pyrogram
@@ -42,6 +39,7 @@ XCB = [
 def dbb():
     """
     تهيئة قاعدة بيانات محلية (في الذاكرة) للمسارات المؤقتة.
+    تم استبدالها بنظام SQLite الجديد.
     """
     global db
     db = {}
@@ -50,16 +48,27 @@ def dbb():
 
 async def sudo():
     """
-    تجاوز خطوة تحميل قائمة sudoers من MongoDB.
-    الآن يقرأ فقط OWNER_ID و DAV من config.
+    تحميل قائمة sudoers من قاعدة البيانات الجديدة.
     """
     global SUDOERS
     # نظّف أي مكونات سابقة
     SUDOERS = filters.user()
+    
     # أضف المعرفات الثابتة من config
     SUDOERS.add(config.OWNER_ID)
     SUDOERS.add(config.DAV)
-    LOGGER(__name__).info("✅ تجاوز sudo(): استخدام OWNER_ID و DAV بدون MongoDB")
+    
+    # تحميل المديرين من قاعدة البيانات
+    try:
+        from ZeMusic.core.database import db
+        sudoers_list = await db.get_sudoers()
+        for user_id in sudoers_list:
+            SUDOERS.add(user_id)
+        LOGGER(__name__).info(f"✅ تم تحميل {len(sudoers_list)} مدير من قاعدة البيانات SQLite")
+    except Exception as e:
+        LOGGER(__name__).error(f"خطأ في تحميل المديرين: {e}")
+    
+    LOGGER(__name__).info("✅ تم تحميل sudo(): استخدام قاعدة البيانات SQLite الجديدة")
 
 
 def heroku():

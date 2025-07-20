@@ -1,0 +1,9 @@
+prefix=/workspace/tdlib/tdlib
+
+Name: tdjson
+Description: Telegram Library - JSON interface (shared)
+Version: 1.8.51
+
+CFlags: -I"${prefix}/include"
+Libs: -L"${prefix}/lib" -ltdjson
+Requires.private: tdjson_private

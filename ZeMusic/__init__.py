@@ -1,26 +1,34 @@
-from ZeMusic.core.bot import Mody
-from ZeMusic.core.dir import dirr
-from ZeMusic.core.git import git
-from ZeMusic.core.userbot import Userbot
-from ZeMusic.misc import dbb, heroku
-
+import asyncio
+import time
 from .logging import LOGGER
 
-dirr()
-git()
-dbb()
-heroku()
+# استخدام طبقة التوافق بدلاً من pyrogram مباشرة
+try:
+    # محاولة استيراد pyrogram إذا كان متاحاً
+    from pyrogram import Client
+    LOGGER(__name__).info("🔄 تم العثور على pyrogram - استخدام النظام المختلط")
+except ImportError:
+    # استخدام طبقة التوافق TDLib
+    from .compatibility import Client, app
+    LOGGER(__name__).info("🔄 استخدام طبقة التوافق TDLib")
 
-app = Mody()
-userbot = Userbot()
+# تهيئة قاعدة البيانات
+async def init_database():
+    """تهيئة قاعدة البيانات SQLite"""
+    try:
+        from .core.database import db
+        LOGGER(__name__).info("✅ تم تهيئة قاعدة البيانات SQLite بنجاح")
+        return True
+    except Exception as e:
+        LOGGER(__name__).error(f"❌ خطأ في تهيئة قاعدة البيانات: {e}")
+        return False
 
+# متغيرات عامة
+SUDOERS = []
+OWNER_ID = None
+userbot = None
 
-from .platforms import *
+# تحديد وقت بدء التشغيل
+StartTime = time.time()
 
-Apple = AppleAPI()
-Carbon = CarbonAPI()
-SoundCloud = SoundAPI()
-Spotify = SpotifyAPI()
-Resso = RessoAPI()
-Telegram = TeleAPI()
-YouTube = YouTubeAPI()
+LOGGER(__name__).info("🎵 تم تحميل ZeMusic Bot بنجاح")

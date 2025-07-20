@@ -1,0 +1,9 @@
+# تجاهل جميع ملفات الكوكيز لحماية الخصوصية
+*.txt
+*.json
+*.jar
+
+# السماح فقط بملفات README
+!README.md
+!.gitignore
+!cookies_example.txt
