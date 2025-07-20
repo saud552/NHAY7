@@ -205,7 +205,7 @@ def check_duration(file_path):
             if "duration" in s:
                 return float(s["duration"])
 
-    return "Unknown"
+    return "غير معروف"
 
 
 formats = [

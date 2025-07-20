@@ -34,7 +34,7 @@ def vote_mode_markup(_, current, mode: Union[bool, str] = None):
         [
             InlineKeyboardButton(text="-2", callback_data="FERRARIUDTI M"),
             InlineKeyboardButton(
-                text=f"ᴄᴜʀʀᴇɴᴛ : {current}",
+                text=f"الحالي : {current}",
                 callback_data="ANSWERVOMODE",
             ),
             InlineKeyboardButton(text="+2", callback_data="FERRARIUDTI A"),

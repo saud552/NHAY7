@@ -55,20 +55,20 @@ async def get_thumb(videoid):
                 title = re.sub("\W+", " ", title)
                 title = title.title()
             except:
-                title = "Unsupported Title"
+                title = "عنوان غير مدعوم"
             try:
                 duration = result["duration"]
             except:
-                duration = "Unknown Mins"
+                duration = "مدة غير معروفة"
             thumbnail = result["thumbnails"][0]["url"].split("?")[0]
             try:
                 views = result["viewCount"]["short"]
             except:
-                views = "Unknown Views"
+                views = "مشاهدات غير معروفة"
             try:
                 channel = result["channel"]["name"]
             except:
-                channel = "Unknown Channel"
+                channel = "قناة غير معروفة"
 
         async with aiohttp.ClientSession() as session:
             async with session.get(f"http://img.youtube.com/vi/{videoid}/maxresdefault.jpg") as resp:
@@ -104,7 +104,7 @@ async def get_thumb(videoid):
 
         image4 = ImageDraw.Draw(image2)
         image4.text((20, 10), f" {DEV}", fill="white", font=font1, align="left")
-        image4.text((680, 150), "LOL MUSIC", fill="white", font=font2, stroke_width=2, stroke_fill="white", align="left")
+        image4.text((680, 150), "زي ميوزك", fill="white", font=font2, stroke_width=2, stroke_fill="white", align="left")
 
         # title
         title1 = truncate(title)
@@ -112,9 +112,9 @@ async def get_thumb(videoid):
         image4.text((680, 350), text=title1[1], fill="white", stroke_width=1, stroke_fill="white", font=font3, align="left")
 
         # description
-        views_text = f"Views : {views}"
-        duration_text = f"Duration : {duration} Mins"
-        channel_text = f"Channel : @F_A_6"
+        views_text = f"المشاهدات : {views}"
+        duration_text = f"المدة : {duration} دقيقة"
+        channel_text = f"القناة : @F_A_6"
 
         image4.text((680, 450), text=views_text, fill="white", font=font4, align="left")
         image4.text((680, 500), text=duration_text, fill="white", font=font4, align="left")

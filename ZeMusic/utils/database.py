@@ -258,7 +258,7 @@ async def get_cmode(chat_id: int) -> str:
     mode = channelconnect.get(chat_id)
     if mode is not None:
         return mode["mode"]
-    return await db.get_temp_state(f"channelconnect_{chat_id}", "Direct")
+    return await db.get_temp_state(f"channelconnect_{chat_id}", "مباشر")
 
 async def set_cmode(chat_id: int, mode: str):
     """تعيين وضع الاتصال بالقناة"""
