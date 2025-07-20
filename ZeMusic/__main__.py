@@ -1,95 +1,314 @@
 import asyncio
-import importlib
+import os
 import sys
-from pyrogram import idle
-from pyrogram.enums import ParseMode
+import signal
+from contextlib import suppress
 
 import config
-from ZeMusic import LOGGER, init_database
-from ZeMusic.core.bot import Mody
-from ZeMusic.core.dir import dirr
-from ZeMusic.core.git import git
-from ZeMusic.core.userbot import Userbot
-from ZeMusic.misc import dbb, heroku, sudo
-from ZeMusic.plugins import ALL_MODULES
-from ZeMusic.utils.database import get_banned_users, get_gbanned_users
+from ZeMusic.logging import LOGGER
+from ZeMusic.core.tdlib_client import tdlib_manager
+from ZeMusic.core.database import db
+from ZeMusic.core.music_manager import music_manager
+from ZeMusic.plugins.owner.owner_panel import owner_panel
 
-async def init():
-    """تهيئة البوت والخدمات"""
-    # تهيئة الدلائل والملفات
-    dirr()
-    git()
-    dbb()
-    heroku()
+class ZeMusicBot:
+    """البوت الرئيسي لـ ZeMusic مع دعم TDLib"""
     
-    # تهيئة قاعدة البيانات الجديدة
-    db_init = await init_database()
-    if not db_init:
-        LOGGER(__name__).error("❌ فشل في تهيئة قاعدة البيانات - إيقاف البوت")
-        sys.exit(1)
-    
-    # تهيئة البوت والمساعدين
-    await sudo()
-    
-    try:
-        LOGGER(__name__).info("🔄 بدء تشغيل ZeMusic Bot...")
+    def __init__(self):
+        self.is_running = False
+        self.startup_time = None
         
-        # إنشاء عميل البوت
-        app = Mody()
-        
-        # إنشاء عميل المساعد
-        userbot = Userbot()
-        
-        # بدء البوت
-        await app.start()
-        LOGGER(__name__).info("✅ تم تشغيل البوت بنجاح")
-        
-        # بدء المساعدين
-        await userbot.start()
-        LOGGER(__name__).info("✅ تم تشغيل المساعدين بنجاح")
-        
-        # تحميل الوحدات
-        for module in ALL_MODULES:
-            importlib.import_module(f"ZeMusic.plugins.{module}")
-        LOGGER(__name__).info(f"✅ تم تحميل {len(ALL_MODULES)} وحدة")
-        
-        # رسالة البدء
+    async def initialize(self):
+        """تهيئة النظام"""
         try:
-            await app.send_message(
-                config.LOGGER_ID,
-                f"🎵 **ZeMusic Bot Started Successfully!**\n\n"
-                f"🗄️ **Database:** SQLite (محسّن)\n"
-                f"📊 **Modules:** {len(ALL_MODULES)}\n"
-                f"🤖 **Bot:** @{app.username}\n"
-                f"👥 **Assistants:** تم تفعيلهم\n\n"
-                f"✅ **Status:** Ready to serve music!",
-                parse_mode=ParseMode.MARKDOWN
-            )
+            LOGGER(__name__).info("🚀 بدء تهيئة ZeMusic Bot...")
+            
+            # تهيئة قاعدة البيانات
+            LOGGER(__name__).info("📊 تهيئة قاعدة البيانات...")
+            await self._ensure_database_ready()
+            
+            # تهيئة البوت الرئيسي
+            LOGGER(__name__).info("🤖 تشغيل البوت الرئيسي...")
+            bot_success = await tdlib_manager.initialize_bot()
+            if not bot_success:
+                LOGGER(__name__).error("❌ فشل في تشغيل البوت الرئيسي")
+                return False
+            
+            # تحميل الحسابات المساعدة من قاعدة البيانات
+            LOGGER(__name__).info("📱 تحميل الحسابات المساعدة...")
+            await tdlib_manager.load_assistants_from_database()
+            
+            # التحقق من وجود حسابات مساعدة
+            assistants_count = tdlib_manager.get_assistants_count()
+            connected_count = tdlib_manager.get_connected_assistants_count()
+            
+            if assistants_count == 0:
+                LOGGER(__name__).warning("⚠️ لا توجد حسابات مساعدة - البوت سيعمل بوظائف محدودة")
+                self._show_no_assistants_warning()
+            else:
+                LOGGER(__name__).info(f"✅ تم تحميل {assistants_count} حساب مساعد ({connected_count} متصل)")
+            
+            # تحميل المديرين من قاعدة البيانات
+            await self._load_sudoers()
+            
+            # بدء المهام الدورية
+            await self._start_periodic_tasks()
+            
+            self.startup_time = asyncio.get_event_loop().time()
+            self.is_running = True
+            
+            LOGGER(__name__).info("🎵 تم تشغيل ZeMusic Bot بنجاح!")
+            self._show_startup_message()
+            
+            return True
+            
         except Exception as e:
-            LOGGER(__name__).warning(f"تعذر إرسال رسالة البدء: {e}")
-        
-        # إبقاء البوت يعمل
-        LOGGER(__name__).info("🎵 ZeMusic Bot is now running...")
-        await idle()
-        
-    except Exception as e:
-        LOGGER(__name__).error(f"❌ خطأ في تشغيل البوت: {e}")
-        sys.exit(1)
-    finally:
-        # إيقاف الخدمات
+            LOGGER(__name__).error(f"❌ خطأ في تهيئة البوت: {e}")
+            return False
+    
+    async def _ensure_database_ready(self):
+        """التأكد من جاهزية قاعدة البيانات"""
         try:
-            await app.stop()
-            await userbot.stop()
-            LOGGER(__name__).info("🛑 تم إيقاف البوت")
-        except:
-            pass
+            # التحقق من إمكانية الوصول لقاعدة البيانات
+            stats = await db.get_stats()
+            LOGGER(__name__).info(f"📊 قاعدة البيانات جاهزة - {stats['users']} مستخدم، {stats['chats']} مجموعة")
+        except Exception as e:
+            LOGGER(__name__).error(f"❌ خطأ في قاعدة البيانات: {e}")
+            raise
+    
+    async def _load_sudoers(self):
+        """تحميل قائمة المديرين"""
+        try:
+            sudoers = await db.get_sudoers()
+            LOGGER(__name__).info(f"👨‍💼 تم تحميل {len(sudoers)} مدير")
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في تحميل المديرين: {e}")
+    
+    async def _start_periodic_tasks(self):
+        """بدء المهام الدورية"""
+        try:
+            # مهمة تنظيف الجلسات والحسابات الخاملة
+            asyncio.create_task(self._cleanup_task())
+            
+            # مهمة مراقبة صحة النظام
+            asyncio.create_task(self._health_check_task())
+            
+            # مهمة إحصائيات دورية
+            asyncio.create_task(self._stats_task())
+            
+            LOGGER(__name__).info("⏰ تم بدء المهام الدورية")
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في بدء المهام الدورية: {e}")
+    
+    def _show_no_assistants_warning(self):
+        """عرض تحذير عدم وجود حسابات مساعدة"""
+        warning_message = f"""
+╔══════════════════════════════════════╗
+║           ⚠️  تحذير مهم  ⚠️              ║
+╠══════════════════════════════════════╣
+║                                      ║
+║  🚫 لا توجد حسابات مساعدة مضافة        ║
+║                                      ║
+║  📝 البوت سيعمل بوظائف محدودة:          ║
+║     ✅ الأوامر العادية                 ║
+║     ✅ البحث والمعلومات               ║
+║     ❌ تشغيل الموسيقى                 ║
+║                                      ║
+║  📱 لإضافة حساب مساعد:                ║
+║     /owner ← إدارة الحسابات المساعدة    ║
+║                                      ║
+║  📞 للدعم: @{config.SUPPORT_CHAT or 'YourSupport'}               ║
+║                                      ║
+╚══════════════════════════════════════╝
+        """
+        print(warning_message)
+    
+    def _show_startup_message(self):
+        """عرض رسالة بدء التشغيل"""
+        assistants_count = tdlib_manager.get_assistants_count()
+        connected_count = tdlib_manager.get_connected_assistants_count()
+        
+        startup_message = f"""
+╔══════════════════════════════════════╗
+║          🎵 ZeMusic Bot 🎵            ║
+╠══════════════════════════════════════╣
+║                                      ║
+║  ✅ البوت جاهز للعمل                  ║
+║                                      ║
+║  📊 الحالة:                          ║
+║     🤖 البوت الرئيسي: متصل            ║
+║     📱 الحسابات المساعدة: {assistants_count} ({connected_count} متصل)     ║
+║     💾 قاعدة البيانات: جاهزة          ║
+║                                      ║
+║  🎯 الوضائف المتاحة:                 ║
+║     {'✅ تشغيل الموسيقى' if assistants_count > 0 else '❌ تشغيل الموسيقى (يحتاج حسابات مساعدة)'}               ║
+║     ✅ إدارة المجموعات                ║
+║     ✅ الأوامر الإدارية               ║
+║                                      ║
+║  📞 الدعم: @{config.SUPPORT_CHAT or 'YourSupport'}               ║
+║                                      ║
+╚══════════════════════════════════════╝
+        """
+        print(startup_message)
+    
+    async def _cleanup_task(self):
+        """مهمة تنظيف دورية"""
+        while self.is_running:
+            try:
+                await asyncio.sleep(1800)  # كل 30 دقيقة
+                
+                # تنظيف الجلسات المنتهية
+                await music_manager.cleanup_sessions()
+                
+                # تنظيف الحسابات الخاملة
+                await tdlib_manager.cleanup_idle_assistants()
+                
+                # تنظيف كاش قاعدة البيانات
+                await db.clear_cache()
+                
+                LOGGER(__name__).info("🧹 تم تنظيف النظام")
+                
+            except Exception as e:
+                LOGGER(__name__).error(f"خطأ في مهمة التنظيف: {e}")
+    
+    async def _health_check_task(self):
+        """مهمة فحص صحة النظام"""
+        while self.is_running:
+            try:
+                await asyncio.sleep(300)  # كل 5 دقائق
+                
+                # فحص البوت الرئيسي
+                if not tdlib_manager.bot_client or not tdlib_manager.bot_client.is_connected:
+                    LOGGER(__name__).warning("⚠️ البوت الرئيسي غير متصل - محاولة إعادة الاتصال...")
+                    await tdlib_manager.initialize_bot()
+                
+                # فحص الحسابات المساعدة
+                connected_count = tdlib_manager.get_connected_assistants_count()
+                total_count = tdlib_manager.get_assistants_count()
+                
+                if total_count > 0 and connected_count < total_count * 0.5:  # أقل من 50% متصل
+                    LOGGER(__name__).warning(f"⚠️ عدد الحسابات المتصلة منخفض: {connected_count}/{total_count}")
+                
+            except Exception as e:
+                LOGGER(__name__).error(f"خطأ في فحص صحة النظام: {e}")
+    
+    async def _stats_task(self):
+        """مهمة إحصائيات دورية"""
+        while self.is_running:
+            try:
+                await asyncio.sleep(3600)  # كل ساعة
+                
+                stats = await db.get_stats()
+                assistants_count = tdlib_manager.get_assistants_count()
+                connected_count = tdlib_manager.get_connected_assistants_count()
+                active_sessions = len(music_manager.active_sessions)
+                
+                LOGGER(__name__).info(
+                    f"📊 إحصائيات: {stats['users']} مستخدم، "
+                    f"{stats['chats']} مجموعة، "
+                    f"{connected_count}/{assistants_count} مساعد، "
+                    f"{active_sessions} جلسة نشطة"
+                )
+                
+            except Exception as e:
+                LOGGER(__name__).error(f"خطأ في مهمة الإحصائيات: {e}")
+    
+    async def handle_no_assistant_request(self, chat_id: int, user_id: int) -> str:
+        """التعامل مع طلبات التشغيل عند عدم وجود حسابات مساعدة"""
+        try:
+            # إضافة المستخدم والمجموعة لقاعدة البيانات
+            await db.add_user(user_id)
+            await db.add_chat(chat_id)
+            
+            # رسالة الإشعار
+            return config.ASSISTANT_NOT_FOUND_MESSAGE.format(
+                SUPPORT_CHAT=config.SUPPORT_CHAT or "@YourSupport",
+                OWNER_ID=config.OWNER_ID
+            )
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالجة طلب بدون مساعد: {e}")
+            return "❌ عذراً، حدث خطأ في النظام"
+    
+    async def shutdown(self):
+        """إيقاف البوت بأمان"""
+        try:
+            LOGGER(__name__).info("🛑 بدء إيقاف البوت...")
+            
+            self.is_running = False
+            
+            # إيقاف جميع الجلسات النشطة
+            LOGGER(__name__).info("🎵 إيقاف الجلسات النشطة...")
+            for chat_id in list(music_manager.active_sessions.keys()):
+                await music_manager.stop_music(chat_id)
+            
+            # إيقاف جميع العملاء
+            LOGGER(__name__).info("📱 إيقاف العملاء...")
+            await tdlib_manager.stop_all()
+            
+            LOGGER(__name__).info("✅ تم إيقاف البوت بنجاح")
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في إيقاف البوت: {e}")
+    
+    def setup_signal_handlers(self):
+        """إعداد معالجات الإشارات"""
+        def signal_handler(signum, frame):
+            LOGGER(__name__).info(f"🔔 تم استلام إشارة {signum}")
+            asyncio.create_task(self.shutdown())
+        
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
+
+
+async def main():
+    """الدالة الرئيسية"""
+    try:
+        # التحقق من المتطلبات
+        if not config.API_ID or not config.API_HASH or not config.BOT_TOKEN:
+            print("❌ خطأ: المتغيرات المطلوبة غير مكتملة")
+            print("تأكد من ضبط: API_ID, API_HASH, BOT_TOKEN")
+            sys.exit(1)
+        
+        # إنشاء البوت
+        bot = ZeMusicBot()
+        
+        # إعداد معالجات الإشارات
+        bot.setup_signal_handlers()
+        
+        # تهيئة وبدء البوت
+        success = await bot.initialize()
+        if not success:
+            print("❌ فشل في تهيئة البوت")
+            sys.exit(1)
+        
+        # تشغيل البوت
+        try:
+            # البقاء في حالة تشغيل
+            while bot.is_running:
+                await asyncio.sleep(1)
+        except KeyboardInterrupt:
+            LOGGER(__name__).info("⌨️ تم استلام إشارة إيقاف من المستخدم")
+        finally:
+            await bot.shutdown()
+    
+    except Exception as e:
+        LOGGER(__name__).error(f"❌ خطأ مهم في البوت: {e}")
+        sys.exit(1)
+
 
 if __name__ == "__main__":
-    # تشغيل البوت
     try:
-        asyncio.get_event_loop().run_until_complete(init())
+        # إعداد حدود asyncio
+        if sys.platform == "win32":
+            asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+        
+        # تشغيل البوت
+        asyncio.run(main())
+        
     except KeyboardInterrupt:
-        LOGGER(__name__).info("🛑 تم إيقاف البوت بواسطة المستخدم")
+        print("\n🛑 تم إيقاف البوت بواسطة المستخدم")
     except Exception as e:
-        LOGGER(__name__).error(f"❌ خطأ فادح: {e}")
+        print(f"❌ خطأ فادح: {e}")
         sys.exit(1)
