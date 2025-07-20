@@ -1,13 +1,13 @@
 import asyncio
 
-from pyrogram.enums import ChatMemberStatus
-from pyrogram.errors import (
+from ZeMusic.pyrogram_compatibility.enums import ChatMemberStatus
+from ZeMusic.pyrogram_compatibility.errors import (
     ChatAdminRequired,
     InviteRequestSent,
     UserAlreadyParticipant,
     UserNotParticipant,
 )
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from ZeMusic import YouTube, app
 from ZeMusic.misc import SUDOERS

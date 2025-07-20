@@ -1,9 +1,9 @@
 import asyncio
 import os
 
-from pyrogram import filters
-from pyrogram.errors import FloodWait
-from pyrogram.types import CallbackQuery, InputMediaPhoto, Message
+from ZeMusic.pyrogram_compatibility import filters
+from ZeMusic.pyrogram_compatibility.errors import FloodWait
+from ZeMusic.pyrogram_compatibility.types import CallbackQuery, InputMediaPhoto, Message
 
 import config
 from ZeMusic import app

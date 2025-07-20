@@ -1,6 +1,6 @@
-from pyrogram import Client, filters
+from ZeMusic.pyrogram_compatibility import Client, filters
 from ZeMusic.core.userbot import Userbot
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from ZeMusic.pyrogram_compatibility.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from config import LOGGER_ID as LOG_ID
 from ZeMusic import app
 

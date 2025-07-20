@@ -4,8 +4,8 @@
 # A Powerful Music Bot Property Of Rocks Indian Largest Chatting Group
 # All rights reserved. © Alisha © Alexa © Yukki
 
-from pyrogram import Client, filters
-from pyrogram.types import Message
+from ZeMusic.pyrogram_compatibility import Client, filters
+from ZeMusic.pyrogram_compatibility.types import Message
 from ZeMusic import app
 from ZeMusic.utils.database import get_served_chats
 from config import LOGGER_ID

@@ -1,7 +1,7 @@
-from pyrogram import filters
-from pyrogram.enums import ChatType
-from pyrogram.errors import MessageNotModified
-from pyrogram.types import (
+from ZeMusic.pyrogram_compatibility import filters
+from ZeMusic.pyrogram_compatibility.enums import ChatType
+from ZeMusic.pyrogram_compatibility.errors import MessageNotModified
+from ZeMusic.pyrogram_compatibility.types import (
     CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,

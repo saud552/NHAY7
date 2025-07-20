@@ -1,4 +1,4 @@
-from pyrogram.types import (
+from ZeMusic.pyrogram_compatibility.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     InlineQueryResultPhoto,

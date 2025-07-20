@@ -1,15 +1,15 @@
 import asyncio
 from typing import Optional
 from random import randint
-from pyrogram.types import Message, ChatPrivileges
-from pyrogram import Client, filters
+from ZeMusic.pyrogram_compatibility.types import Message, ChatPrivileges
+from ZeMusic.pyrogram_compatibility import Client, filters
 from strings.filters import command
 from pyrogram.raw.functions.channels import GetFullChannel
 from pyrogram.raw.functions.messages import GetFullChat
 from pyrogram.raw.types import InputGroupCall, InputPeerChannel, InputPeerChat
 from ZeMusic.utils.database import *
 from pyrogram.raw.functions.phone import CreateGroupCall, DiscardGroupCall
-from pyrogram.errors import UserAlreadyParticipant, UserNotParticipant, ChatAdminRequired
+from ZeMusic.pyrogram_compatibility.errors import UserAlreadyParticipant, UserNotParticipant, ChatAdminRequired
 from ZeMusic import app , Userbot
 
 async def get_group_call(

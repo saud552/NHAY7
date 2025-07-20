@@ -1,4 +1,4 @@
-from pyrogram.enums import ParseMode
+from ZeMusic.pyrogram_compatibility.enums import ParseMode
 
 from ZeMusic import app
 from ZeMusic.utils.database import is_on_off

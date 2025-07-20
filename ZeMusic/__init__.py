@@ -2,15 +2,9 @@ import asyncio
 import time
 from .logging import LOGGER
 
-# استخدام طبقة التوافق بدلاً من pyrogram مباشرة
-try:
-    # محاولة استيراد pyrogram إذا كان متاحاً
-    from pyrogram import Client
-    LOGGER(__name__).info("🔄 تم العثور على pyrogram - استخدام النظام المختلط")
-except ImportError:
-    # استخدام طبقة التوافق TDLib
-    from .compatibility import Client, app
-    LOGGER(__name__).info("🔄 استخدام طبقة التوافق TDLib")
+# استخدام طبقة التوافق TDLib بدلاً من pyrogram
+from .compatibility import CompatibilityClient as Client, app
+LOGGER(__name__).info("🔄 استخدام طبقة التوافق TDLib")
 
 # تهيئة قاعدة البيانات
 async def init_database():

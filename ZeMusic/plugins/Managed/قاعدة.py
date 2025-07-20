@@ -5,9 +5,9 @@ import re
 import asyncio
 import time
 import asyncio
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.errors import UserAlreadyParticipant
+from ZeMusic.pyrogram_compatibility import Client, filters
+from ZeMusic.pyrogram_compatibility.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from ZeMusic.pyrogram_compatibility.errors import UserAlreadyParticipant
 import asyncio
 import random
 from ZeMusic.utils.database import add_served_chat

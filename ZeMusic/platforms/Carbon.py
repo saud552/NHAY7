@@ -1,8 +1,13 @@
 import random
 from os.path import realpath
 
-import aiohttp
-from aiohttp import client_exceptions
+try:
+    import aiohttp
+    from aiohttp import client_exceptions
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
+    client_exceptions = None
 
 
 class UnableToFetchCarbon(Exception):

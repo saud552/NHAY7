@@ -1,9 +1,9 @@
 import asyncio
-from pyrogram import Client, filters
+from ZeMusic.pyrogram_compatibility import Client, filters
 from strings.filters import command
-from pyrogram.types import InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Message
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Message
 from typing import Union
-from pyrogram.types import InlineKeyboardButton
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardButton
 from ZeMusic import app
 from ZeMusic.misc import HAPP, SUDOERS, XCB
 from config import OWNER_ID

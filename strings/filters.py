@@ -1,7 +1,10 @@
 from typing import List, Union
 
-from pyrogram import filters
+# استخدام طبقة التوافق بدلاً من pyrogram
+from ZeMusic.compatibility import TDLibFilters
 
+# إنشاء كائن filters للتوافق
+filters = TDLibFilters()
 
 other_filters = filters.group & ~filters.via_bot & ~filters.forwarded
 other_filters2 = (

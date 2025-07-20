@@ -1,6 +1,6 @@
 import os
-from pyrogram import filters, Client
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from ZeMusic.pyrogram_compatibility import filters, Client
+from ZeMusic.pyrogram_compatibility.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from ZeMusic import app
 

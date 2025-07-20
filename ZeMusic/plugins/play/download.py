@@ -26,9 +26,9 @@ import aiofiles
 import yt_dlp
 from youtube_search import YoutubeSearch
 
-from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram.errors import FloodWait, RPCError, MessageIdInvalid
+from ZeMusic.pyrogram_compatibility import filters
+from ZeMusic.pyrogram_compatibility.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from ZeMusic.pyrogram_compatibility.errors import FloodWait, RPCError, MessageIdInvalid
 
 import config
 from ZeMusic import app, LOGGER

@@ -3,10 +3,10 @@ from ZeMusic import app
 from config import OWNER_ID
 import os
 import requests
-import pyrogram
-from pyrogram import Client, filters, emoji
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
-from pyrogram.errors import MessageNotModified
+import ZeMusic.pyrogram_compatibility as pyrogram
+from ZeMusic.pyrogram_compatibility import Client, filters, emoji
+from ZeMusic.pyrogram_compatibility.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
+from ZeMusic.pyrogram_compatibility.errors import MessageNotModified
 import config
 
 @app.on_message(filters.regex(r"^(انا من|انا منو)$"))

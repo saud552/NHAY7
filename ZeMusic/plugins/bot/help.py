@@ -1,7 +1,7 @@
 from typing import Union
 
-from pyrogram import filters, types
-from pyrogram.types import InlineKeyboardMarkup, Message
+from ZeMusic.pyrogram_compatibility import filters, types
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardMarkup, Message
 
 from ZeMusic import app
 from ZeMusic.utils import help_pannel

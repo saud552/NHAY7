@@ -1,7 +1,7 @@
 import os, asyncio
 from typing import Optional
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
+from ZeMusic.pyrogram_compatibility import Client, filters
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from telegraph import upload_file
 from ZeMusic import app
 from strings.filters import command

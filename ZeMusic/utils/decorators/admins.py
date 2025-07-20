@@ -1,5 +1,5 @@
-from pyrogram.enums import ChatType
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from ZeMusic.pyrogram_compatibility.enums import ChatType
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from ZeMusic import app
 from ZeMusic.misc import SUDOERS, db

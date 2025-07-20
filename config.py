@@ -1,20 +1,25 @@
 import re
 from os import getenv
-from dotenv import load_dotenv
 
-load_dotenv()
+# تحميل متغيرات البيئة إذا كانت متاحة
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # يعمل بدون .env في وضع الإنتاج
+    pass
 
 # ============================================
 # إعدادات Telegram API الأساسية
 # ============================================
-API_ID = int(getenv("API_ID", "20036317"))
-API_HASH = getenv("API_HASH", "986cb4ba434870a62fe96da3b5f6d411")
+API_ID = int(getenv("API_ID", "0"))
+API_HASH = getenv("API_HASH", "")
 
 # Get your token from @BotFather on Telegram
-BOT_TOKEN = getenv("BOT_TOKEN", "7686060382:AAH3wBx0cwW0X7rRVg14XlOhourcG3WgTt0")
-BOT_NAME = getenv("BOT_NAME", "لارين")
+BOT_TOKEN = getenv("BOT_TOKEN", "")
+BOT_NAME = getenv("BOT_NAME", "ZeMusic Bot")
 BOT_USERNAME = getenv("BOT_USERNAME", "")
-BOT_ID = getenv("BOT_ID", "7686060382")  # معرف البوت الرقمي
+BOT_ID = getenv("BOT_ID", "0")  # معرف البوت الرقمي
 
 # ============================================
 # إعدادات قاعدة البيانات - SQLite

@@ -1,5 +1,5 @@
-from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, Message
+from ZeMusic.pyrogram_compatibility import filters
+from ZeMusic.pyrogram_compatibility.types import InlineKeyboardMarkup, Message
 
 from ZeMusic import app
 from ZeMusic.utils.database import get_playmode, get_playtype, is_nonadmin_chat

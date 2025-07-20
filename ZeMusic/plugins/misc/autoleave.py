@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 
-from pyrogram.enums import ChatType
+from ZeMusic.pyrogram_compatibility.enums import ChatType
 
 import config
 from ZeMusic import app

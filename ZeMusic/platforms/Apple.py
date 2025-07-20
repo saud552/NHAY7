@@ -1,8 +1,18 @@
 import re
 from typing import Union
 
-import aiohttp
-from bs4 import BeautifulSoup
+try:
+    import aiohttp
+    AIOHTTP_AVAILABLE = True
+except ImportError:
+    AIOHTTP_AVAILABLE = False
+
+try:
+    from bs4 import BeautifulSoup
+    BS4_AVAILABLE = True
+except ImportError:
+    BS4_AVAILABLE = False
+    BeautifulSoup = None
 from youtubesearchpython.__future__ import VideosSearch
 
 
@@ -20,6 +30,10 @@ class AppleAPI:
     async def track(self, url, playid: Union[bool, str] = None):
         if playid:
             url = self.base + url
+        
+        if not AIOHTTP_AVAILABLE or not BS4_AVAILABLE:
+            return False  # لا يمكن معالجة Apple Music بدون aiohttp أو bs4
+            
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status != 200:
