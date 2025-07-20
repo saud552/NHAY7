@@ -411,5 +411,12 @@ async def cleanup_task():
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في مهمة التنظيف: {e}")
 
-# بدء مهمة التنظيف
-asyncio.create_task(cleanup_task())
+# دالة لبدء مهمة التنظيف (سيتم استدعاؤها من __main__)
+def start_cleanup_task():
+    """بدء مهمة التنظيف"""
+    try:
+        asyncio.create_task(cleanup_task())
+        LOGGER(__name__).info("🧹 تم بدء مهمة التنظيف الدورية")
+    except RuntimeError:
+        # سيتم بدؤها لاحقاً من __main__
+        LOGGER(__name__).info("🧹 سيتم بدء مهمة التنظيف لاحقاً")
