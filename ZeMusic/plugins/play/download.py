@@ -42,28 +42,21 @@ DOWNLOAD_TIMEOUT = 120
 MAX_SESSIONS = 50  # عدد جلسات HTTP متوازية
 
 # قناة التخزين الذكي
-SMART_CACHE_CHANNEL = getattr(config, "CACHE_CHANNEL_ID", None)
-if SMART_CACHE_CHANNEL and not str(SMART_CACHE_CHANNEL).startswith('-100'):
-    SMART_CACHE_CHANNEL = f"-100{SMART_CACHE_CHANNEL}"
+SMART_CACHE_CHANNEL = config.CACHE_CHANNEL_ID
 
 # إعدادات العرض
 channel = getattr(config, 'STORE_LINK', '')
 lnk = f"https://t.me/{channel}" if channel else None
 
 # --- تدوير المفاتيح والخوادم ---
-YT_API_KEYS = getattr(config, "YT_API_KEYS", [])
+YT_API_KEYS = config.YT_API_KEYS
 API_KEYS_CYCLE = cycle(YT_API_KEYS) if YT_API_KEYS else None
 
-INVIDIOUS_SERVERS = getattr(config, "INVIDIOUS_SERVERS", [])
+INVIDIOUS_SERVERS = config.INVIDIOUS_SERVERS
 INVIDIOUS_CYCLE = cycle(INVIDIOUS_SERVERS) if INVIDIOUS_SERVERS else None
 
 # تدوير ملفات الكوكيز
-COOKIES_FILES = []
-if hasattr(config, 'COOKIES_FILES') and config.COOKIES_FILES:
-    COOKIES_FILES = config.COOKIES_FILES
-elif os.path.exists("cookies.txt"):
-    COOKIES_FILES = ["cookies.txt"]
-
+COOKIES_FILES = config.COOKIES_FILES
 COOKIES_CYCLE = cycle(COOKIES_FILES) if COOKIES_FILES else None
 
 # --- إعدادات yt-dlp عالية الأداء ---

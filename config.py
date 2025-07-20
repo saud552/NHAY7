@@ -52,41 +52,93 @@ STRING4 = getenv("STRING_SESSION4", None)
 STRING5 = getenv("STRING_SESSION5", None)
 
 # ============================================
-# YouTube Data API Keys
+# إعدادات النظام الذكي الجديد
 # ============================================
-YT_API_KEYS = [
-    "EQD5mxRgCuRNLxKxeOjG6r14iSroLF5FtomPnet-sgP5xNJb",
-    # يمكن إضافة مفاتيح أخرى
-]
+
+# قناة التخزين الذكي (للتخزين في قناة تيليجرام)
+CACHE_CHANNEL_ID = getenv("CACHE_CHANNEL_ID", None)
+if CACHE_CHANNEL_ID:
+    try:
+        CACHE_CHANNEL_ID = int(CACHE_CHANNEL_ID)
+        if not str(CACHE_CHANNEL_ID).startswith('-100'):
+            CACHE_CHANNEL_ID = f"-100{CACHE_CHANNEL_ID}"
+    except ValueError:
+        CACHE_CHANNEL_ID = None
 
 # ============================================
-# Invidious Servers
+# YouTube Data API Keys (متعددة للتدوير)
 # ============================================
-INVIDIOUS_SERVERS = [
-    "https://yewtu.be",
-    "https://vid.puffyan.us",
-    "https://inv.riverside.rocks",
-    "https://yewtu.eu.org",
-    "https://yewtu.cafe",
-    "https://yewtu.snopyta.org",
-    "https://yewtu.shareyour.world",
-    "https://yewtu.privacytools.io",
-    "https://yewtu.kavin.rocks",
-    "https://yewtu.nixnet.services",
-    "https://yewtu.ossdv.cn",
-    "https://yewtu.invidious.io",
-    "https://yewtu.mooo.com",
-    "https://yewtu.fdn.fr",
-    "https://invidious.snopyta.org",
-    "https://yewtu.ayaka.systems",
-    "https://yewtu.offensive-security.dev"
-]
+YT_API_KEYS_ENV = getenv("YT_API_KEYS", "[]")
+try:
+    import json
+    YT_API_KEYS = json.loads(YT_API_KEYS_ENV) if YT_API_KEYS_ENV != "[]" else []
+except:
+    YT_API_KEYS = []
+
+# مفاتيح افتراضية (تحديث مطلوب)
+if not YT_API_KEYS:
+    YT_API_KEYS = [
+        "EQD5mxRgCuRNLxKxeOjG6r14iSroLF5FtomPnet-sgP5xNJb",
+        # أضف مفاتيحك هنا
+    ]
 
 # ============================================
-# إعدادات الكوكيز
+# خوادم Invidious الأفضل (محدثة 2025)
+# ============================================
+INVIDIOUS_SERVERS_ENV = getenv("INVIDIOUS_SERVERS", "[]")
+try:
+    import json
+    INVIDIOUS_SERVERS = json.loads(INVIDIOUS_SERVERS_ENV) if INVIDIOUS_SERVERS_ENV != "[]" else []
+except:
+    INVIDIOUS_SERVERS = []
+
+# خوادم افتراضية محدثة (مجربة ديسمبر 2024 - يناير 2025)
+if not INVIDIOUS_SERVERS:
+    INVIDIOUS_SERVERS = [
+        "https://inv.nadeko.net",           # 🥇 الأفضل - 99.666% uptime
+        "https://invidious.nerdvpn.de",     # 🥈 ممتاز - 100% uptime  
+        "https://yewtu.be",                 # 🥉 جيد - 89.625% uptime
+        "https://invidious.f5.si",          # ⚡ سريع - Cloudflare
+        "https://invidious.materialio.us",  # 🌟 موثوق
+        "https://invidious.reallyaweso.me", # 🚀 سريع
+        "https://iteroni.com",              # ⚡ جيد
+        "https://iv.catgirl.cloud",         # 😸 ممتاز
+        "https://youtube.alt.tyil.nl",      # 🇳🇱 هولندا
+    ]
+
+# ============================================
+# إعدادات ملفات الكوكيز المتعددة
+# ============================================
+COOKIES_FILES_ENV = getenv("COOKIES_FILES", "[]")
+try:
+    import json
+    COOKIES_FILES = json.loads(COOKIES_FILES_ENV) if COOKIES_FILES_ENV != "[]" else []
+except:
+    COOKIES_FILES = []
+
+# مسارات افتراضية لملفات الكوكيز
+if not COOKIES_FILES:
+    import os
+    cookies_dir = "cookies"
+    if os.path.exists(cookies_dir):
+        COOKIES_FILES = [
+            f"{cookies_dir}/cookies1.txt",
+            f"{cookies_dir}/cookies2.txt", 
+            f"{cookies_dir}/cookies3.txt",
+            f"{cookies_dir}/cookies4.txt",
+            f"{cookies_dir}/cookies5.txt"
+        ]
+        # فلترة الملفات الموجودة فقط
+        COOKIES_FILES = [f for f in COOKIES_FILES if os.path.exists(f)]
+    else:
+        # ملف واحد افتراضي للتوافق
+        COOKIES_FILES = ["cookies.txt"] if os.path.exists("cookies.txt") else []
+
+# ============================================
+# إعدادات الكوكيز (التوافق مع الكود القديم)
 # ============================================
 COOKIE_METHOD = "browser"
-COOKIE_FILE = "cookies.txt"
+COOKIE_FILE = COOKIES_FILES[0] if COOKIES_FILES else "cookies.txt"
 
 # ============================================
 # إعدادات القنوات والدعم
