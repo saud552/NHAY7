@@ -62,39 +62,64 @@ class TDLibCommandHandler:
                 # تحويل للتنسيق المتوافق مع الأوامر الموجودة
                 mock_update = self._create_mock_update(text, chat_id, sender_id, message_id, message)
                 
+                # فحص الاشتراك الإجباري لجميع الرسائل والمحادثات (ما عدا أوامر المطور)
+                should_check_subscription = True
+                
+                # استثناءات فحص الاشتراك
+                if sender_id == config.OWNER_ID:
+                    should_check_subscription = False
+                elif text.startswith('/admin') or text.startswith('/owner'):
+                    should_check_subscription = False
+                elif text == '/start':  # السماح بـ /start للترحيب
+                    should_check_subscription = False
+                
+                # ملاحظة: الفحص يطبق على:
+                # 1. الرسائل الخاصة مع البوت
+                # 2. الرسائل في المجموعات والقنوات
+                # 3. جميع أنواع التفاعل مع البوت
+                
+                # تنفيذ فحص الاشتراك إذا كان مطلوباً
+                if should_check_subscription:
+                    from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
+                    is_subscribed = await force_subscribe_handler.check_user_subscription(sender_id)
+                    
+                    if not is_subscribed:
+                        # الحصول على اسم المستخدم من الرسالة
+                        user_name = message.get('sender_id', {}).get('user_id', 'المستخدم')
+                        try:
+                            # محاولة الحصول على الاسم الحقيقي
+                            bot_client = tdlib_manager.bot_client
+                            if bot_client and bot_client.is_connected:
+                                user_info = await bot_client.client.call_method('getUser', {'user_id': sender_id})
+                                user_name = user_info.get('first_name', 'المستخدم')
+                        except:
+                            user_name = "المستخدم"
+                        
+                        # إرسال رسالة طلب الاشتراك
+                        subscription_msg = await force_subscribe_handler.get_subscription_message(user_name)
+                        
+                        # إرسال الرسالة مع الأزرار
+                        bot_client = tdlib_manager.bot_client
+                        if bot_client and bot_client.is_connected:
+                            # تحويل keyboard للتنسيق المناسب
+                            keyboard = self._convert_keyboard_for_subscription(subscription_msg['keyboard'])
+                            await bot_client.client.call_method('sendMessage', {
+                                'chat_id': chat_id,
+                                'input_message_content': {
+                                    '@type': 'inputMessageText',
+                                    'text': {
+                                        '@type': 'formattedText',
+                                        'text': subscription_msg['message']
+                                    }
+                                },
+                                'reply_markup': keyboard
+                            })
+                        return  # منع معالجة الرسالة إذا لم يكن مشتركاً
+                
                 # التحقق من الأوامر
                 if text.startswith('/'):
                     command = text.split()[0].lower()
                     if command in self.commands:
-                        # فحص الاشتراك الإجباري قبل تنفيذ الأمر
-                        # (لا ينطبق على أوامر المطور)
-                        if command not in ['/admin', '/owner'] and sender_id != config.OWNER_ID:
-                            from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
-                            is_subscribed = await force_subscribe_handler.check_user_subscription(sender_id)
-                            
-                            if not is_subscribed:
-                                # إرسال رسالة طلب الاشتراك
-                                user_name = "المستخدم"  # يمكن تحسين هذا للحصول على الاسم الحقيقي
-                                subscription_msg = await force_subscribe_handler.get_subscription_message(user_name)
-                                
-                                # إرسال الرسالة مع الأزرار
-                                bot_client = tdlib_manager.bot_client
-                                if bot_client and bot_client.is_connected:
-                                    # تحويل keyboard للتنسيق المناسب
-                                    keyboard = self._convert_keyboard_for_subscription(subscription_msg['keyboard'])
-                                    await bot_client.client.call_method('sendMessage', {
-                                        'chat_id': chat_id,
-                                        'input_message_content': {
-                                            '@type': 'inputMessageText',
-                                            'text': {
-                                                '@type': 'formattedText',
-                                                'text': subscription_msg['message']
-                                            }
-                                        },
-                                        'reply_markup': keyboard
-                                    })
-                                return
-                        
                         await self.commands[command](mock_update, None)
                         return
                 

@@ -58,6 +58,10 @@ class ZeMusicBot:
             # بدء المهام الدورية
             await self._start_periodic_tasks()
             
+            # بدء مهمة تنظيف music_manager
+            from ZeMusic.core.music_manager import start_cleanup_task
+            start_cleanup_task()
+            
             self.startup_time = asyncio.get_event_loop().time()
             self.is_running = True
             

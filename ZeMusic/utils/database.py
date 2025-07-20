@@ -1,7 +1,8 @@
 import random
 from typing import Dict, List, Union
 
-from ZeMusic import userbot
+# استخدام TDLib manager بدلاً من userbot
+from ZeMusic.core.tdlib_client import tdlib_manager
 from ZeMusic.core.database import db
 
 # متغيرات الذاكرة للحالات المؤقتة (كما في الكود الأصلي)
@@ -90,17 +91,20 @@ async def get_assistant_number(chat_id: int) -> str:
     return str(settings.assistant_id)
 
 async def get_client(assistant: int):
-    """الحصول على عميل المساعد"""
-    if int(assistant) == 1:
-        return userbot.one
-    elif int(assistant) == 2:
-        return userbot.two
-    elif int(assistant) == 3:
-        return userbot.three
-    elif int(assistant) == 4:
-        return userbot.four
-    elif int(assistant) == 5:
-        return userbot.five
+    """الحصول على عميل المساعد - TDLib version"""
+    try:
+        # الحصول على المساعد من TDLib manager
+        for tdlib_assistant in tdlib_manager.assistants:
+            if tdlib_assistant.assistant_id == assistant:
+                return tdlib_assistant
+        
+        # إذا لم يتم العثور على المساعد، إرجاع أول مساعد متاح
+        if tdlib_manager.assistants:
+            return tdlib_manager.assistants[0]
+        
+        return None
+    except Exception:
+        return None
 
 async def set_assistant_new(chat_id, number):
     """تعيين مساعد جديد"""
@@ -109,54 +113,84 @@ async def set_assistant_new(chat_id, number):
     await db.update_chat_setting(chat_id, assistant_id=number)
 
 async def set_assistant(chat_id):
-    """تعيين مساعد عشوائي"""
-    from ZeMusic.core.userbot import assistants
-
-    ran_assistant = random.choice(assistants)
-    assistantdict[chat_id] = ran_assistant
-    await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
-    userbot = await get_client(ran_assistant)
-    return userbot
+    """تعيين مساعد عشوائي - TDLib version"""
+    try:
+        # الحصول على قائمة المساعدين المتصلين
+        connected_assistants = [
+            assistant for assistant in tdlib_manager.assistants 
+            if assistant.is_connected
+        ]
+        
+        if not connected_assistants:
+            return None
+        
+        # اختيار مساعد عشوائي
+        selected_assistant = random.choice(connected_assistants)
+        
+        assistantdict[chat_id] = selected_assistant.assistant_id
+        await db.update_chat_setting(chat_id, assistant_id=selected_assistant.assistant_id)
+        
+        return selected_assistant
+    except Exception:
+        return None
 
 async def get_assistant(chat_id: int) -> str:
-    """الحصول على المساعد"""
-    from ZeMusic.core.userbot import assistants
-
-    assistant = assistantdict.get(chat_id)
-    if assistant:
-        return assistant
-    
-    settings = await db.get_chat_settings(chat_id)
-    got_assis = settings.assistant_id
-    if got_assis:
-        assistantdict[chat_id] = got_assis
-        return got_assis
-    else:
-        ran_assistant = random.choice(assistants)
-        assistantdict[chat_id] = ran_assistant
-        await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
-        return ran_assistant
+    """الحصول على المساعد - TDLib version"""
+    try:
+        assistant = assistantdict.get(chat_id)
+        if assistant:
+            return assistant
+        
+        settings = await db.get_chat_settings(chat_id)
+        got_assis = settings.assistant_id
+        if got_assis:
+            assistantdict[chat_id] = got_assis
+            return got_assis
+        else:
+            # اختيار مساعد متاح من TDLib
+            available_assistants = [
+                assistant.assistant_id for assistant in tdlib_manager.assistants 
+                if assistant.is_connected
+            ]
+            
+            if available_assistants:
+                ran_assistant = random.choice(available_assistants)
+                assistantdict[chat_id] = ran_assistant
+                await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
+                return ran_assistant
+            else:
+                return None
+    except Exception:
+        return None
 
 async def get_assistant_details(chat_id: int) -> str:
-    """الحصول على تفاصيل المساعد"""
-    from ZeMusic.core.userbot import assistants
-
-    assistant = assistantdict.get(chat_id)
-    if assistant:
-        assis = assistant
-        assistantdict[chat_id] = assis
-        return assis
-    
-    settings = await db.get_chat_settings(chat_id)
-    got_assis = settings.assistant_id
-    if got_assis:
-        assistantdict[chat_id] = got_assis
-        return got_assis
-    else:
-        ran_assistant = random.choice(assistants)
-        assistantdict[chat_id] = ran_assistant
-        await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
-        return ran_assistant
+    """الحصول على تفاصيل المساعد - TDLib version"""
+    try:
+        assistant = assistantdict.get(chat_id)
+        if assistant:
+            return assistant
+        
+        settings = await db.get_chat_settings(chat_id)
+        got_assis = settings.assistant_id
+        if got_assis:
+            assistantdict[chat_id] = got_assis
+            return got_assis
+        else:
+            # اختيار مساعد متاح من TDLib
+            available_assistants = [
+                assistant.assistant_id for assistant in tdlib_manager.assistants 
+                if assistant.is_connected
+            ]
+            
+            if available_assistants:
+                ran_assistant = random.choice(available_assistants)
+                assistantdict[chat_id] = ran_assistant
+                await db.update_chat_setting(chat_id, assistant_id=ran_assistant)
+                return ran_assistant
+            else:
+                return None
+    except Exception:
+        return None
 
 # وظائف Skip Mode
 async def is_skipmode(chat_id: int) -> bool:
