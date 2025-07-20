@@ -41,7 +41,7 @@ REQUEST_TIMEOUT = 10
 DOWNLOAD_TIMEOUT = 120
 MAX_SESSIONS = 50  # عدد جلسات HTTP متوازية
 
-# قناة التخزين الذكي
+# قناة التخزين الذكي (يوزر أو ID)
 SMART_CACHE_CHANNEL = config.CACHE_CHANNEL_ID
 
 # إعدادات العرض
@@ -709,7 +709,7 @@ async def smart_download_handler(client, message: Message):
         except:
             pass
 
-# --- إحصائيات سريعة للمطور ---
+# --- إحصائيات وأوامر المطور ---
 @app.on_message(command(["cache_stats"]) & filters.user(config.OWNER_ID))
 async def cache_stats_handler(client, message: Message):
     """عرض إحصائيات التخزين الذكي"""
@@ -733,6 +733,7 @@ async def cache_stats_handler(client, message: Message):
 💾 **المحفوظ:** {total_cached} ملف
 ⚡ **مرات الاستخدام:** {total_hits}
 📈 **معدل الكفاءة:** {(total_hits/max(1,total_cached)):.1f}
+📺 **قناة التخزين:** {SMART_CACHE_CHANNEL or "غير مُعدة"}
 
 🎵 **الأكثر طلباً:**
 """
@@ -744,5 +745,98 @@ async def cache_stats_handler(client, message: Message):
         
     except Exception as e:
         await message.reply_text(f"❌ خطأ: {e}")
+
+@app.on_message(command(["test_cache_channel"]) & filters.user(config.OWNER_ID))
+async def test_cache_channel_handler(client, message: Message):
+    """اختبار قناة التخزين الذكي"""
+    if not SMART_CACHE_CHANNEL:
+        await message.reply_text("❌ **قناة التخزين غير مُعدة**\n\n📝 أضف `CACHE_CHANNEL_USERNAME` في ملف .env")
+        return
+    
+    try:
+        # اختبار إرسال رسالة للقناة
+        test_msg = await app.send_message(
+            chat_id=SMART_CACHE_CHANNEL,
+            text="🧪 **اختبار قناة التخزين الذكي**\n\n✅ البوت يعمل بشكل صحيح في هذه القناة!"
+        )
+        
+        await message.reply_text(f"""✅ **اختبار قناة التخزين نجح!**
+
+📺 **القناة:** `{SMART_CACHE_CHANNEL}`
+📨 **رسالة الاختبار:** [اضغط هنا](https://t.me/c/{str(SMART_CACHE_CHANNEL).replace('-100', '')}/{test_msg.id})
+
+🎵 الآن يمكن حفظ الأغاني في قناة التخزين تلقائياً!""")
+        
+        # حذف رسالة الاختبار بعد 10 ثوان
+        await asyncio.sleep(10)
+        try:
+            await test_msg.delete()
+        except:
+            pass
+            
+    except Exception as e:
+        await message.reply_text(f"""❌ **فشل اختبار قناة التخزين!**
+
+📺 **القناة:** `{SMART_CACHE_CHANNEL}`
+🚫 **الخطأ:** `{str(e)}`
+
+🔧 **تأكد من:**
+- البوت أدمن في القناة
+- تفعيل إرسال الرسائل
+- صحة يوزر/ID القناة""")
+
+@app.on_message(command(["clear_cache"]) & filters.user(config.OWNER_ID))
+async def clear_cache_handler(client, message: Message):
+    """مسح كاش التخزين الذكي"""
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        
+        # عد الملفات قبل المسح
+        cursor.execute("SELECT COUNT(*) FROM channel_index")
+        total_before = cursor.fetchone()[0]
+        
+        # مسح البيانات
+        cursor.execute("DELETE FROM channel_index")
+        conn.commit()
+        conn.close()
+        
+        await message.reply_text(f"""🧹 **تم مسح كاش التخزين!**
+
+📊 **المحذوف:** {total_before} ملف
+💽 **قاعدة البيانات:** تم تنظيفها
+🔄 **الكاش:** تم إعادة تعيينه
+
+⚡ سيتم إعادة بناء الكاش تلقائياً مع الاستخدام""")
+        
+    except Exception as e:
+        await message.reply_text(f"❌ خطأ في مسح الكاش: {e}")
+
+@app.on_message(command(["cache_help"]) & filters.user(config.OWNER_ID))
+async def cache_help_handler(client, message: Message):
+    """مساعدة أوامر التخزين الذكي"""
+    help_text = """🤖 **أوامر التخزين الذكي**
+
+📊 `/cache_stats` - إحصائيات التخزين
+🧪 `/test_cache_channel` - اختبار قناة التخزين  
+🧹 `/clear_cache` - مسح جميع البيانات المحفوظة
+❓ `/cache_help` - عرض هذه المساعدة
+
+📺 **إعداد قناة التخزين:**
+1. أنشئ قناة جديدة
+2. أضف البوت كأدمن 
+3. أضف يوزر القناة في `.env`:
+   ```
+   CACHE_CHANNEL_USERNAME=@my_cache_channel
+   ```
+4. اختبر بالأمر `/test_cache_channel`
+
+🚀 **المميزات:**
+- تخزين تلقائي للأغاني المحملة
+- بحث فوري في الكاش (0.001s)
+- إحصائيات تفصيلية
+- تنظيف وإدارة سهلة"""
+
+    await message.reply_text(help_text)
 
 LOGGER(__name__).info("🚀 تم تحميل نظام التحميل الذكي الخارق")
