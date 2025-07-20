@@ -72,6 +72,9 @@ class TDLibClient:
             self.client.add_update_handler('updateUser', self._handle_user_update)
             self.client.add_update_handler('updateGroupCall', self._handle_group_call_update)
             
+            # معالجات إضافية
+            self.update_handlers = {}
+            
             await self.client.login()
             self.is_connected = True
             self.last_activity = time.time()
@@ -142,6 +145,24 @@ class TDLibClient:
                     self.active_calls.add(call_id)
                 else:
                     self.active_calls.discard(call_id)
+    
+    def add_update_handler(self, update_type: str, handler_func):
+        """إضافة معالج للتحديثات"""
+        try:
+            if not hasattr(self, 'update_handlers'):
+                self.update_handlers = {}
+            
+            if update_type not in self.update_handlers:
+                self.update_handlers[update_type] = []
+            
+            self.update_handlers[update_type].append(handler_func)
+            
+            # تسجيل المعالج في TDLib مباشرة
+            if self.client:
+                self.client.add_update_handler(update_type, handler_func)
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في إضافة معالج التحديثات: {e}")
     
     async def send_message(self, chat_id: int, text: str, reply_markup=None) -> Optional[Dict]:
         """إرسال رسالة"""

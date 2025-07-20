@@ -7,6 +7,9 @@ from ZeMusic.core.tdlib_client import tdlib_manager
 from ZeMusic.core.database import db
 from ZeMusic.core.music_manager import music_manager
 from ZeMusic.plugins.owner.owner_panel import owner_panel
+from ZeMusic.plugins.owner.admin_panel import admin_panel
+from ZeMusic.plugins.owner.stats_handler import stats_handler
+from ZeMusic.plugins.owner.broadcast_handler import broadcast_handler
 
 class BasicCommandHandler:
     """معالج الأوامر الأساسية"""
@@ -354,6 +357,124 @@ class BasicCommandHandler:
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في أمر stats: {e}")
             await update.message.reply_text("❌ حدث خطأ في عرض الإحصائيات")
+    
+    @staticmethod
+    async def admin_command(update, context):
+        """معالج أمر /admin - لوحة أوامر المطور"""
+        try:
+            user_id = update.effective_user.id
+            chat_id = update.effective_chat.id
+            
+            # التحقق من أن الأمر في محادثة خاصة
+            if chat_id != user_id:
+                await update.message.reply_text(
+                    "⚠️ هذا الأمر يعمل في المحادثة الخاصة فقط",
+                    reply_to_message_id=update.message.message_id
+                )
+                return
+            
+            # عرض لوحة المطور
+            result = await admin_panel.show_main_panel(user_id)
+            
+            if result['success']:
+                # إنشاء لوحة مفاتيح
+                keyboard = []
+                for row in result['keyboard']:
+                    keyboard_row = []
+                    for button in row:
+                        keyboard_row.append([button['text'], button['callback_data']])
+                    keyboard.append(keyboard_row)
+                
+                # إرسال الرسالة مع لوحة المفاتيح
+                await update.message.reply_text(
+                    result['message'],
+                    parse_mode=result.get('parse_mode', 'Markdown'),
+                    reply_markup=keyboard if keyboard else None
+                )
+            else:
+                await update.message.reply_text(result['message'])
+                
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في أمر admin: {e}")
+            await update.message.reply_text("❌ حدث خطأ في عرض لوحة المطور")
+    
+    @staticmethod
+    async def handle_callback_query(update, context):
+        """معالج استعلامات الأزرار (Callback Queries)"""
+        try:
+            query = update.callback_query
+            user_id = query.from_user.id
+            callback_data = query.data
+            message_id = query.message.message_id
+            
+            # الرد السريع لتجنب timeout
+            await query.answer()
+            
+            result = None
+            
+            # توجيه الاستعلام حسب النوع
+            if callback_data.startswith('admin_'):
+                result = await admin_panel.handle_callback(user_id, callback_data, message_id)
+            
+            elif callback_data.startswith('broadcast_'):
+                # معالجة أزرار الإذاعة
+                if callback_data == 'broadcast_users':
+                    result = await broadcast_handler.handle_broadcast_target_selection(user_id, 'users')
+                elif callback_data == 'broadcast_groups':
+                    result = await broadcast_handler.handle_broadcast_target_selection(user_id, 'groups')
+                elif callback_data == 'broadcast_channels':
+                    result = await broadcast_handler.handle_broadcast_target_selection(user_id, 'channels')
+                elif callback_data == 'broadcast_pin_yes':
+                    result = await broadcast_handler.handle_pin_selection(user_id, True)
+                elif callback_data == 'broadcast_pin_no':
+                    result = await broadcast_handler.handle_pin_selection(user_id, False)
+                elif callback_data == 'broadcast_copy':
+                    result = await broadcast_handler.handle_forward_mode_selection(user_id, False)
+                elif callback_data == 'broadcast_forward':
+                    result = await broadcast_handler.handle_forward_mode_selection(user_id, True)
+                elif callback_data == 'confirm_broadcast':
+                    result = await broadcast_handler.start_broadcast(user_id)
+                elif callback_data == 'stop_broadcast':
+                    result = await broadcast_handler.stop_broadcast(user_id)
+                elif callback_data == 'broadcast_progress':
+                    result = await broadcast_handler.get_broadcast_progress(user_id)
+                elif callback_data == 'broadcast_cancel':
+                    result = await broadcast_handler.cancel_setup(user_id)
+                else:
+                    result = await broadcast_handler.show_broadcast_menu(user_id)
+            
+            elif callback_data.startswith('owner_'):
+                # معالجة أزرار إدارة الحسابات المساعدة
+                result = await owner_panel.handle_callback(user_id, callback_data)
+            
+            # تحديث الرسالة إذا كان هناك نتيجة
+            if result and result.get('success'):
+                # إنشاء لوحة مفاتيح جديدة
+                keyboard = []
+                if result.get('keyboard'):
+                    for row in result['keyboard']:
+                        keyboard_row = []
+                        for button in row:
+                            keyboard_row.append([button['text'], button['callback_data']])
+                        keyboard.append(keyboard_row)
+                
+                # تحديث الرسالة
+                await query.edit_message_text(
+                    result['message'],
+                    parse_mode=result.get('parse_mode', 'Markdown'),
+                    reply_markup=keyboard if keyboard else None
+                )
+            
+            elif result and not result.get('success'):
+                # إرسال رسالة خطأ
+                await query.message.reply_text(result['message'])
+                
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالج callback query: {e}")
+            try:
+                await query.answer("❌ حدث خطأ، يرجى المحاولة مرة أخرى", show_alert=True)
+            except:
+                pass
 
 # إنشاء مثيل معالج الأوامر
 command_handler = BasicCommandHandler()

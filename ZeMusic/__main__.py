@@ -9,6 +9,7 @@ from ZeMusic.logging import LOGGER
 from ZeMusic.core.tdlib_client import tdlib_manager
 from ZeMusic.core.database import db
 from ZeMusic.core.music_manager import music_manager
+from ZeMusic.core.command_handler import tdlib_command_handler
 from ZeMusic.plugins.owner.owner_panel import owner_panel
 
 class ZeMusicBot:
@@ -51,6 +52,9 @@ class ZeMusicBot:
             # تحميل المديرين من قاعدة البيانات
             await self._load_sudoers()
             
+            # إعداد معالج الأوامر مع TDLib
+            await self._setup_command_handler()
+            
             # بدء المهام الدورية
             await self._start_periodic_tasks()
             
@@ -83,6 +87,31 @@ class ZeMusicBot:
             LOGGER(__name__).info(f"👨‍💼 تم تحميل {len(sudoers)} مدير")
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في تحميل المديرين: {e}")
+    
+    async def _setup_command_handler(self):
+        """إعداد معالج الأوامر مع TDLib"""
+        try:
+            # ربط معالج الأوامر مع TDLib
+            if tdlib_manager.bot_client:
+                # إعداد معالج الرسائل
+                def message_handler(update):
+                    asyncio.create_task(tdlib_command_handler.handle_message(update))
+                
+                # إعداد معالج الcallback queries
+                def callback_handler(update):
+                    if update.get('@type') == 'updateNewCallbackQuery':
+                        asyncio.create_task(tdlib_command_handler.handle_callback_query(update))
+                
+                # تسجيل المعالجات في TDLib
+                tdlib_manager.bot_client.add_update_handler('updateNewMessage', message_handler)
+                tdlib_manager.bot_client.add_update_handler('updateNewCallbackQuery', callback_handler)
+                
+                LOGGER(__name__).info("🎛️ تم إعداد معالج الأوامر مع TDLib")
+            else:
+                LOGGER(__name__).warning("⚠️ البوت الرئيسي غير متصل - لن يتم إعداد معالج الأوامر")
+                
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في إعداد معالج الأوامر: {e}")
     
     async def _start_periodic_tasks(self):
         """بدء المهام الدورية"""
