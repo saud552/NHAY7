@@ -10,6 +10,7 @@ from ZeMusic.plugins.owner.owner_panel import owner_panel
 from ZeMusic.plugins.owner.admin_panel import admin_panel
 from ZeMusic.plugins.owner.stats_handler import stats_handler
 from ZeMusic.plugins.owner.broadcast_handler import broadcast_handler
+from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
 
 class BasicCommandHandler:
     """معالج الأوامر الأساسية"""
@@ -442,6 +443,28 @@ class BasicCommandHandler:
                     result = await broadcast_handler.cancel_setup(user_id)
                 else:
                     result = await broadcast_handler.show_broadcast_menu(user_id)
+            
+            elif callback_data.startswith('fs_'):
+                # معالجة أزرار الاشتراك الإجباري
+                if callback_data == 'fs_enable':
+                    result = await force_subscribe_handler.enable_force_subscribe(user_id)
+                elif callback_data == 'fs_disable':
+                    result = await force_subscribe_handler.disable_force_subscribe(user_id)
+                elif callback_data == 'fs_setup_channel':
+                    result = await force_subscribe_handler.setup_channel(user_id)
+                elif callback_data == 'fs_stats':
+                    result = await force_subscribe_handler.get_force_subscribe_stats(user_id)
+                elif callback_data == 'fs_check_bot':
+                    # إعادة فحص حالة البوت
+                    await force_subscribe_handler.load_settings()
+                    result = await force_subscribe_handler.show_force_subscribe_menu(user_id)
+                else:
+                    result = await force_subscribe_handler.show_force_subscribe_menu(user_id)
+            
+            elif callback_data == 'check_subscription':
+                # معالجة فحص الاشتراك للمستخدم
+                user_name = query.from_user.first_name or "المستخدم"
+                result = await force_subscribe_handler.handle_subscription_check(user_id, user_name)
             
             elif callback_data.startswith('owner_'):
                 # معالجة أزرار إدارة الحسابات المساعدة

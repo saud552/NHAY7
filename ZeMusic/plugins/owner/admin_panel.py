@@ -30,12 +30,12 @@ class AdminPanel:
                 {'text': '📢 الإذاعة', 'callback_data': 'admin_broadcast'}
             ],
             [
-                {'text': '📱 إدارة الحسابات المساعدة', 'callback_data': 'admin_assistants'},
-                {'text': '🔧 صيانة النظام', 'callback_data': 'admin_maintenance'}
+                {'text': '🔐 الاشتراك الإجباري', 'callback_data': 'admin_force_subscribe'},
+                {'text': '📱 إدارة الحسابات المساعدة', 'callback_data': 'admin_assistants'}
             ],
             [
-                {'text': '👥 إدارة المستخدمين', 'callback_data': 'admin_users'},
-                {'text': '💬 إدارة المجموعات', 'callback_data': 'admin_groups'}
+                {'text': '💬 إدارة المجموعات', 'callback_data': 'admin_groups'},
+                {'text': '🔧 صيانة النظام', 'callback_data': 'admin_maintenance'}
             ],
             [
                 {'text': '⚙️ إعدادات البوت', 'callback_data': 'admin_settings'},
@@ -84,6 +84,10 @@ class AdminPanel:
         elif callback_data == 'admin_broadcast':
             from ZeMusic.plugins.owner.broadcast_handler import broadcast_handler
             return await broadcast_handler.show_broadcast_menu(user_id)
+            
+        elif callback_data == 'admin_force_subscribe':
+            from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
+            return await force_subscribe_handler.show_force_subscribe_menu(user_id)
             
         elif callback_data == 'admin_assistants':
             from ZeMusic.plugins.owner.owner_panel import owner_panel

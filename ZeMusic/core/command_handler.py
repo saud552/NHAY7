@@ -66,6 +66,35 @@ class TDLibCommandHandler:
                 if text.startswith('/'):
                     command = text.split()[0].lower()
                     if command in self.commands:
+                        # فحص الاشتراك الإجباري قبل تنفيذ الأمر
+                        # (لا ينطبق على أوامر المطور)
+                        if command not in ['/admin', '/owner'] and sender_id != config.OWNER_ID:
+                            from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
+                            is_subscribed = await force_subscribe_handler.check_user_subscription(sender_id)
+                            
+                            if not is_subscribed:
+                                # إرسال رسالة طلب الاشتراك
+                                user_name = "المستخدم"  # يمكن تحسين هذا للحصول على الاسم الحقيقي
+                                subscription_msg = await force_subscribe_handler.get_subscription_message(user_name)
+                                
+                                # إرسال الرسالة مع الأزرار
+                                bot_client = tdlib_manager.bot_client
+                                if bot_client and bot_client.is_connected:
+                                    # تحويل keyboard للتنسيق المناسب
+                                    keyboard = self._convert_keyboard_for_subscription(subscription_msg['keyboard'])
+                                    await bot_client.client.call_method('sendMessage', {
+                                        'chat_id': chat_id,
+                                        'input_message_content': {
+                                            '@type': 'inputMessageText',
+                                            'text': {
+                                                '@type': 'formattedText',
+                                                'text': subscription_msg['message']
+                                            }
+                                        },
+                                        'reply_markup': keyboard
+                                    })
+                                return
+                        
                         await self.commands[command](mock_update, None)
                         return
                 
@@ -124,6 +153,21 @@ class TDLibCommandHandler:
                     
                     if result.get('success'):
                         await self._send_reply(mock_update, result)
+                    return
+            
+            # التحقق من جلسات إعداد الاشتراك الإجباري
+            from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
+            # (يمكن إضافة آلية لحفظ حالة الانتظار لإعداد القناة)
+            # في هذا المثال، سنفترض أن النص هو رابط قناة إذا بدأ بـ https://t.me أو @
+            text = mock_update.message.text
+            if (user_id == config.OWNER_ID and 
+                (text.startswith('https://t.me/') or text.startswith('@') or 
+                 ('t.me/' in text and len(text.strip()) > 5))):
+                
+                # محاولة معالجة كإعداد قناة
+                result = await force_subscribe_handler.process_channel_setup(user_id, text)
+                if result.get('success'):
+                    await self._send_reply(mock_update, result)
                     return
             
             # يمكن إضافة معالجات أخرى للرسائل العادية هنا
@@ -359,11 +403,48 @@ class TDLibCommandHandler:
         try:
             if result.get('success') and result.get('message'):
                 await update.message.reply_text(
-                    result['message'],
-                    parse_mode=result.get('parse_mode', 'Markdown')
-                )
+                                          result['message'],
+                      parse_mode=result.get('parse_mode', 'Markdown')
+                  )
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في إرسال الرد: {e}")
+    
+    def _convert_keyboard_for_subscription(self, keyboard_data):
+        """تحويل keyboard للتنسيق المناسب لرسالة الاشتراك"""
+        if not keyboard_data:
+            return None
+        
+        rows = []
+        for row in keyboard_data:
+            buttons = []
+            for button in row:
+                if button.get('url'):
+                    # زر رابط
+                    buttons.append({
+                        '@type': 'inlineKeyboardButton',
+                        'text': button['text'],
+                        'type': {
+                            '@type': 'inlineKeyboardButtonTypeUrl',
+                            'url': button['url']
+                        }
+                    })
+                elif button.get('callback_data'):
+                    # زر callback
+                    buttons.append({
+                        '@type': 'inlineKeyboardButton',
+                        'text': button['text'],
+                        'type': {
+                            '@type': 'inlineKeyboardButtonTypeCallback',
+                            'data': button['callback_data']
+                        }
+                    })
+            if buttons:
+                rows.append(buttons)
+        
+        return {
+            '@type': 'replyMarkupInlineKeyboard',
+            'rows': rows
+        } if rows else None
 
 # إنشاء مثيل عام لمعالج الأوامر
 tdlib_command_handler = TDLibCommandHandler()

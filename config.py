@@ -14,6 +14,7 @@ API_HASH = getenv("API_HASH", "986cb4ba434870a62fe96da3b5f6d411")
 BOT_TOKEN = getenv("BOT_TOKEN", "7686060382:AAH3wBx0cwW0X7rRVg14XlOhourcG3WgTt0")
 BOT_NAME = getenv("BOT_NAME", "لارين")
 BOT_USERNAME = getenv("BOT_USERNAME", "")
+BOT_ID = getenv("BOT_ID", "7686060382")  # معرف البوت الرقمي
 
 # ============================================
 # إعدادات قاعدة البيانات - SQLite
