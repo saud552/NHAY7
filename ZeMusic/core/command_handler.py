@@ -62,21 +62,43 @@ class TDLibCommandHandler:
                 # تحويل للتنسيق المتوافق مع الأوامر الموجودة
                 mock_update = self._create_mock_update(text, chat_id, sender_id, message_id, message)
                 
-                # فحص الاشتراك الإجباري لجميع الرسائل والمحادثات (ما عدا أوامر المطور)
-                should_check_subscription = True
+                # فحص الاشتراك الإجباري بناءً على نوع المحادثة
+                should_check_subscription = False
                 
-                # استثناءات فحص الاشتراك
+                # الحصول على نوع المحادثة
+                chat_type = message.get('chat_id', 0)
+                is_private_chat = chat_id > 0  # المحادثات الخاصة لها معرف موجب
+                is_group_or_channel = chat_id < 0  # المجموعات والقنوات لها معرف سالب
+                
+                # قواعد فحص الاشتراك:
                 if sender_id == config.OWNER_ID:
+                    # المطور معفي دائماً
                     should_check_subscription = False
                 elif text.startswith('/admin') or text.startswith('/owner'):
+                    # أوامر الإدارة معفية دائماً
                     should_check_subscription = False
-                elif text == '/start':  # السماح بـ /start للترحيب
+                elif text == '/start':
+                    # أمر البدء معفي دائماً للترحيب
                     should_check_subscription = False
-                
-                # ملاحظة: الفحص يطبق على:
-                # 1. الرسائل الخاصة مع البوت
-                # 2. الرسائل في المجموعات والقنوات
-                # 3. جميع أنواع التفاعل مع البوت
+                elif is_private_chat:
+                    # في المحادثات الخاصة: فحص جميع الرسائل
+                    should_check_subscription = True
+                elif is_group_or_channel:
+                    # في المجموعات والقنوات: فحص فقط عند استخدام البوت
+                    is_bot_command = text.startswith('/')
+                    is_bot_mention = f"@{tdlib_manager.bot_client.username}" in text if tdlib_manager.bot_client and hasattr(tdlib_manager.bot_client, 'username') else False
+                    is_reply_to_bot = message.get('reply_to_message_id') and message.get('reply_to_message', {}).get('sender_id', {}).get('user_id') == int(config.BOT_ID)
+                    
+                    # كلمات مفتاحية تدل على استخدام البوت
+                    bot_keywords = [
+                        'شغل', 'تشغيل', 'play', 'ايقاف', 'وقف', 'stop', 'pause', 'resume',
+                        'تخطي', 'skip', 'next', 'تالي', 'قائمة', 'queue', 'موسيقى', 'music',
+                        'صوت', 'audio', 'video', 'فيديو', 'بحث', 'search'
+                    ]
+                    is_using_bot_keywords = any(keyword in text.lower() for keyword in bot_keywords)
+                    
+                    # فحص الاشتراك فقط إذا كان المستخدم يتفاعل مع البوت
+                    should_check_subscription = is_bot_command or is_bot_mention or is_reply_to_bot or is_using_bot_keywords
                 
                 # تنفيذ فحص الاشتراك إذا كان مطلوباً
                 if should_check_subscription:
@@ -198,6 +220,54 @@ class TDLibCommandHandler:
             message_id = callback_query.get('message', {}).get('id')
             chat_id = callback_query.get('message', {}).get('chat_id')
             callback_query_id = callback_query.get('id')
+            
+            # فحص الاشتراك الإجباري للcallback queries
+            should_check_subscription = True
+            
+            # استثناءات فحص الاشتراك
+            if sender_id == config.OWNER_ID:
+                should_check_subscription = False
+            elif data.startswith('admin_') or data.startswith('owner_'):
+                should_check_subscription = False
+            elif data == 'check_subscription':  # زر التحقق من الاشتراك نفسه
+                should_check_subscription = False
+            
+            # تنفيذ فحص الاشتراك إذا كان مطلوباً
+            if should_check_subscription:
+                from ZeMusic.plugins.owner.force_subscribe_handler import force_subscribe_handler
+                is_subscribed = await force_subscribe_handler.check_user_subscription(sender_id)
+                
+                if not is_subscribed:
+                    # الرد السريع بالاشتراك المطلوب
+                    await self._answer_callback_query(callback_query_id, "🔐 يجب الاشتراك في القناة أولاً!", True)
+                    
+                    # إرسال رسالة الاشتراك
+                    try:
+                        bot_client = tdlib_manager.bot_client
+                        if bot_client and bot_client.is_connected:
+                            user_info = await bot_client.client.call_method('getUser', {'user_id': sender_id})
+                            user_name = user_info.get('first_name', 'المستخدم')
+                    except:
+                        user_name = "المستخدم"
+                    
+                    subscription_msg = await force_subscribe_handler.get_subscription_message(user_name)
+                    
+                    # إرسال رسالة الاشتراك
+                    bot_client = tdlib_manager.bot_client
+                    if bot_client and bot_client.is_connected:
+                        keyboard = self._convert_keyboard_for_subscription(subscription_msg['keyboard'])
+                        await bot_client.client.call_method('sendMessage', {
+                            'chat_id': chat_id,
+                            'input_message_content': {
+                                '@type': 'inputMessageText',
+                                'text': {
+                                    '@type': 'formattedText',
+                                    'text': subscription_msg['message']
+                                }
+                            },
+                            'reply_markup': keyboard
+                        })
+                    return
             
             # الرد السريع على الcallback
             await self._answer_callback_query(callback_query_id)
