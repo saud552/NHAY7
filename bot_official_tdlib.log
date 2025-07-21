@@ -28,3 +28,9 @@ nohup: ignoring input
 [21-Jul-25 05:24:12 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
 [21-Jul-25 05:24:12 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
 [21-Jul-25 05:24:47 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: start_advanced_real_tdlib_assistant from user 7345311113
+[21-Jul-25 05:25:02 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: cancel_real_tdlib_session from user 7345311113
+[21-Jul-25 05:25:11 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: owner_assistants from user 7345311113
+[21-Jul-25 05:25:12 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: add_assistant from user 7345311113
+[21-Jul-25 05:25:16 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: use_real_tdlib from user 7345311113
+[21-Jul-25 05:25:22 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: start_advanced_real_tdlib_assistant from user 7345311113
+[21-Jul-25 05:25:26 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: cancel_real_tdlib_session from user 7345311113
