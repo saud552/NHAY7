@@ -186,7 +186,7 @@ LANGUAGE = "ar"
 LANGS = "ar"
 
 # Get this value from @FallenxBot on Telegram by /id
-OWNER_ID = int(getenv("OWNER_ID", 5901732027))
+OWNER_ID = int(getenv("OWNER_ID", "7345311113"))
 
 # ============================================
 # إعدادات Heroku (اختياري)
