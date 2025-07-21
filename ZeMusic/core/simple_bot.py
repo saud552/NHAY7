@@ -1,7 +1,8 @@
 import asyncio
 import logging
 from typing import Optional, Dict, Any
-from telegram import Bot, Update
+from telegram import Update
+from telegram.ext import Application
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
 import config
 from ZeMusic.logging import LOGGER

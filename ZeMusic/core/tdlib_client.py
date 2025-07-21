@@ -5,10 +5,12 @@ import os
 import random
 import time
 from typing import Dict, List, Optional, Any
-# المكتبة ستكون متاحة عند التثبيت الفعلي
+# استخدام طبقة توافق بدلاً من TDLib المعطل
+TDLIB_IMPORTED = False
 try:
     from telegram.client import Telegram
     from telegram.api import API
+    TDLIB_IMPORTED = True
 except ImportError:
     # وضع تجريبي للتطوير
     class Telegram:
@@ -77,8 +79,8 @@ class TDLibClient:
     async def start(self) -> bool:
         """بدء العميل"""
         try:
-            # التحقق من وجود TDLib
-            if hasattr(Telegram, 'add_message_handler'):
+            # التحقق من وجود TDLib الحقيقي
+            if TDLIB_IMPORTED and hasattr(Telegram, 'add_message_handler'):
                 self.client = Telegram(**self.client_config)
                 self.client.add_message_handler(self._handle_message)
                 self.client.add_update_handler('updateUser', self._handle_user_update)
@@ -98,8 +100,9 @@ class TDLibClient:
                 LOGGER(__name__).info(f"✅ تم تشغيل العميل {'البوت' if self.is_bot else f'المساعد {self.assistant_id}'}")
                 return True
             else:
-                # TDLib غير متاح أو غير مكتمل
-                raise AttributeError("TDLib not properly installed")
+                # استخدام النظام البديل - لا نرمي خطأ
+                LOGGER(__name__).warning("⚠️ TDLib غير متاح - استخدام النظام البديل")
+                return False
             
         except Exception as e:
             LOGGER(__name__).error(f"❌ فشل تشغيل العميل: {e}")

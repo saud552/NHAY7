@@ -667,3 +667,244 @@
 [21-Jul-25 03:24:21 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
 [21-Jul-25 03:24:21 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
 [21-Jul-25 03:24:21 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:27:03 - INFO] - __main__ - 🔔 تم استلام إشارة 15
+[21-Jul-25 03:27:04 - INFO] - __main__ - 🛑 بدء إيقاف البوت...
+[21-Jul-25 03:27:04 - INFO] - __main__ - 🎵 إيقاف الجلسات النشطة...
+[21-Jul-25 03:27:04 - INFO] - __main__ - 📱 إيقاف العملاء...
+[21-Jul-25 03:27:04 - INFO] - __main__ - 🛑 بدء إيقاف البوت...
+[21-Jul-25 03:27:04 - INFO] - __main__ - 🎵 إيقاف الجلسات النشطة...
+[21-Jul-25 03:27:04 - INFO] - __main__ - 📱 إيقاف العملاء...
+[21-Jul-25 03:27:05 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:27:05 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:27:05 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:27:05 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:27:05 - INFO] - ZeMusic.core.database - ✅ تم إنشاء قاعدة البيانات SQLite بنجاح
+[21-Jul-25 03:27:05 - INFO] - ZeMusic.core.database - ✅ نظام قاعدة البيانات TDLib جاهز للاستخدام
+[21-Jul-25 03:27:05 - INFO] - ZeMusic.plugins.owner.force_subscribe_handler - تم تحميل إعدادات الاشتراك الإجباري - مفعل: False
+[21-Jul-25 03:27:05 - INFO] - ZeMusic.plugins.owner.assistants_handler - تم تحميل إعدادات المغادرة التلقائية - مفعل: False
+[21-Jul-25 03:27:05 - INFO] - __main__ - 🚀 بدء تهيئة ZeMusic Bot...
+[21-Jul-25 03:27:05 - INFO] - __main__ - 📊 تهيئة قاعدة البيانات...
+[21-Jul-25 03:27:05 - INFO] - __main__ - 📊 قاعدة البيانات جاهزة - 1 مستخدم، 1 مجموعة
+[21-Jul-25 03:27:05 - INFO] - __main__ - 🤖 تشغيل البوت الرئيسي...
+[21-Jul-25 03:27:05 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+[21-Jul-25 03:27:05 - WARNING] - ZeMusic.core.tdlib_client - ⚠️ TDLib غير متاح: TDLib not properly installed
+[21-Jul-25 03:27:05 - INFO] - telegram.ext.Application - Application started
+[21-Jul-25 03:27:06 - INFO] - ZeMusic.core.simple_bot - ✅ تم تشغيل البوت البسيط بنجاح
+[21-Jul-25 03:27:06 - INFO] - ZeMusic.core.tdlib_client - 🤖 تم تشغيل البوت البسيط بنجاح
+[21-Jul-25 03:27:06 - INFO] - __main__ - 📱 تحميل الحسابات المساعدة...
+[21-Jul-25 03:27:06 - INFO] - ZeMusic.core.tdlib_client - 📱 تم تحميل 0 حساب مساعد من قاعدة البيانات
+[21-Jul-25 03:27:06 - WARNING] - __main__ - ⚠️ لا توجد حسابات مساعدة - البوت سيعمل بوظائف محدودة
+[21-Jul-25 03:27:06 - INFO] - __main__ - 👨‍💼 تم تحميل 0 مدير
+[21-Jul-25 03:27:06 - INFO] - __main__ - 🎛️ معالجات الأوامر جاهزة مع python-telegram-bot
+[21-Jul-25 03:27:06 - INFO] - __main__ - ⏰ تم بدء المهام الدورية
+[21-Jul-25 03:27:06 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
+[21-Jul-25 03:27:06 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
+[21-Jul-25 03:27:09 - ERROR] - telegram.ext.Updater - Error while calling `get_updates` one more time to mark all fetched updates as read: %s. Suppressing error to ensure graceful shutdown. When polling for updates is restarted, updates may be fetched again. Please adjust timeouts via `ApplicationBuilder` or the parameter `get_updates_request` of `Bot`.
+Traceback (most recent call last):
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_async/connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 136, in handle_async_request
+    raise exc
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_async/http11.py", line 217, in _receive_event
+    data = await self._network_stream.read(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.READ_NUM_BYTES, timeout=timeout
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_backends/anyio.py", line 32, in read
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 276, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/workspace/venv/lib/python3.13/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ReadTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/ext/_updater.py", line 438, in _get_updates_cleanup
+    await self.bot.get_updates(
+    ...<8 lines>...
+    )
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 649, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/_bot.py", line 4366, in get_updates
+    await self._post(
+    ^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    ),
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/_bot.py", line 623, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/ext/_extbot.py", line 355, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/_bot.py", line 652, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 201, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/request/_baserequest.py", line 333, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+    )
+    ^
+  File "/workspace/venv/lib/python3.13/site-packages/telegram/request/_httpxrequest.py", line 293, in do_request
+    raise TimedOut from err
+telegram.error.TimedOut: Timed out
+[21-Jul-25 03:27:09 - INFO] - telegram.ext.Application - Application is stopping. This might take a moment.
+[21-Jul-25 03:27:09 - ERROR] - ZeMusic.core.simple_bot - خطأ في إيقاف البوت البسيط: This Updater is not running!
+[21-Jul-25 03:27:09 - INFO] - ZeMusic.core.tdlib_client - 🛑 تم إيقاف جميع العملاء
+[21-Jul-25 03:27:09 - INFO] - __main__ - ✅ تم إيقاف البوت بنجاح
+[21-Jul-25 03:27:09 - INFO] - telegram.ext.Application - Application.stop() complete
+[21-Jul-25 03:28:14 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:28:14 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:28:14 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:28:14 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:28:14 - ERROR] - ZeMusic.core.real_tdlib_assistant_manager - ❌ TDLib غير متاح - python-telegram غير مثبت: cannot import name 'VERSION' from 'telegram' (/workspace/venv/lib/python3.13/site-packages/telegram/__init__.py)
+[21-Jul-25 03:28:14 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية
+[21-Jul-25 03:31:11 - INFO] - __main__ - 🔔 تم استلام إشارة 15
+[21-Jul-25 03:31:11 - INFO] - __main__ - 🛑 بدء إيقاف البوت...
+[21-Jul-25 03:31:11 - INFO] - __main__ - 🎵 إيقاف الجلسات النشطة...
+[21-Jul-25 03:31:11 - INFO] - __main__ - 📱 إيقاف العملاء...
+[21-Jul-25 03:31:11 - INFO] - __main__ - 🛑 بدء إيقاف البوت...
+[21-Jul-25 03:31:11 - INFO] - __main__ - 🎵 إيقاف الجلسات النشطة...
+[21-Jul-25 03:31:11 - INFO] - __main__ - 📱 إيقاف العملاء...
+[21-Jul-25 03:31:12 - INFO] - telegram.ext.Application - Application is stopping. This might take a moment.
+[21-Jul-25 03:31:12 - ERROR] - ZeMusic.core.simple_bot - خطأ في إيقاف البوت البسيط: This Updater is not running!
+[21-Jul-25 03:31:12 - INFO] - ZeMusic.core.tdlib_client - 🛑 تم إيقاف جميع العملاء
+[21-Jul-25 03:31:12 - INFO] - __main__ - ✅ تم إيقاف البوت بنجاح
+[21-Jul-25 03:31:12 - INFO] - telegram.ext.Application - Application.stop() complete
+[21-Jul-25 03:31:13 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:31:13 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:31:13 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:31:13 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:31:13 - INFO] - ZeMusic.core.database - ✅ تم إنشاء قاعدة البيانات SQLite بنجاح
+[21-Jul-25 03:31:13 - INFO] - ZeMusic.core.database - ✅ نظام قاعدة البيانات TDLib جاهز للاستخدام
+[21-Jul-25 03:31:13 - INFO] - ZeMusic.plugins.owner.force_subscribe_handler - تم تحميل إعدادات الاشتراك الإجباري - مفعل: False
+[21-Jul-25 03:31:13 - INFO] - ZeMusic.plugins.owner.assistants_handler - تم تحميل إعدادات المغادرة التلقائية - مفعل: False
+[21-Jul-25 03:31:13 - INFO] - __main__ - 🚀 بدء تهيئة ZeMusic Bot...
+[21-Jul-25 03:31:13 - INFO] - __main__ - 📊 تهيئة قاعدة البيانات...
+[21-Jul-25 03:31:13 - INFO] - __main__ - 📊 قاعدة البيانات جاهزة - 1 مستخدم، 1 مجموعة
+[21-Jul-25 03:31:13 - INFO] - __main__ - 🤖 تشغيل البوت الرئيسي...
+[21-Jul-25 03:31:13 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: name 'TDLIB_IMPORTED' is not defined
+[21-Jul-25 03:31:13 - WARNING] - ZeMusic.core.tdlib_client - ⚠️ TDLib غير متاح: name 'TDLIB_IMPORTED' is not defined
+[21-Jul-25 03:31:13 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل في تشغيل البوت: cannot import name 'Bot' from 'telegram' (unknown location)
+[21-Jul-25 03:31:13 - ERROR] - __main__ - ❌ فشل في تشغيل البوت الرئيسي
+[21-Jul-25 03:32:01 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:32:01 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:32:01 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:32:01 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:33:12 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:33:12 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:33:12 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:33:12 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:33:12 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ النظام الحقيقي المبسط متاح ومُثبت
+[21-Jul-25 03:33:12 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية المبسطة
+[21-Jul-25 03:33:28 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:33:28 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:33:28 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:33:28 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:33:28 - INFO] - ZeMusic.core.database - ✅ تم إنشاء قاعدة البيانات SQLite بنجاح
+[21-Jul-25 03:33:28 - INFO] - ZeMusic.core.database - ✅ نظام قاعدة البيانات TDLib جاهز للاستخدام
+[21-Jul-25 03:33:28 - INFO] - ZeMusic.plugins.owner.force_subscribe_handler - تم تحميل إعدادات الاشتراك الإجباري - مفعل: False
+[21-Jul-25 03:33:28 - INFO] - ZeMusic.plugins.owner.assistants_handler - تم تحميل إعدادات المغادرة التلقائية - مفعل: False
+[21-Jul-25 03:33:28 - INFO] - __main__ - 🚀 بدء تهيئة ZeMusic Bot...
+[21-Jul-25 03:33:28 - INFO] - __main__ - 📊 تهيئة قاعدة البيانات...
+[21-Jul-25 03:33:28 - INFO] - __main__ - 📊 قاعدة البيانات جاهزة - 1 مستخدم، 1 مجموعة
+[21-Jul-25 03:33:28 - INFO] - __main__ - 🤖 تشغيل البوت الرئيسي...
+[21-Jul-25 03:33:28 - WARNING] - ZeMusic.core.tdlib_client - ⚠️ TDLib غير متاح - استخدام النظام البديل
+[21-Jul-25 03:33:29 - INFO] - telegram.ext.Application - Application started
+[21-Jul-25 03:33:29 - INFO] - ZeMusic.core.simple_bot - ✅ تم تشغيل البوت البسيط بنجاح
+[21-Jul-25 03:33:29 - INFO] - ZeMusic.core.tdlib_client - 🤖 تم تشغيل البوت البسيط بنجاح
+[21-Jul-25 03:33:29 - INFO] - __main__ - 📱 تحميل الحسابات المساعدة...
+[21-Jul-25 03:33:29 - INFO] - ZeMusic.core.tdlib_client - 📱 تم تحميل 0 حساب مساعد من قاعدة البيانات
+[21-Jul-25 03:33:29 - WARNING] - __main__ - ⚠️ لا توجد حسابات مساعدة - البوت سيعمل بوظائف محدودة
+[21-Jul-25 03:33:29 - INFO] - __main__ - 👨‍💼 تم تحميل 0 مدير
+[21-Jul-25 03:33:29 - INFO] - __main__ - 🎛️ معالجات الأوامر جاهزة مع python-telegram-bot
+[21-Jul-25 03:33:29 - INFO] - __main__ - ⏰ تم بدء المهام الدورية
+[21-Jul-25 03:33:29 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
+[21-Jul-25 03:33:29 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
