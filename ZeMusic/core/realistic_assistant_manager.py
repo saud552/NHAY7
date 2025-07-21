@@ -651,19 +651,23 @@ class RealisticAssistantManager:
             
             # إرسال رسالة النجاح
             username_text = f"@{user_info.get('username')}" if user_info.get('username') else "غير محدد"
+            first_name = user_info.get('first_name', '')
+            last_name = user_info.get('last_name', '')
+            full_name = f"{first_name} {last_name}".strip()
             
-            await update.message.reply_text(
-                f"✅ **تم إضافة الحساب المساعد بنجاح!**\n\n"
-                f"📱 **الهاتف:** `{phone}`\n"
-                f"👤 **الاسم:** {user_info.get('first_name', '')} {user_info.get('last_name', '')}\n"
-                f"🆔 **المعرف:** {user_info['id']}\n"
-                f"👤 **اليوزر:** {username_text}\n"
-                f"📱 **الجهاز:** {device['device_model']}\n"
-                f"⚙️ **النظام:** {device['system_version']}\n"
-                f"📲 **التطبيق:** {device['app_name']} {device['app_version']}\n\n"
-                f"🎯 **الحساب جاهز للاستخدام في البوت!**",
-                parse_mode='Markdown'
-            )
+            success_message = f"""✅ تم إضافة الحساب المساعد بنجاح!
+
+📱 الهاتف: {phone}
+👤 الاسم: {full_name}
+🆔 المعرف: {user_info['id']}
+👤 اليوزر: {username_text}
+📱 الجهاز: {device['device_model']}
+⚙️ النظام: {device['system_version']}
+📲 التطبيق: {device['app_name']} {device['app_version']}
+
+🎯 الحساب جاهز للاستخدام في البوت!"""
+            
+            await update.message.reply_text(success_message)
             
             # تنظيف البيانات المؤقتة
             if user_id in self.pending_sessions:
