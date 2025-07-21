@@ -1829,3 +1829,9 @@ telegram.error.TimedOut: Timed out
 [21-Jul-25 05:18:42 - INFO] - __main__ - ⏰ تم بدء المهام الدورية
 [21-Jul-25 05:18:42 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
 [21-Jul-25 05:18:42 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
+[21-Jul-25 05:19:35 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: owner_assistants from user 7345311113
+[21-Jul-25 05:19:36 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: add_assistant from user 7345311113
+[21-Jul-25 05:19:38 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: use_real_tdlib from user 7345311113
+[21-Jul-25 05:19:39 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: start_advanced_real_tdlib_assistant from user 7345311113
+[21-Jul-25 05:19:45 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: use_default_api from user 7345311113
+[21-Jul-25 05:19:45 - INFO] - ZeMusic.core.proper_tdlib_client - 🚀 TDLib Client created with ID: 1
