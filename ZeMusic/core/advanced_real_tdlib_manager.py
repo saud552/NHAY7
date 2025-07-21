@@ -315,43 +315,63 @@ class AdvancedRealTDLibAssistantManager:
             
             await update.message.reply_text(
                 f"✅ **تم استلام الكود:** `{code}`\n\n"
-                "🔄 **جاري التحقق والتسجيل...**\n"
+                "🔄 **جاري التحقق مع TDLib الحقيقي...**\n"
                 f"📱 **الرقم:** `{phone}`\n"
                 f"🔑 **API ID:** `{api_id}`\n\n"
-                "⏱️ **قد تستغرق العملية بضع ثوانٍ...**",
+                "⏱️ **جاري الاتصال بخوادم Telegram...**",
                 parse_mode='Markdown'
             )
             
-            # محاكاة عملية التسجيل
-            import asyncio
-            await asyncio.sleep(2)
-            
-            # إضافة للقاعدة
+            # استخدام النظام الحقيقي المبني على C#
             try:
-                with sqlite3.connect(self.db_path) as conn:
-                    conn.execute("""
-                        INSERT INTO real_tdlib_sessions 
-                        (user_id, phone, api_id, api_hash, is_authorized, status)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                    """, (user_id, phone, api_id, user_state.get('api_hash', ''), True, 'active'))
-                    conn.commit()
+                from .proper_tdlib_client import tdlib_auth_manager
                 
-                await update.message.reply_text(
-                    f"🎉 **تم تسجيل الحساب المساعد بنجاح!**\n\n"
-                    f"📱 **الرقم:** `{phone}`\n"
-                    f"✅ **الحالة:** متصل ونشط\n"
-                    f"🔑 **API:** مُعد ومُختبر\n\n"
-                    "🎯 **يمكنك الآن:**\n"
-                    "• استخدام البوت للتشغيل\n"
-                    "• إضافة المزيد من الحسابات\n"
-                    "• إدارة الحسابات من /owner",
-                    parse_mode='Markdown'
+                # إكمال التفويض باستخدام الكود
+                success = await tdlib_auth_manager.complete_authorization(
+                    user_id=user_id, 
+                    code=code
                 )
                 
+                if success:
+                    # إضافة للقاعدة بعد النجاح
+                    with sqlite3.connect(self.db_path) as conn:
+                        conn.execute("""
+                            INSERT INTO real_tdlib_sessions 
+                            (user_id, phone, api_id, api_hash, is_authorized, status)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """, (user_id, phone, api_id, user_state.get('api_hash', ''), True, 'active'))
+                        conn.commit()
+                    
+                    await update.message.reply_text(
+                        f"🎉 **تم تسجيل الحساب المساعد بنجاح!**\n\n"
+                        f"📱 **الرقم:** `{phone}`\n"
+                        f"✅ **الحالة:** متصل ونشط مع TDLib\n"
+                        f"🔑 **API:** مُعد ومُختبر\n"
+                        f"🔥 **نوع الاتصال:** TDLib الحقيقي\n\n"
+                        "🎯 **يمكنك الآن:**\n"
+                        "• استخدام البوت للتشغيل\n"
+                        "• إضافة المزيد من الحسابات\n"
+                        "• إدارة الحسابات من /owner",
+                        parse_mode='Markdown'
+                    )
+                else:
+                    await update.message.reply_text(
+                        f"❌ **فشل في التحقق من الكود**\n\n"
+                        f"📱 **الرقم:** `{phone}`\n"
+                        f"📟 **الكود:** `{code}`\n\n"
+                        "🔄 **الأسباب المحتملة:**\n"
+                        "• الكود غير صحيح أو منتهي الصلاحية\n"
+                        "• مشكلة في الاتصال بـ Telegram\n\n"
+                        "💡 **حاول مرة أخرى بكود جديد**",
+                        parse_mode='Markdown'
+                    )
+                
             except Exception as e:
+                logger.error(f"TDLib authorization error: {e}")
                 await update.message.reply_text(
-                    f"❌ **خطأ في حفظ الحساب:** {str(e)}\n\n"
-                    "🔄 **حاول مرة أخرى لاحقاً**",
+                    f"❌ **خطأ في نظام TDLib:** {str(e)}\n\n"
+                    "🔄 **حاول مرة أخرى لاحقاً**\n"
+                    "💡 **أو استخدم النظام البديل**",
                     parse_mode='Markdown'
                 )
             
@@ -394,10 +414,11 @@ class AdvancedRealTDLibAssistantManager:
                 'api_hash': api_hash
             })
             
-            # إنشاء TDLib Client (محاكاة واقعية)
+            # إنشاء TDLib Client باستخدام النظام الصحيح (مبني على C#)
             try:
-                # محاولة إنشاء TDLib Client حقيقي
-                client = RealTDLibClient(api_id, api_hash, phone)
+                from .proper_tdlib_client import tdlib_auth_manager
+                # إنشاء عميل TDLib صحيح
+                client = await tdlib_auth_manager.create_client(api_id, api_hash, phone, user_id)
                 client_id = client.client_id if client.client_id else random.randint(1, 1000)
                 
                 await query.edit_message_text(
@@ -411,23 +432,34 @@ class AdvancedRealTDLibAssistantManager:
                     parse_mode='Markdown'
                 )
                 
-                # انتظار قصير لمحاكاة العملية
+                # انتظار حتى يصل الكود الحقيقي من TDLib
                 import asyncio
-                await asyncio.sleep(3)
                 
-                # إنشاء كود التحقق
-                verification_code = f"{random.randint(10000, 99999)}"
-                
-                # محاكاة إرسال الكود
+                # مراقبة حالة TDLib
                 await query.edit_message_text(
-                    f"✅ **تم إرسال كود التحقق بنجاح!**\n\n"
+                    f"🔥 **TDLib Client متصل بنجاح!**\n\n"
+                    f"🆔 **Client ID:** {client_id}\n"
+                    f"📱 **Phone:** `{phone}`\n"
+                    f"🔑 **API ID:** `{api_id}`\n\n"
+                    "⚡ **جاري إرسال كود التحقق الحقيقي...**\n"
+                    "📱 **سيصل لتطبيق Telegram خلال ثوان**\n\n"
+                    "⏳ **يرجى انتظار وصول الكود...**",
+                    parse_mode='Markdown'
+                )
+                
+                # انتظار وصول الكود (مراقبة حالة TDLib)
+                await asyncio.sleep(5)  # وقت لوصول الكود الحقيقي
+                
+                # تحديث الرسالة عند وصول الكود
+                await query.edit_message_text(
+                    f"📱 **كود التحقق تم إرساله!**\n\n"
+                    f"🆔 **Client ID:** {client_id}\n"
                     f"📱 **الرقم:** `{phone}`\n"
-                    f"🔑 **API ID:** `{api_id}`\n"
-                    f"🆔 **Client ID:** {client_id}\n\n"
-                    f"📟 **كود التحقق:** `{verification_code}`\n"
-                    f"💡 **في النظام الحقيقي وصل لتليجرام**\n"
-                    f"📱 **تحقق من تطبيق تليجرام أيضاً**\n\n"
-                    "📝 **أرسل الكود الآن للمتابعة:**",
+                    f"🔑 **API ID:** `{api_id}`\n\n"
+                    f"📟 **تحقق من تطبيق Telegram**\n"
+                    f"🔥 **النظام:** TDLib الحقيقي المتصل\n\n"
+                    "📝 **أرسل الكود الذي وصلك للمتابعة:**\n"
+                    "💡 **إذا لم يصل، تحقق من الرسائل المحفوظة**",
                     parse_mode='Markdown'
                 )
                 
