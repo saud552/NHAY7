@@ -62,6 +62,10 @@ class ZeMusicBot:
             from ZeMusic.core.music_manager import start_cleanup_task
             start_cleanup_task()
             
+            # بدء مهام assistants_handler
+            from ZeMusic.plugins.owner.assistants_handler import assistants_handler
+            await assistants_handler.start_auto_leave_task()
+            
             self.startup_time = asyncio.get_event_loop().time()
             self.is_running = True
             

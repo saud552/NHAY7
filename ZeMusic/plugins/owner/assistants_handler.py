@@ -18,9 +18,13 @@ class AssistantsHandler:
         self.auto_leave_enabled = False
         self.auto_leave_timeout = 300  # 5 دقائق
         self.load_auto_leave_settings()
+        self._auto_leave_task_started = False
         
-        # بدء مهمة المغادرة التلقائية
-        asyncio.create_task(self._auto_leave_task())
+    async def start_auto_leave_task(self):
+        """بدء مهمة المغادرة التلقائية"""
+        if not self._auto_leave_task_started:
+            self._auto_leave_task_started = True
+            asyncio.create_task(self._auto_leave_task())
     
     def load_auto_leave_settings(self):
         """تحميل إعدادات المغادرة التلقائية"""
