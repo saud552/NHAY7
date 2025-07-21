@@ -2,12 +2,9 @@ import asyncio
 import re
 from typing import Dict, Optional, Any
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ContextTypes, ConversationHandler
+from telegram.ext import ContextTypes
 import config
 from ZeMusic.logging import LOGGER
-
-# حالات المحادثة
-PHONE_INPUT, CODE_INPUT, PASSWORD_INPUT = range(3)
 
 class AssistantManager:
     """مدير الحسابات المساعدة مع التحقق التفاعلي"""
@@ -25,7 +22,7 @@ class AssistantManager:
                     "❌ **هذا الأمر للمالك فقط!**",
                     parse_mode='Markdown'
                 )
-                return ConversationHandler.END
+                return
             
             # إنشاء جلسة جديدة
             session_id = f"assistant_{user_id}_{int(asyncio.get_event_loop().time())}"
@@ -65,11 +62,8 @@ class AssistantManager:
                 parse_mode='Markdown'
             )
             
-            return PHONE_INPUT
-            
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في بدء إضافة المساعد: {e}")
-            return ConversationHandler.END
     
     async def handle_phone_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """معالج إدخال رقم الهاتف"""
@@ -88,7 +82,7 @@ class AssistantManager:
                     "🔄 **أرسل الرقم مرة أخرى:**",
                     parse_mode='Markdown'
                 )
-                return PHONE_INPUT
+                return
             
             # حفظ رقم الهاتف وإرسال رمز التحقق
             if user_id in self.pending_sessions:
@@ -98,15 +92,12 @@ class AssistantManager:
                 await self._simulate_send_code(update, phone)
                 
                 self.pending_sessions[user_id]['step'] = 'code'
-                return CODE_INPUT
             else:
                 await update.message.reply_text("❌ جلسة منتهية الصلاحية. ابدأ من جديد.")
-                return ConversationHandler.END
                 
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج الهاتف: {e}")
             await update.message.reply_text("❌ حدث خطأ. حاول مرة أخرى.")
-            return ConversationHandler.END
     
     async def _simulate_send_code(self, update: Update, phone: str):
         """محاكاة إرسال رمز التحقق"""
@@ -151,7 +142,7 @@ class AssistantManager:
                     "🔄 **أرسل الرمز مرة أخرى:**",
                     parse_mode='Markdown'
                 )
-                return CODE_INPUT
+                return
             
             # حفظ الرمز ومحاولة التحقق
             if user_id in self.pending_sessions:
@@ -163,12 +154,10 @@ class AssistantManager:
                 if verification_result == 'success':
                     # نجح التحقق - إضافة الحساب
                     await self._complete_assistant_addition(update, user_id)
-                    return ConversationHandler.END
                 elif verification_result == '2fa_required':
                     # يحتاج تحقق بخطوتين
                     await self._request_2fa_password(update)
                     self.pending_sessions[user_id]['step'] = 'password'
-                    return PASSWORD_INPUT
                 else:
                     # رمز خاطئ
                     await update.message.reply_text(
@@ -177,15 +166,12 @@ class AssistantManager:
                         "📱 تحقق من رسائل SMS مرة أخرى",
                         parse_mode='Markdown'
                     )
-                    return CODE_INPUT
             else:
                 await update.message.reply_text("❌ جلسة منتهية الصلاحية. ابدأ من جديد.")
-                return ConversationHandler.END
                 
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج الرمز: {e}")
             await update.message.reply_text("❌ حدث خطأ في التحقق. حاول مرة أخرى.")
-            return CODE_INPUT
     
     async def _simulate_verify_code(self, update: Update, code: str):
         """محاكاة التحقق من الرمز"""
@@ -238,7 +224,7 @@ class AssistantManager:
                     "🔄 **أرسل كلمة مرور التحقق بخطوتين:**",
                     parse_mode='Markdown'
                 )
-                return PASSWORD_INPUT
+                return
             
             # حفظ كلمة المرور ومحاولة التحقق النهائي
             if user_id in self.pending_sessions:
@@ -248,7 +234,6 @@ class AssistantManager:
                 if await self._simulate_verify_password(update, password):
                     # نجح التحقق - إضافة الحساب
                     await self._complete_assistant_addition(update, user_id)
-                    return ConversationHandler.END
                 else:
                     # كلمة مرور خاطئة
                     await update.message.reply_text(
@@ -257,15 +242,12 @@ class AssistantManager:
                         "💡 تأكد من كتابتها بدقة",
                         parse_mode='Markdown'
                     )
-                    return PASSWORD_INPUT
             else:
                 await update.message.reply_text("❌ جلسة منتهية الصلاحية. ابدأ من جديد.")
-                return ConversationHandler.END
                 
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج كلمة المرور: {e}")
             await update.message.reply_text("❌ حدث خطأ في التحقق. حاول مرة أخرى.")
-            return PASSWORD_INPUT
     
     async def _simulate_verify_password(self, update: Update, password: str):
         """محاكاة التحقق من كلمة مرور التحقق بخطوتين"""
@@ -368,11 +350,8 @@ class AssistantManager:
                 parse_mode='Markdown'
             )
             
-            return ConversationHandler.END
-            
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في إلغاء إضافة المساعد: {e}")
-            return ConversationHandler.END
     
     def _validate_phone(self, phone: str) -> bool:
         """التحقق من صحة رقم الهاتف"""

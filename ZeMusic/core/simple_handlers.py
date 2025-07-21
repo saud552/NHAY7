@@ -227,9 +227,27 @@ class SimpleHandlers:
             LOGGER(__name__).error(f"خطأ في معالج addassistant: {e}")
     
     async def handle_search_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """معالج البحث عن الأغاني"""
+        """معالج البحث عن الأغاني والرسائل التفاعلية"""
         try:
             message_text = update.message.text
+            user_id = update.effective_user.id
+            
+            # التحقق من وجود جلسة إضافة مساعد نشطة
+            from ZeMusic.core.assistant_manager import assistant_manager
+            
+            if user_id in assistant_manager.pending_sessions:
+                session = assistant_manager.pending_sessions[user_id]
+                step = session.get('step')
+                
+                if step == 'phone':
+                    await assistant_manager.handle_phone_input(update, context)
+                    return
+                elif step == 'code':
+                    await assistant_manager.handle_code_input(update, context)
+                    return
+                elif step == 'password':
+                    await assistant_manager.handle_password_input(update, context)
+                    return
             
             # التحقق من وجود كلمة "بحث"
             if not message_text.startswith('بحث'):
