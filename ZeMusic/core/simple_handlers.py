@@ -232,25 +232,74 @@ class SimpleHandlers:
             message_text = update.message.text
             user_id = update.effective_user.id
             
-            # التحقق من وجود جلسة إضافة مساعد نشطة (نظام واقعي)
+            # التحقق من النظام الواقعي الجديد للحسابات المساعدة
             from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
             
-            if user_id in realistic_assistant_manager.pending_sessions:
-                session = realistic_assistant_manager.pending_sessions[user_id]
-                step = session.get('step')
+            # التحقق من حالة المستخدم في النظام الجديد
+            if user_id in realistic_assistant_manager.user_states:
+                user_state = realistic_assistant_manager.user_states[user_id]
+                current_state = user_state.get('state', '')
                 
-                if step == 'phone':
+                if current_state == 'waiting_phone':
                     await realistic_assistant_manager.handle_phone_input(update, context)
                     return
-                elif step == 'code':
+                elif current_state == 'waiting_code':
                     await realistic_assistant_manager.handle_code_input(update, context)
                     return
-                elif step == 'password':
+                elif current_state == 'waiting_password':
                     await realistic_assistant_manager.handle_password_input(update, context)
                     return
             
+            # التحقق من الجلسات المعلقة للتوافق مع النظام القديم
+            if user_id in realistic_assistant_manager.pending_sessions:
+                session_data = realistic_assistant_manager.pending_sessions[user_id]
+                
+                # تحديد الحالة المناسبة بناءً على بيانات الجلسة
+                if 'phone' in session_data and 'session' in session_data:
+                    phone = session_data['phone']
+                    if phone in realistic_assistant_manager.mock_accounts_db:
+                        account_info = realistic_assistant_manager.mock_accounts_db[phone]
+                        if account_info.get('has_2fa', False) and session_data.get('session', {}).get('is_authorized', False):
+                            await realistic_assistant_manager.handle_password_input(update, context)
+                        else:
+                            await realistic_assistant_manager.handle_code_input(update, context)
+                    else:
+                        await realistic_assistant_manager.handle_code_input(update, context)
+                    return
+            
+            # التعامل مع أوامر الإلغاء
+            if message_text.lower() in ['/cancel', 'إلغاء', 'cancel']:
+                # تنظيف أي جلسات معلقة
+                if user_id in realistic_assistant_manager.pending_sessions:
+                    try:
+                        session = realistic_assistant_manager.pending_sessions[user_id].get('session')
+                        if session:
+                            await session.stop()
+                    except:
+                        pass
+                    del realistic_assistant_manager.pending_sessions[user_id]
+                
+                if user_id in realistic_assistant_manager.user_states:
+                    del realistic_assistant_manager.user_states[user_id]
+                
+                await update.message.reply_text(
+                    "❌ **تم إلغاء العملية**\n\n"
+                    "يمكنك البدء من جديد: /owner",
+                    parse_mode='Markdown'
+                )
+                return
+            
             # التحقق من وجود كلمة "بحث"
             if not message_text.startswith('بحث'):
+                # رد على الرسائل العادية في الخاص
+                if update.message.chat.type == 'private':
+                    await update.message.reply_text(
+                        "👋 **مرحباً في ZeMusic Bot!**\n\n"
+                        "🎵 **للبحث عن موسيقى:** `بحث اسم الأغنية`\n"
+                        "⚙️ **لوحة التحكم:** /owner\n"
+                        "❓ **المساعدة:** /help",
+                        parse_mode='Markdown'
+                    )
                 return
             
             # استخراج اسم الأغنية
