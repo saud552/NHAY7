@@ -1,0 +1,14 @@
+
+=== تقرير الأخطاء Mon Jul 21 02:31:03 AM UTC 2025 ===
+⚠️ 02:31:03 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:05 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:07 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:19 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:21 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:23 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:25 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:27 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:29 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:31 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:33 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
+⚠️ 02:31:35 - خطأ جديد: [21-Jul-25 02:30:49 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: TDLib not properly installed
