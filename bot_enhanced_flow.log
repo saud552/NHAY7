@@ -1,0 +1,29 @@
+nohup: ignoring input
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.core.tdlib_client - ✅ TDLib loaded successfully from compiled library
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.core.tdlib_client - 🔥 TDLib Manager initialized with real TDLib support
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 05:01:57 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 05:01:57 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.core.database - ✅ تم إنشاء قاعدة البيانات SQLite بنجاح
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.core.database - ✅ نظام قاعدة البيانات TDLib جاهز للاستخدام
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.plugins.owner.force_subscribe_handler - تم تحميل إعدادات الاشتراك الإجباري - مفعل: False
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.plugins.owner.assistants_handler - تم تحميل إعدادات المغادرة التلقائية - مفعل: False
+[21-Jul-25 05:01:57 - INFO] - __main__ - 🚀 بدء تهيئة ZeMusic Bot...
+[21-Jul-25 05:01:57 - INFO] - __main__ - 📊 تهيئة قاعدة البيانات...
+[21-Jul-25 05:01:57 - INFO] - __main__ - 📊 قاعدة البيانات جاهزة - 1 مستخدم، 1 مجموعة
+[21-Jul-25 05:01:57 - INFO] - __main__ - 🤖 تشغيل البوت الرئيسي...
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.core.simple_bot - 📝 Advanced TDLib handlers added
+[21-Jul-25 05:01:57 - INFO] - ZeMusic.core.simple_bot - 📝 Bot handlers added successfully
+[21-Jul-25 05:01:58 - INFO] - apscheduler.scheduler - Scheduler started
+[21-Jul-25 05:01:58 - INFO] - telegram.ext.Application - Application started
+[21-Jul-25 05:01:58 - INFO] - ZeMusic.core.simple_bot - ✅ Simple Bot started successfully
+[21-Jul-25 05:01:58 - INFO] - __main__ - ✅ تم تشغيل البوت البسيط بنجاح
+[21-Jul-25 05:01:58 - INFO] - __main__ - 📱 تحميل الحسابات المساعدة...
+[21-Jul-25 05:01:58 - INFO] - __main__ - 📊 حالة الحسابات المساعدة: 0 إجمالي، 0 متصل
+[21-Jul-25 05:01:58 - WARNING] - __main__ - ⚠️ لا توجد حسابات مساعدة - البوت سيعمل بوظائف محدودة
+[21-Jul-25 05:01:58 - INFO] - __main__ - 👨‍💼 تم تحميل 0 مدير
+[21-Jul-25 05:01:58 - INFO] - __main__ - 🎛️ معالجات الأوامر جاهزة مع python-telegram-bot
+[21-Jul-25 05:01:58 - INFO] - __main__ - ⏰ تم بدء المهام الدورية
+[21-Jul-25 05:01:58 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
+[21-Jul-25 05:01:58 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
