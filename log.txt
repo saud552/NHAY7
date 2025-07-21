@@ -647,3 +647,23 @@
 [21-Jul-25 03:22:23 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
 [21-Jul-25 03:22:23 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ TDLib متاح ومُثبت
 [21-Jul-25 03:22:23 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية
+[21-Jul-25 03:23:46 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ TDLib متاح ومُثبت
+[21-Jul-25 03:23:46 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية
+[21-Jul-25 03:23:54 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:23:54 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:23:54 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:23:54 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:23:54 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ TDLib متاح ومُثبت
+[21-Jul-25 03:23:54 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية
+[21-Jul-25 03:23:58 - INFO] - ZeMusic.core.realistic_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة
+[21-Jul-25 03:23:59 - ERROR] - ZeMusic.core.real_tdlib_assistant_manager - ❌ فشل بدء جلسة TDLib: module 'tdjson' has no attribute 'TDJson'
+[21-Jul-25 03:24:05 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:24:05 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:24:05 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:24:05 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 03:24:05 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ TDLib متاح ومُثبت
+[21-Jul-25 03:24:05 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية
+[21-Jul-25 03:24:21 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 03:24:21 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 03:24:21 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 03:24:21 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
