@@ -1,5 +1,7 @@
 # TDLib Python wrapper
 python-telegram==0.18.0
+python-telegram-bot==21.9
+python-tdlib==0.8.10
 
 # Core dependencies
 aiofiles
@@ -21,7 +23,7 @@ hachoir
 numpy
 
 # Audio streaming
-py-tgcalls==0.9.7
+py-tgcalls==2.2.5
 
 # Web scraping and search
 beautifulsoup4
