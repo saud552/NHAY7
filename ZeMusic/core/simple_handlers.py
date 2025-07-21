@@ -184,6 +184,48 @@ class SimpleHandlers:
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج ping: {e}")
     
+    async def handle_addassistant(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """معالج أمر /addassistant"""
+        try:
+            user_id = update.effective_user.id
+            
+            # التحقق من صلاحيات المالك
+            if user_id != config.OWNER_ID:
+                await update.message.reply_text(
+                    "❌ **هذا الأمر للمالك فقط!**",
+                    parse_mode='Markdown'
+                )
+                return
+            
+            # إرسال تعليمات سريعة
+            text = """
+➕ **إضافة حساب مساعد**
+
+🎯 **للبدء السريع:**
+استخدم لوحة التحكم للحصول على تجربة تفاعلية كاملة
+
+💡 **اختر إحدى الطرق:**
+1️⃣ استخدم /owner ثم "إدارة الحسابات المساعدة"
+2️⃣ أو استخدم الأزرار أدناه
+"""
+            
+            keyboard = [
+                [InlineKeyboardButton("➕ بدء إضافة حساب مساعد", callback_data="add_assistant")],
+                [InlineKeyboardButton("📊 عرض الحسابات الحالية", callback_data="list_assistants")],
+                [InlineKeyboardButton("🔙 لوحة التحكم الرئيسية", callback_data="back_to_main")]
+            ]
+            
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            await update.message.reply_text(
+                text,
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالج addassistant: {e}")
+    
     async def handle_search_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """معالج البحث عن الأغاني"""
         try:
@@ -363,6 +405,8 @@ class SimpleHandlers:
                 await self._handle_list_assistants(query)
             elif callback_data == 'restart_assistants':
                 await self._handle_restart_assistants(query)
+            elif callback_data == 'cancel_add_assistant':
+                await self._handle_cancel_add_assistant(query)
             else:
                 await query.edit_message_text(
                     f"❌ **أمر غير مدعوم:** `{callback_data}`",
@@ -644,48 +688,12 @@ class SimpleHandlers:
     async def _handle_add_assistant(self, query):
         """معالج إضافة حساب مساعد"""
         try:
-            text = """
-➕ **إضافة حساب مساعد**
-
-🔐 **لإضافة حساب مساعد، تحتاج إلى:**
-
-1️⃣ **Session String** من الحساب المساعد
-2️⃣ **API_ID** و **API_HASH** (نفس بيانات البوت)
-
-📝 **كيفية الحصول على Session String:**
-• استخدم [@StringFatherBot](https://t.me/StringFatherBot)
-• أو استخدم [@StringGenBot](https://t.me/StringGenBot)
-• أدخل رقم هاتف الحساب المساعد
-• احصل على الـ Session String
-
-⚠️ **هام:**
-• الحساب المساعد يجب أن يكون حساب حقيقي (ليس بوت)
-• يجب أن يكون منضم للمجموعات التي ستشغل فيها الموسيقى
-• لا تشارك الـ Session String مع أحد
-
-💡 **للمطورين:**
-حالياً البوت يعمل بـ python-telegram-bot ولا يدعم إضافة الحسابات المساعدة.
-يحتاج تثبيت TDLib للدعم الكامل.
-
-🔧 **خطوات التفعيل:**
-1. تثبيت TDLib
-2. إعادة تشغيل البوت
-3. استخدام هذه الخاصية
-"""
+            from ZeMusic.core.assistant_manager import assistant_manager
             
-            keyboard = [
-                [InlineKeyboardButton("📚 شرح Session String", url="https://t.me/StringFatherBot")],
-                [InlineKeyboardButton("🔙 رجوع", callback_data="owner_assistants")]
-            ]
+            user_id = query.from_user.id
             
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            
-            await query.edit_message_text(
-                text,
-                reply_markup=reply_markup,
-                parse_mode='Markdown',
-                disable_web_page_preview=True
-            )
+            # بدء عملية إضافة الحساب المساعد التفاعلية
+            await assistant_manager.start_add_assistant(query, user_id)
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج إضافة المساعد: {e}")
@@ -822,6 +830,17 @@ class SimpleHandlers:
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج إعادة تشغيل المساعدين: {e}")
+    
+    async def _handle_cancel_add_assistant(self, query):
+        """معالج إلغاء إضافة الحساب المساعد"""
+        try:
+            from ZeMusic.core.assistant_manager import assistant_manager
+            
+            user_id = query.from_user.id
+            await assistant_manager.cancel_add_assistant(query, user_id)
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في إلغاء إضافة المساعد: {e}")
 
 # مثيل المعالجات
 simple_handlers = SimpleHandlers()

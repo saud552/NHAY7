@@ -41,6 +41,20 @@ class SimpleBotClient:
         """تسجيل معالجات الأوامر الأساسية"""
         try:
             from ZeMusic.core.simple_handlers import simple_handlers
+            from ZeMusic.core.assistant_manager import assistant_manager, PHONE_INPUT, CODE_INPUT, PASSWORD_INPUT
+            from telegram.ext import ConversationHandler, filters
+            
+            # معالج المحادثة لإضافة الحسابات المساعدة
+            assistant_conv_handler = ConversationHandler(
+                entry_points=[],  # سيتم البدء من callback query
+                states={
+                    PHONE_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, assistant_manager.handle_phone_input)],
+                    CODE_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, assistant_manager.handle_code_input)],
+                    PASSWORD_INPUT: [MessageHandler(filters.TEXT & ~filters.COMMAND, assistant_manager.handle_password_input)],
+                },
+                fallbacks=[],
+                allow_reentry=True
+            )
             
             # معالج الأوامر الأساسية
             self.application.add_handler(CommandHandler("start", simple_handlers.handle_start))
@@ -48,6 +62,10 @@ class SimpleBotClient:
             self.application.add_handler(CommandHandler("owner", simple_handlers.handle_owner))
             self.application.add_handler(CommandHandler("admin", simple_handlers.handle_admin))
             self.application.add_handler(CommandHandler("ping", simple_handlers.handle_ping))
+            self.application.add_handler(CommandHandler("addassistant", simple_handlers.handle_addassistant))
+            
+            # معالج المحادثات
+            self.application.add_handler(assistant_conv_handler)
             
             # معالج الرسائل النصية (للبحث)
             self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, simple_handlers.handle_search_message))
