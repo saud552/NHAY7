@@ -498,6 +498,8 @@ class SimpleHandlers:
                 await self._handle_logs_panel(query)
             elif callback_data == 'owner_database':
                 await self._handle_database_panel(query)
+            elif callback_data == 'cancel_real_tdlib_session':
+                await self._handle_cancel_tdlib_session(query)
             elif callback_data == 'owner_restart':
                 await self._handle_restart(query)
             elif callback_data == 'owner_shutdown':
@@ -1343,6 +1345,73 @@ class SimpleHandlers:
                 "حاول مرة أخرى أو استخدم `/start`",
                 parse_mode='Markdown'
             )
+
+    async def _handle_cancel_tdlib_session(self, query):
+        """معالج إلغاء جلسة TDLib"""
+        try:
+            user_id = query.from_user.id
+            
+            # مسح الجلسات النشطة
+            if ADVANCED_REAL_TDLIB_AVAILABLE:
+                try:
+                    from .advanced_real_tdlib_manager import advanced_real_tdlib_manager
+                    
+                    # مسح من الجلسات النشطة
+                    if user_id in advanced_real_tdlib_manager.active_sessions:
+                        del advanced_real_tdlib_manager.active_sessions[user_id]
+                    
+                    # مسح من حالات المستخدم
+                    if user_id in advanced_real_tdlib_manager.user_states:
+                        del advanced_real_tdlib_manager.user_states[user_id]
+                    
+                    # مسح من مدير TDLib الرسمي
+                    try:
+                        from .official_tdlib_client import official_tdlib_manager
+                        if user_id in official_tdlib_manager.pending_auth:
+                            client = official_tdlib_manager.pending_auth[user_id].get('client')
+                            if client:
+                                client.close()
+                            del official_tdlib_manager.pending_auth[user_id]
+                        
+                        if user_id in official_tdlib_manager.active_clients:
+                            client = official_tdlib_manager.active_clients[user_id]
+                            if client:
+                                client.close()
+                            del official_tdlib_manager.active_clients[user_id]
+                    except:
+                        pass
+                    
+                    await query.edit_message_text(
+                        "✅ **تم إلغاء الجلسة بنجاح**\n\n"
+                        "🔄 يمكنك البدء من جديد الآن\n"
+                        "استخدم /owner للعودة للقائمة الرئيسية",
+                        parse_mode='Markdown'
+                    )
+                    
+                except Exception as e:
+                    LOGGER(__name__).error(f"خطأ في إلغاء جلسة TDLib: {e}")
+                    await query.edit_message_text(
+                        "❌ **خطأ في إلغاء الجلسة**\n\n"
+                        "حاول إعادة تشغيل البوت أو استخدم /owner",
+                        parse_mode='Markdown'
+                    )
+            else:
+                await query.edit_message_text(
+                    "⚠️ **نظام TDLib غير متاح**\n\n"
+                    "استخدم /owner للعودة للقائمة الرئيسية",
+                    parse_mode='Markdown'
+                )
+                
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالج إلغاء الجلسة: {e}")
+            try:
+                await query.edit_message_text(
+                    "❌ **حدث خطأ**\n\n"
+                    "حاول مرة أخرى أو استخدم /owner",
+                    parse_mode='Markdown'
+                )
+            except:
+                pass
 
 # مثيل المعالجات
 simple_handlers = SimpleHandlers()
