@@ -232,21 +232,21 @@ class SimpleHandlers:
             message_text = update.message.text
             user_id = update.effective_user.id
             
-            # التحقق من وجود جلسة إضافة مساعد نشطة
-            from ZeMusic.core.assistant_manager import assistant_manager
+            # التحقق من وجود جلسة إضافة مساعد نشطة (نظام حقيقي)
+            from ZeMusic.core.real_assistant_manager import real_assistant_manager
             
-            if user_id in assistant_manager.pending_sessions:
-                session = assistant_manager.pending_sessions[user_id]
+            if user_id in real_assistant_manager.pending_sessions:
+                session = real_assistant_manager.pending_sessions[user_id]
                 step = session.get('step')
                 
                 if step == 'phone':
-                    await assistant_manager.handle_phone_input(update, context)
+                    await real_assistant_manager.handle_phone_input(update, context)
                     return
                 elif step == 'code':
-                    await assistant_manager.handle_code_input(update, context)
+                    await real_assistant_manager.handle_code_input(update, context)
                     return
                 elif step == 'password':
-                    await assistant_manager.handle_password_input(update, context)
+                    await real_assistant_manager.handle_password_input(update, context)
                     return
             
             # التحقق من وجود كلمة "بحث"
@@ -706,12 +706,12 @@ class SimpleHandlers:
     async def _handle_add_assistant(self, query):
         """معالج إضافة حساب مساعد"""
         try:
-            from ZeMusic.core.assistant_manager import assistant_manager
+            from ZeMusic.core.real_assistant_manager import real_assistant_manager
             
             user_id = query.from_user.id
             
-            # بدء عملية إضافة الحساب المساعد التفاعلية
-            await assistant_manager.start_add_assistant(query, user_id)
+            # بدء عملية إضافة الحساب المساعد التفاعلية (نظام حقيقي)
+            await real_assistant_manager.start_add_assistant(query, user_id)
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج إضافة المساعد: {e}")
@@ -852,10 +852,10 @@ class SimpleHandlers:
     async def _handle_cancel_add_assistant(self, query):
         """معالج إلغاء إضافة الحساب المساعد"""
         try:
-            from ZeMusic.core.assistant_manager import assistant_manager
+            from ZeMusic.core.real_assistant_manager import real_assistant_manager
             
             user_id = query.from_user.id
-            await assistant_manager.cancel_add_assistant(query, user_id)
+            await real_assistant_manager.cancel_add_assistant(query, user_id)
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في إلغاء إضافة المساعد: {e}")
