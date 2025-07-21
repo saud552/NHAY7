@@ -474,6 +474,9 @@ class SimpleHandlers:
             user_id = query.from_user.id
             callback_data = query.data
             
+            # تسجيل الضغط على الزر
+            LOGGER(__name__).info(f"🔘 Callback received: {callback_data} from user {user_id}")
+            
             # التحقق من صلاحيات المالك للأوامر الإدارية
             if callback_data.startswith('owner_') and user_id != config.OWNER_ID:
                 await query.edit_message_text(

@@ -105,19 +105,14 @@ class SafeMessageHandler:
                     await manager.handle_api_hash_input(update, context)
                     return
         
-        # رسالة افتراضية للرسائل العادية
+        # عدم الرد على الرسائل العادية إلا إذا كانت أوامر
         if message_text.startswith('/'):
             await update.message.reply_text(
                 "❓ **أمر غير معروف**\n\n"
                 "استخدم `/start` للدخول إلى القائمة الرئيسية",
                 parse_mode='Markdown'
             )
-        else:
-            await update.message.reply_text(
-                "💬 **مرحباً!**\n\n"
-                "استخدم `/start` للدخول إلى القائمة الرئيسية",
-                parse_mode='Markdown'
-            )
+        # لا نرد على الرسائل العادية لتجنب الإزعاج
 
 # مثيل المعالج الآمن
 safe_message_handler = SafeMessageHandler()

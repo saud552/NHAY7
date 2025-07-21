@@ -59,6 +59,15 @@ class SimpleBotManager:
             # معالج الأزرار (Callback Queries)
             self.application.add_handler(CallbackQueryHandler(simple_handlers.handle_callback_query))
             
+            # معالج أزرار advanced TDLib
+            try:
+                from .advanced_real_tdlib_manager import get_advanced_real_tdlib_handlers
+                for handler in get_advanced_real_tdlib_handlers():
+                    self.application.add_handler(handler)
+                self.logger.info("📝 Advanced TDLib handlers added")
+            except Exception as e:
+                self.logger.warning(f"⚠️ Advanced TDLib handlers not available: {e}")
+            
             # معالج الرسائل النصية الآمن
             from .safe_message_handler import safe_message_handler
             self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, safe_message_handler.handle_message_safely))

@@ -335,7 +335,7 @@ class AdvancedRealTDLibAssistantManager:
     
     async def use_default_api(self, query, context):
         """استخدام الإعدادات الافتراضية للـ API"""
-        user_id = query.from_user.id
+        user_id = query.from_user.id if hasattr(query, 'from_user') else query.message.from_user.id
         
         if user_id in self.user_states:
             import config
