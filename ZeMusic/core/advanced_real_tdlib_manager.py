@@ -363,6 +363,14 @@ class AdvancedRealTDLibAssistantManager:
             'start_time': time.time()
         }
         
+        # أيضاً حفظ في user_states للتوافق مع المعالج الآمن
+        self.user_states[user_id] = {
+            'state': 'waiting_phone',
+            'step': 'phone_input',
+            'data': {},
+            'start_time': time.time()
+        }
+        
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("❌ إلغاء", callback_data="cancel_real_tdlib_session")]
         ])
