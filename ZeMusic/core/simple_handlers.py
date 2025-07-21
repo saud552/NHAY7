@@ -232,11 +232,27 @@ class SimpleHandlers:
             message_text = update.message.text
             user_id = update.effective_user.id
             
-            # التحقق من النظام الواقعي الجديد للحسابات المساعدة
+            # التحقق من النظامين (الحقيقي والمحاكاة) للحسابات المساعدة
             from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
+            from ZeMusic.core.real_tdlib_assistant_manager import real_tdlib_assistant_manager
             
-            # التحقق من حالة المستخدم في النظام الجديد
-            if user_id in realistic_assistant_manager.user_states:
+            # التحقق من النظام الحقيقي TDLib أولاً
+            if user_id in real_tdlib_assistant_manager.user_states:
+                user_state = real_tdlib_assistant_manager.user_states[user_id]
+                current_state = user_state.get('state', '')
+                
+                if current_state == 'waiting_phone':
+                    await real_tdlib_assistant_manager.handle_phone_input(update, context)
+                    return
+                elif current_state == 'waiting_code':
+                    await real_tdlib_assistant_manager.handle_code_input(update, context)
+                    return
+                elif current_state == 'waiting_password':
+                    await real_tdlib_assistant_manager.handle_password_input(update, context)
+                    return
+            
+            # التحقق من النظام البديل (المحاكاة)
+            elif user_id in realistic_assistant_manager.user_states:
                 user_state = realistic_assistant_manager.user_states[user_id]
                 current_state = user_state.get('state', '')
                 
@@ -269,7 +285,20 @@ class SimpleHandlers:
             
             # التعامل مع أوامر الإلغاء
             if message_text.lower() in ['/cancel', 'إلغاء', 'cancel']:
-                # تنظيف أي جلسات معلقة
+                # تنظيف أي جلسات معلقة - النظام الحقيقي
+                if user_id in real_tdlib_assistant_manager.pending_sessions:
+                    try:
+                        session = real_tdlib_assistant_manager.pending_sessions[user_id].get('session')
+                        if session:
+                            await session.stop()
+                    except:
+                        pass
+                    del real_tdlib_assistant_manager.pending_sessions[user_id]
+                
+                if user_id in real_tdlib_assistant_manager.user_states:
+                    del real_tdlib_assistant_manager.user_states[user_id]
+                
+                # تنظيف أي جلسات معلقة - النظام البديل
                 if user_id in realistic_assistant_manager.pending_sessions:
                     try:
                         session = realistic_assistant_manager.pending_sessions[user_id].get('session')
@@ -468,6 +497,12 @@ class SimpleHandlers:
                 await self._handle_add_assistant(query)
             elif callback_data.startswith('realistic_'):
                 await self._handle_realistic_callbacks(query, context)
+            elif callback_data == 'use_real_tdlib':
+                await self._handle_use_real_tdlib(query, context)
+            elif callback_data == 'use_simulation':
+                await self._handle_use_simulation(query, context)
+            elif callback_data.startswith('real_tdlib_'):
+                await self._handle_real_tdlib_callbacks(query, context)
             elif callback_data == 'remove_assistant':
                 await self._handle_remove_assistant(query)
             elif callback_data == 'list_assistants':
@@ -757,12 +792,30 @@ class SimpleHandlers:
     async def _handle_add_assistant(self, query):
         """معالج إضافة حساب مساعد"""
         try:
-            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
-            
             user_id = query.from_user.id
             
-            # بدء عملية إضافة الحساب المساعد التفاعلية (نظام واقعي)
-            await realistic_assistant_manager.start_add_assistant(query, user_id)
+            # عرض خيارات النظام
+            keyboard = [
+                [InlineKeyboardButton("🔥 النظام الحقيقي (TDLib)", callback_data="use_real_tdlib")],
+                [InlineKeyboardButton("⚡ النظام البديل (محاكاة)", callback_data="use_simulation")],
+                [InlineKeyboardButton("❌ إلغاء", callback_data="cancel_assistant_choice")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            await query.edit_message_text(
+                "🎯 **اختر نوع النظام:**\n\n"
+                "🔥 **النظام الحقيقي (TDLib):**\n"
+                "✅ اتصال مباشر بخوادم تليجرام\n"
+                "✅ كود التحقق يصل لحسابك الفعلي\n"
+                "✅ جلسات حقيقية ومستقرة\n\n"
+                "⚡ **النظام البديل (محاكاة):**\n"
+                "✅ لا يحتاج TDLib\n"
+                "✅ للاختبار والتجريب\n"
+                "✅ كودات تحقق تظهر في الرسائل\n\n"
+                "🔧 **أيهما تفضل؟**",
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج إضافة المساعد: {e}")
@@ -1024,6 +1077,77 @@ class SimpleHandlers:
                 
         except Exception as e:
             LOGGER(__name__).error(f"❌ خطأ في معالج الـ realistic callbacks: {e}")
+            await query.edit_message_text(
+                f"❌ **حدث خطأ:** {str(e)}",
+                parse_mode='Markdown'
+            )
+    
+    async def _handle_real_tdlib_callbacks(self, query, context):
+        """معالج الـ Callbacks للنظام الحقيقي TDLib"""
+        try:
+            from ZeMusic.core.real_tdlib_assistant_manager import real_tdlib_assistant_manager
+            user_id = query.from_user.id
+            callback_data = query.data
+            
+            if callback_data == "real_tdlib_add_phone":
+                # بدء إضافة حساب برقم الهاتف الحقيقي
+                await query.edit_message_text(
+                    "📱 **إضافة حساب مساعد حقيقي برقم الهاتف**\n\n"
+                    "🔥 **نظام TDLib الحقيقي:**\n"
+                    "• اتصال مباشر بخوادم تليجرام\n"
+                    "• كود التحقق يصل لحسابك الفعلي\n"
+                    "• جلسات مستقرة وآمنة\n\n"
+                    "📋 **أرسل رقم الهاتف بالصيغة الدولية:**\n"
+                    "مثال: +967780138966\n\n"
+                    "❌ للإلغاء: /cancel",
+                    parse_mode='Markdown'
+                )
+                
+                # تحديث حالة المستخدم
+                real_tdlib_assistant_manager.user_states[user_id] = {
+                    'state': 'waiting_phone',
+                    'data': {}
+                }
+                
+            elif callback_data == "real_tdlib_cancel":
+                # إلغاء العملية
+                await real_tdlib_assistant_manager.cancel_add_assistant(query, user_id)
+                
+            else:
+                await query.answer("❓ أمر غير معروف", show_alert=True)
+                
+        except Exception as e:
+            LOGGER(__name__).error(f"❌ خطأ في معالج الـ real TDLib callbacks: {e}")
+            await query.edit_message_text(
+                f"❌ **حدث خطأ:** {str(e)}",
+                parse_mode='Markdown'
+            )
+    
+    async def _handle_use_real_tdlib(self, query, context):
+        """معالج استخدام النظام الحقيقي TDLib"""
+        try:
+            from ZeMusic.core.real_tdlib_assistant_manager import real_tdlib_assistant_manager
+            user_id = query.from_user.id
+            
+            await real_tdlib_assistant_manager.start_add_assistant(query, user_id)
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"❌ خطأ في بدء النظام الحقيقي: {e}")
+            await query.edit_message_text(
+                f"❌ **حدث خطأ:** {str(e)}",
+                parse_mode='Markdown'
+            )
+    
+    async def _handle_use_simulation(self, query, context):
+        """معالج استخدام النظام البديل (محاكاة)"""
+        try:
+            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
+            user_id = query.from_user.id
+            
+            await realistic_assistant_manager.start_add_assistant(query, user_id)
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"❌ خطأ في بدء النظام البديل: {e}")
             await query.edit_message_text(
                 f"❌ **حدث خطأ:** {str(e)}",
                 parse_mode='Markdown'
