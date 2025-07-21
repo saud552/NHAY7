@@ -35,10 +35,7 @@ class SimpleBotManager:
                 poll_interval=1.0,
                 timeout=10,
                 bootstrap_retries=-1,
-                read_timeout=10,
-                write_timeout=10,
-                connect_timeout=10,
-                pool_timeout=10,
+                drop_pending_updates=True,
             )
             
             self.is_running = True

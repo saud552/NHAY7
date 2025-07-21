@@ -12,11 +12,11 @@ except ImportError:
 # ============================================
 # إعدادات Telegram API الأساسية
 # ============================================
-API_ID = int(getenv("API_ID", "94575"))
-API_HASH = getenv("API_HASH", "a3406de8d171bb422bb6ddf3bbd800e2")
+API_ID = int(getenv("API_ID", "20036317"))
+API_HASH = getenv("API_HASH", "986cb4ba434870a62fe96da3b5f6d411")
 
 # Get your token from @BotFather on Telegram
-BOT_TOKEN = getenv("BOT_TOKEN", "7345311113:AAHGqDRZdX0kQ7qiZfAhWqEVE_1FnHCy96w")
+BOT_TOKEN = getenv("BOT_TOKEN", "7727065450:AAH9Dcw3j1qsBF06-D2vITGSOuC9E8jtp-s")
 BOT_NAME = getenv("BOT_NAME", "ZeMusic Bot")
 BOT_USERNAME = getenv("BOT_USERNAME", "")
 BOT_ID = getenv("BOT_ID", "0")  # معرف البوت الرقمي

@@ -980,3 +980,13 @@ telegram.error.TimedOut: Timed out
 [21-Jul-25 04:04:49 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
 [21-Jul-25 04:04:49 - INFO] - ZeMusic.core.simple_bot - 📝 Bot handlers added successfully
 [21-Jul-25 04:04:51 - ERROR] - ZeMusic.core.simple_bot - ❌ Failed to start simple bot: The token `7345311113:AAHGqDRZdX0kQ7qiZfAhWqEVE_1FnHCy96w` was rejected by the server.
+[21-Jul-25 04:08:20 - INFO] - ZeMusic.core.tdlib_client - ✅ TDLib loaded successfully from compiled library
+[21-Jul-25 04:08:20 - INFO] - ZeMusic.core.tdlib_client - 🔥 TDLib Manager initialized with real TDLib support
+[21-Jul-25 04:08:20 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 04:08:20 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 04:08:20 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 04:08:20 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 04:08:21 - INFO] - ZeMusic.core.simple_bot - 📝 Bot handlers added successfully
+[21-Jul-25 04:08:21 - INFO] - apscheduler.scheduler - Scheduler started
+[21-Jul-25 04:08:21 - INFO] - telegram.ext.Application - Application started
+[21-Jul-25 04:08:21 - ERROR] - ZeMusic.core.simple_bot - ❌ Failed to start simple bot: Updater.start_polling() got an unexpected keyword argument 'read_timeout'
