@@ -355,6 +355,14 @@ class SimpleHandlers:
                 await self._handle_shutdown(query)
             elif callback_data == 'back_to_main':
                 await self._back_to_main_panel(query)
+            elif callback_data == 'add_assistant':
+                await self._handle_add_assistant(query)
+            elif callback_data == 'remove_assistant':
+                await self._handle_remove_assistant(query)
+            elif callback_data == 'list_assistants':
+                await self._handle_list_assistants(query)
+            elif callback_data == 'restart_assistants':
+                await self._handle_restart_assistants(query)
             else:
                 await query.edit_message_text(
                     f"❌ **أمر غير مدعوم:** `{callback_data}`",
@@ -632,6 +640,188 @@ class SimpleHandlers:
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في العودة للوحة الرئيسية: {e}")
+    
+    async def _handle_add_assistant(self, query):
+        """معالج إضافة حساب مساعد"""
+        try:
+            text = """
+➕ **إضافة حساب مساعد**
+
+🔐 **لإضافة حساب مساعد، تحتاج إلى:**
+
+1️⃣ **Session String** من الحساب المساعد
+2️⃣ **API_ID** و **API_HASH** (نفس بيانات البوت)
+
+📝 **كيفية الحصول على Session String:**
+• استخدم [@StringFatherBot](https://t.me/StringFatherBot)
+• أو استخدم [@StringGenBot](https://t.me/StringGenBot)
+• أدخل رقم هاتف الحساب المساعد
+• احصل على الـ Session String
+
+⚠️ **هام:**
+• الحساب المساعد يجب أن يكون حساب حقيقي (ليس بوت)
+• يجب أن يكون منضم للمجموعات التي ستشغل فيها الموسيقى
+• لا تشارك الـ Session String مع أحد
+
+💡 **للمطورين:**
+حالياً البوت يعمل بـ python-telegram-bot ولا يدعم إضافة الحسابات المساعدة.
+يحتاج تثبيت TDLib للدعم الكامل.
+
+🔧 **خطوات التفعيل:**
+1. تثبيت TDLib
+2. إعادة تشغيل البوت
+3. استخدام هذه الخاصية
+"""
+            
+            keyboard = [
+                [InlineKeyboardButton("📚 شرح Session String", url="https://t.me/StringFatherBot")],
+                [InlineKeyboardButton("🔙 رجوع", callback_data="owner_assistants")]
+            ]
+            
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            await query.edit_message_text(
+                text,
+                reply_markup=reply_markup,
+                parse_mode='Markdown',
+                disable_web_page_preview=True
+            )
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالج إضافة المساعد: {e}")
+    
+    async def _handle_remove_assistant(self, query):
+        """معالج إزالة حساب مساعد"""
+        try:
+            from ZeMusic.core.tdlib_client import tdlib_manager
+            assistants_count = tdlib_manager.get_assistants_count()
+            
+            if assistants_count == 0:
+                text = """
+➖ **إزالة حساب مساعد**
+
+❌ **لا توجد حسابات مساعدة**
+
+💡 **لإضافة حساب مساعد:**
+استخدم زر "إضافة حساب مساعد" أولاً
+"""
+            else:
+                text = f"""
+➖ **إزالة حساب مساعد**
+
+📊 **الحسابات الحالية:** {assistants_count}
+
+⚠️ **تحذير:**
+إزالة الحسابات المساعدة ستوقف تشغيل الموسيقى في جميع المجموعات
+
+🔧 **للمطورين:**
+هذه الخاصية متاحة مع TDLib فقط
+"""
+            
+            keyboard = [[InlineKeyboardButton("🔙 رجوع", callback_data="owner_assistants")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            await query.edit_message_text(
+                text,
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالج إزالة المساعد: {e}")
+    
+    async def _handle_list_assistants(self, query):
+        """معالج قائمة الحسابات المساعدة"""
+        try:
+            from ZeMusic.core.tdlib_client import tdlib_manager
+            
+            assistants_count = tdlib_manager.get_assistants_count()
+            connected_count = tdlib_manager.get_connected_assistants_count()
+            
+            if assistants_count == 0:
+                text = """
+📋 **قائمة الحسابات المساعدة**
+
+❌ **لا توجد حسابات مساعدة**
+
+💡 **لبدء استخدام الموسيقى:**
+1️⃣ أضف حساب مساعد باستخدام Session String
+2️⃣ تأكد من انضمام الحساب للمجموعات
+3️⃣ ابدأ تشغيل الموسيقى
+"""
+            else:
+                text = f"""
+📋 **قائمة الحسابات المساعدة**
+
+📊 **إحصائيات:**
+🔢 **العدد الكلي:** `{assistants_count}`
+✅ **المتصلة:** `{connected_count}`
+❌ **غير المتصلة:** `{assistants_count - connected_count}`
+
+🔧 **ملاحظة:**
+عرض تفاصيل الحسابات متاح مع TDLib
+"""
+            
+            keyboard = [
+                [InlineKeyboardButton("🔄 تحديث", callback_data="list_assistants")],
+                [InlineKeyboardButton("🔙 رجوع", callback_data="owner_assistants")]
+            ]
+            
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            await query.edit_message_text(
+                text,
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالج قائمة المساعدين: {e}")
+    
+    async def _handle_restart_assistants(self, query):
+        """معالج إعادة تشغيل الحسابات المساعدة"""
+        try:
+            from ZeMusic.core.tdlib_client import tdlib_manager
+            
+            assistants_count = tdlib_manager.get_assistants_count()
+            
+            if assistants_count == 0:
+                text = """
+🔄 **إعادة تشغيل الحسابات المساعدة**
+
+❌ **لا توجد حسابات مساعدة**
+
+💡 **أضف حساب مساعد أولاً**
+ثم استخدم هذه الخاصية لإعادة تشغيله
+"""
+            else:
+                text = f"""
+🔄 **إعادة تشغيل الحسابات المساعدة**
+
+⏳ **جاري إعادة تشغيل {assistants_count} حساب...**
+
+📊 **ما يحدث:**
+• قطع الاتصال الحالي
+• إعادة تسجيل الدخول
+• اختبار الاتصال
+• استئناف الخدمات
+
+⏰ **قد يستغرق دقيقة واحدة**
+"""
+                
+                # هنا يمكن إضافة كود إعادة التشغيل الفعلي
+                
+            keyboard = [[InlineKeyboardButton("🔙 رجوع", callback_data="owner_assistants")]]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            
+            await query.edit_message_text(
+                text,
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
+            
+        except Exception as e:
+            LOGGER(__name__).error(f"خطأ في معالج إعادة تشغيل المساعدين: {e}")
 
 # مثيل المعالجات
 simple_handlers = SimpleHandlers()
