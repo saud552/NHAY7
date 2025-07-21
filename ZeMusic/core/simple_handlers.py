@@ -1205,20 +1205,45 @@ class SimpleHandlers:
             user_id = update.effective_user.id
             message_text = update.message.text
             
-            # معالجة إدخالات المستخدم في عملية إضافة المساعد
-            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
+            # التحقق من صحة البيانات أولاً
+            if not message_text:
+                return
             
-            # التحقق من حالة المستخدم في النظام الجديد
-            if user_id in realistic_assistant_manager.user_states:
+            # معالجة إدخالات المستخدم في عملية إضافة المساعد مع timeout protection
+            try:
+                from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
+            except ImportError:
+                LOGGER(__name__).warning("Realistic assistant manager not available")
+                return
+            
+            # التحقق من حالة المستخدم في النظام الجديد مع timeout protection
+            if hasattr(realistic_assistant_manager, 'user_states') and user_id in realistic_assistant_manager.user_states:
                 user_state = realistic_assistant_manager.user_states[user_id]
                 current_state = user_state.get('state', '')
                 
-                if current_state == 'waiting_phone':
-                    await realistic_assistant_manager.handle_phone_input(update, context)
-                elif current_state == 'waiting_code':
-                    await realistic_assistant_manager.handle_code_input(update, context)
-                elif current_state == 'waiting_password':
-                    await realistic_assistant_manager.handle_password_input(update, context)
+                try:
+                    # استخدام asyncio.wait_for لتجنب timeout
+                    if current_state == 'waiting_phone':
+                        await asyncio.wait_for(realistic_assistant_manager.handle_phone_input(update, context), timeout=5.0)
+                    elif current_state == 'waiting_code':
+                        await asyncio.wait_for(realistic_assistant_manager.handle_code_input(update, context), timeout=5.0)
+                    elif current_state == 'waiting_password':
+                        await asyncio.wait_for(realistic_assistant_manager.handle_password_input(update, context), timeout=5.0)
+                except asyncio.TimeoutError:
+                    await update.message.reply_text(
+                        "⏱️ **انتهت مهلة المعالجة**\n\n"
+                        "الرجاء المحاولة مرة أخرى: /start",
+                        parse_mode='Markdown'
+                    )
+                    return
+                except Exception as handler_error:
+                    LOGGER(__name__).error(f"Handler error: {handler_error}")
+                    await update.message.reply_text(
+                        "❌ **خطأ في المعالجة**\n\n"
+                        "الرجاء المحاولة مرة أخرى: /start",
+                        parse_mode='Markdown'
+                    )
+                    return
                 else:
                     await update.message.reply_text(
                         "🔄 **حالة غير معروفة**\n\n"

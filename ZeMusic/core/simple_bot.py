@@ -59,8 +59,9 @@ class SimpleBotManager:
             # معالج الأزرار (Callback Queries)
             self.application.add_handler(CallbackQueryHandler(simple_handlers.handle_callback_query))
             
-            # معالج الرسائل النصية
-            self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, simple_handlers.handle_message))
+            # معالج الرسائل النصية الآمن
+            from .safe_message_handler import safe_message_handler
+            self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, safe_message_handler.handle_message_safely))
             
             self.logger.info("📝 Bot handlers added successfully")
             

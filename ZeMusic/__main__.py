@@ -121,8 +121,8 @@ class ZeMusicBot:
     async def _setup_command_handler(self):
         """إعداد معالج الأوامر"""
         try:
-            # التحقق من نوع البوت
-            if hasattr(tdlib_manager.bot_client, 'add_update_handler'):
+            # التحقق من نوع البوت مع حماية آمنة
+            if hasattr(tdlib_manager, 'bot_client') and tdlib_manager.bot_client and hasattr(tdlib_manager.bot_client, 'add_update_handler'):
                 # البوت يستخدم TDLib
                 def message_handler(update):
                     asyncio.create_task(tdlib_command_handler.handle_message(update))
