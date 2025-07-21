@@ -34,3 +34,12 @@ nohup: ignoring input
 [21-Jul-25 04:45:12 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ النظام الحقيقي المبسط متاح ومُثبت
 [21-Jul-25 04:45:12 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية المبسطة
 [21-Jul-25 04:45:26 - INFO] - ZeMusic.core.safe_message_handler - Processing message from user 7345311113: 'ا...'
+[21-Jul-25 04:47:42 - INFO] - ZeMusic.core.safe_message_handler - Processing message from user 7345311113: '+967780138966...'
+[21-Jul-25 04:47:42 - INFO] - ZeMusic.core.safe_message_handler - Found user 7345311113 state 'waiting_phone' in advanced_real manager
+[21-Jul-25 04:47:44 - ERROR] - ZeMusic.core.simple_handlers - خطأ في معالج الأزرار: 'CallbackQuery' object has no attribute 'effective_user'
+[21-Jul-25 04:48:08 - INFO] - ZeMusic.core.safe_message_handler - Processing message from user 7345311113: '✅ تم حفظ رقم الهاتف: +967780138966
+
+🔑 الآن نحتاج إ...'
+[21-Jul-25 04:48:08 - INFO] - ZeMusic.core.safe_message_handler - Found user 7345311113 state 'waiting_phone' in advanced_real manager
+[21-Jul-25 04:48:57 - ERROR] - ZeMusic.core.simple_handlers - خطأ في معالج الأزرار: 'CallbackQuery' object has no attribute 'effective_user'
+[21-Jul-25 04:48:58 - ERROR] - ZeMusic.core.simple_handlers - خطأ في معالج الأزرار: 'CallbackQuery' object has no attribute 'effective_user'
