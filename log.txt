@@ -1680,3 +1680,5 @@ telegram.error.TimedOut: Timed out
 [21-Jul-25 05:01:58 - INFO] - __main__ - ⏰ تم بدء المهام الدورية
 [21-Jul-25 05:01:58 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
 [21-Jul-25 05:01:58 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
+[21-Jul-25 05:03:17 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: owner_assistants from user 7345311113
+[21-Jul-25 05:03:18 - INFO] - ZeMusic.core.simple_handlers - 🔘 Callback received: add_assistant from user 7345311113
