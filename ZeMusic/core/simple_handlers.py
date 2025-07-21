@@ -232,21 +232,21 @@ class SimpleHandlers:
             message_text = update.message.text
             user_id = update.effective_user.id
             
-            # التحقق من وجود جلسة إضافة مساعد نشطة (نظام حقيقي)
-            from ZeMusic.core.real_assistant_manager import real_assistant_manager
+            # التحقق من وجود جلسة إضافة مساعد نشطة (نظام واقعي)
+            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
             
-            if user_id in real_assistant_manager.pending_sessions:
-                session = real_assistant_manager.pending_sessions[user_id]
+            if user_id in realistic_assistant_manager.pending_sessions:
+                session = realistic_assistant_manager.pending_sessions[user_id]
                 step = session.get('step')
                 
                 if step == 'phone':
-                    await real_assistant_manager.handle_phone_input(update, context)
+                    await realistic_assistant_manager.handle_phone_input(update, context)
                     return
                 elif step == 'code':
-                    await real_assistant_manager.handle_code_input(update, context)
+                    await realistic_assistant_manager.handle_code_input(update, context)
                     return
                 elif step == 'password':
-                    await real_assistant_manager.handle_password_input(update, context)
+                    await realistic_assistant_manager.handle_password_input(update, context)
                     return
             
             # التحقق من وجود كلمة "بحث"
