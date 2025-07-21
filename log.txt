@@ -908,3 +908,9 @@ telegram.error.TimedOut: Timed out
 [21-Jul-25 03:33:29 - INFO] - __main__ - ⏰ تم بدء المهام الدورية
 [21-Jul-25 03:33:29 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
 [21-Jul-25 03:33:29 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
+[21-Jul-25 03:34:31 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ النظام الحقيقي المبسط متاح ومُثبت
+[21-Jul-25 03:34:31 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية المبسطة
+[21-Jul-25 03:34:37 - INFO] - ZeMusic.core.realistic_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة
+[21-Jul-25 03:34:37 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم بدء جلسة TDLib الحقيقية المبسطة للرقم +967780138966
+[21-Jul-25 03:34:38 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم إرسال كود التحقق الحقيقي إلى +967780138966
+[21-Jul-25 03:34:38 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - 🔑 كود التحقق: 42408
