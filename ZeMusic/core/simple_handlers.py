@@ -706,12 +706,12 @@ class SimpleHandlers:
     async def _handle_add_assistant(self, query):
         """معالج إضافة حساب مساعد"""
         try:
-            from ZeMusic.core.real_assistant_manager import real_assistant_manager
+            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
             
             user_id = query.from_user.id
             
-            # بدء عملية إضافة الحساب المساعد التفاعلية (نظام حقيقي)
-            await real_assistant_manager.start_add_assistant(query, user_id)
+            # بدء عملية إضافة الحساب المساعد التفاعلية (نظام واقعي)
+            await realistic_assistant_manager.start_add_assistant(query, user_id)
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في معالج إضافة المساعد: {e}")
@@ -852,10 +852,10 @@ class SimpleHandlers:
     async def _handle_cancel_add_assistant(self, query):
         """معالج إلغاء إضافة الحساب المساعد"""
         try:
-            from ZeMusic.core.real_assistant_manager import real_assistant_manager
+            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
             
             user_id = query.from_user.id
-            await real_assistant_manager.cancel_add_assistant(query, user_id)
+            await realistic_assistant_manager.cancel_add_assistant(query, user_id)
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في إلغاء إضافة المساعد: {e}")
