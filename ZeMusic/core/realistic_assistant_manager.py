@@ -346,8 +346,9 @@ class RealisticAssistantManager:
                 'timestamp': time.time()
             }
             
-            # إنشاء كود تحقق واقعي للحسابات التجريبية
+            # إنشاء كود تحقق للحسابات (تجريبية وحقيقية)
             if phone in self.mock_accounts_db:
+                # حساب تجريبي - إظهار الكود
                 verification_code = self.mock_accounts_db[phone]['valid_code']
                 self.verification_codes[phone] = {
                     'code': verification_code,
@@ -365,12 +366,21 @@ class RealisticAssistantManager:
                     parse_mode='Markdown'
                 )
             else:
+                # حساب حقيقي - إنشاء كود عشوائي للمحاكاة
+                verification_code = ''.join([str(random.randint(0, 9)) for _ in range(5)])
+                self.verification_codes[phone] = {
+                    'code': verification_code,
+                    'expires_at': time.time() + 300,  # 5 دقائق
+                    'attempts': 0
+                }
+                
                 await update.message.reply_text(
                     f"📱 **تم إرسال رمز التحقق إلى {phone}**\n\n"
-                    "📩 **تحقق من رسائل تليجرام الخاصة بك**\n"
-                    "⏰ **الرمز صالح لمدة 5 دقائق**\n\n"
+                    f"🔐 **رمز التحقق المحاكى:** `{verification_code}`\n"
+                    f"⏰ **ينتهي خلال:** 5 دقائق\n\n"
                     "🔢 **أرسل الرمز مع مسافات بين الأرقام:**\n"
-                    "مثال: `1 2 3 4 5`\n\n"
+                    f"مثال: `{' '.join(verification_code)}`\n\n"
+                    "ℹ️ **ملاحظة:** هذا نظام محاكاة - في الواقع الكود يُرسل لتليجرام\n"
                     "❌ للإلغاء: /cancel",
                     parse_mode='Markdown'
                 )
@@ -456,13 +466,24 @@ class RealisticAssistantManager:
                     account_info = self.mock_accounts_db.get(phone, {})
                     
                     # محاكاة معلومات المستخدم
-                    session.user_info = {
-                        'id': account_info.get('id', random.randint(100000000, 999999999)),
-                        'first_name': account_info.get('first_name', 'مستخدم'),
-                        'last_name': account_info.get('last_name', 'تجريبي'),
-                        'username': account_info.get('username'),
-                        'phone': phone
-                    }
+                    if phone in self.mock_accounts_db:
+                        # حساب تجريبي
+                        session.user_info = {
+                            'id': account_info['id'],
+                            'first_name': account_info['first_name'],
+                            'last_name': account_info['last_name'],
+                            'username': account_info.get('username'),
+                            'phone': phone
+                        }
+                    else:
+                        # حساب حقيقي - إنشاء معلومات تلقائية
+                        session.user_info = {
+                            'id': random.randint(100000000, 999999999),
+                            'first_name': f"مستخدم {phone[-4:]}",
+                            'last_name': "محاكاة",
+                            'username': f"user_{phone[-6:].replace('+', '')}",
+                            'phone': phone
+                        }
                     session.is_authorized = True
                     
                     # التحقق من التحقق بخطوتين
