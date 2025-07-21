@@ -1326,3 +1326,4 @@ telegram.error.TimedOut: Timed out
 [21-Jul-25 04:33:31 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ النظام الحقيقي المبسط متاح ومُثبت
 [21-Jul-25 04:33:31 - INFO] - ZeMusic.core.real_tdlib_assistant_manager - ✅ تم تهيئة قاعدة بيانات الحسابات المساعدة الحقيقية المبسطة
 [21-Jul-25 04:33:36 - INFO] - ZeMusic.core.safe_message_handler - Processing message from user 7345311113: '+967770701985...'
+[21-Jul-25 04:34:07 - INFO] - ZeMusic.core.simple_handlers - طلب إعادة تشغيل من المالك: 7345311113
