@@ -50,6 +50,8 @@ class SafeMessageHandler:
     async def _process_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE, user_id: int, message_text: str):
         """معالجة الرسالة الفعلية"""
         
+        logger.info(f"Processing message from user {user_id}: '{message_text[:50]}...'")  # Log message processing
+        
         # محاولة تحميل جميع المدراء المتاحين
         realistic_manager = None
         real_tdlib_manager = None
