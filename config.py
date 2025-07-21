@@ -21,6 +21,12 @@ BOT_NAME = getenv("BOT_NAME", "ZeMusic Bot")
 BOT_USERNAME = getenv("BOT_USERNAME", "")
 BOT_ID = getenv("BOT_ID", "0")  # معرف البوت الرقمي
 
+# Owner ID - معرف المالك
+OWNER_ID = int(getenv("OWNER_ID", "7345311113"))
+
+# Support chat
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "@YourSupport")
+
 # ============================================
 # إعدادات قاعدة البيانات - SQLite
 # ============================================

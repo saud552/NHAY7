@@ -77,29 +77,35 @@ class TDLibClient:
     async def start(self) -> bool:
         """بدء العميل"""
         try:
-            self.client = Telegram(**self.client_config)
-            self.client.add_message_handler(self._handle_message)
-            self.client.add_update_handler('updateUser', self._handle_user_update)
-            self.client.add_update_handler('updateGroupCall', self._handle_group_call_update)
-            
-            # معالجات إضافية
-            self.update_handlers = {}
-            
-            await self.client.login()
-            self.is_connected = True
-            self.last_activity = time.time()
-            
-            # محاكاة سلوك طبيعي للحسابات المساعدة
-            if not self.is_bot:
-                await self._simulate_human_behavior()
-            
-            LOGGER(__name__).info(f"✅ تم تشغيل العميل {'البوت' if self.is_bot else f'المساعد {self.assistant_id}'}")
-            return True
+            # التحقق من وجود TDLib
+            if hasattr(Telegram, 'add_message_handler'):
+                self.client = Telegram(**self.client_config)
+                self.client.add_message_handler(self._handle_message)
+                self.client.add_update_handler('updateUser', self._handle_user_update)
+                self.client.add_update_handler('updateGroupCall', self._handle_group_call_update)
+                
+                # معالجات إضافية
+                self.update_handlers = {}
+                
+                await self.client.login()
+                self.is_connected = True
+                self.last_activity = time.time()
+                
+                # محاكاة سلوك طبيعي للحسابات المساعدة
+                if not self.is_bot:
+                    await self._simulate_human_behavior()
+                
+                LOGGER(__name__).info(f"✅ تم تشغيل العميل {'البوت' if self.is_bot else f'المساعد {self.assistant_id}'}")
+                return True
+            else:
+                # TDLib غير متاح أو غير مكتمل
+                raise AttributeError("TDLib not properly installed")
             
         except Exception as e:
             LOGGER(__name__).error(f"❌ فشل تشغيل العميل: {e}")
             self.is_connected = False
-            return False
+            # إعادة رفع الخطأ للمعالجة في المستوى الأعلى
+            raise e
     
     async def stop(self):
         """إيقاف العميل"""
@@ -346,13 +352,28 @@ class TDLibManager:
     async def initialize_bot(self) -> bool:
         """تهيئة البوت الرئيسي"""
         try:
-            self.bot_client = TDLibClient(is_bot=True)
-            success = await self.bot_client.start()
+            # محاولة استخدام TDLib أولاً
+            try:
+                self.bot_client = TDLibClient(is_bot=True)
+                success = await self.bot_client.start()
+                if success:
+                    LOGGER(__name__).info("🤖 تم تشغيل البوت مع TDLib بنجاح")
+                    return True
+            except Exception as tdlib_error:
+                LOGGER(__name__).warning(f"⚠️ TDLib غير متاح: {tdlib_error}")
+            
+            # استخدام البوت البسيط كبديل
+            from ZeMusic.core.simple_bot import simple_bot
+            success = await simple_bot.start()
             if success:
-                LOGGER(__name__).info("🤖 تم تشغيل البوت الرئيسي بنجاح")
-            return success
+                self.bot_client = simple_bot  # استخدام البوت البسيط
+                LOGGER(__name__).info("🤖 تم تشغيل البوت البسيط بنجاح")
+                return True
+            
+            return False
+            
         except Exception as e:
-            LOGGER(__name__).error(f"❌ فشل تشغيل البوت الرئيسي: {e}")
+            LOGGER(__name__).error(f"❌ فشل في تشغيل البوت: {e}")
             return False
     
     async def load_assistants_from_database(self):
