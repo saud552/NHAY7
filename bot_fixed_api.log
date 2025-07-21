@@ -107,3 +107,126 @@ nohup: ignoring input
 [1;36m[ 3][t 0][1753075255.872469186][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
 [1;36m[ 3][t 0][1753075257.874554157][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
 [1;36m[ 3][t 0][1753075257.874620199][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075259.876697778][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075259.876739025][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075261.878885269][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075261.878937959][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075263.880999565][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075263.881041288][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075265.883107423][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075265.883151054][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075267.885216712][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075267.885266304][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075269.887330055][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075269.887375831][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075271.889472246][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075271.889527082][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075273.891597747][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075273.891644477][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075275.893711805][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075275.893751621][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075277.895898818][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075277.895936727][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075279.897997379][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075279.898038387][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075281.900099754][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075281.900136470][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075283.902197599][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075283.902237892][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075285.904407978][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075285.904445886][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075287.906517505][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075287.906570911][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075289.908639430][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075289.908703804][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075291.910765886][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075291.910812854][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075293.912883758][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075293.912930727][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075295.914994478][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075295.915032386][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075297.917090654][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075297.917127132][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075299.919188737][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075299.919231653][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075301.921305656][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075301.921344518][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075303.923408746][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075303.923461914][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075305.925565481][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075305.925607204][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075307.927668571][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075307.927708864][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075309.929840564][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075309.929883241][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075311.931966304][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075311.932004690][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075313.934077262][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075313.934115409][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075315.936185121][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075315.936237335][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075317.938368797][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075317.938415527][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075319.940498590][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075319.940539598][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075321.942601919][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075321.942643880][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075323.944713354][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075323.944750547][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075325.946827411][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075325.946866035][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075327.948926925][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075327.948972225][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075329.951059579][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075329.951108455][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[1;36m[ 3][t 0][1753075331.953171968][Client.cpp:293][&td_requests]	End to wait for updates, returning object 0 (nil)[0m
+[1;36m[ 3][t 0][1753075331.953208684][Client.cpp:280][&td_requests]	Begin to wait for updates with timeout 2.000000[0m
+[21-Jul-25 05:22:13 - INFO] - __main__ - 🔔 تم استلام إشارة 15
+[21-Jul-25 05:22:13 - INFO] - __main__ - 🛑 بدء إيقاف البوت...
+[21-Jul-25 05:22:13 - INFO] - __main__ - 🎵 إيقاف الجلسات النشطة...
+[21-Jul-25 05:22:13 - INFO] - __main__ - 📱 إيقاف العملاء...
+[21-Jul-25 05:22:13 - ERROR] - __main__ - خطأ في إيقاف البوت: 'TDLibManager' object has no attribute 'stop_all'
+[21-Jul-25 05:22:13 - INFO] - __main__ - 🛑 بدء إيقاف البوت...
+[21-Jul-25 05:22:13 - INFO] - __main__ - 🎵 إيقاف الجلسات النشطة...
+[21-Jul-25 05:22:13 - INFO] - __main__ - 📱 إيقاف العملاء...
+[21-Jul-25 05:22:13 - ERROR] - __main__ - خطأ في إيقاف البوت: 'TDLibManager' object has no attribute 'stop_all'
+
+╔══════════════════════════════════════╗
+║           ⚠️  تحذير مهم  ⚠️              ║
+╠══════════════════════════════════════╣
+║                                      ║
+║  🚫 لا توجد حسابات مساعدة مضافة        ║
+║                                      ║
+║  📝 البوت سيعمل بوظائف محدودة:          ║
+║     ✅ الأوامر العادية                 ║
+║     ✅ البحث والمعلومات               ║
+║     ❌ تشغيل الموسيقى                 ║
+║                                      ║
+║  📱 لإضافة حساب مساعد:                ║
+║     /owner ← إدارة الحسابات المساعدة    ║
+║                                      ║
+║  📞 للدعم: @https://t.me/K55DD               ║
+║                                      ║
+╚══════════════════════════════════════╝
+        
+
+╔══════════════════════════════════════╗
+║          🎵 ZeMusic Bot 🎵            ║
+╠══════════════════════════════════════╣
+║                                      ║
+║  ✅ البوت جاهز للعمل                  ║
+║                                      ║
+║  📊 الحالة:                          ║
+║     🤖 البوت الرئيسي: متصل            ║
+║     📱 الحسابات المساعدة: 0 (0 متصل)     ║
+║     💾 قاعدة البيانات: جاهزة          ║
+║                                      ║
+║  🎯 الوضائف المتاحة:                 ║
+║     ❌ تشغيل الموسيقى (يحتاج حسابات مساعدة)               ║
+║     ✅ إدارة المجموعات                ║
+║     ✅ الأوامر الإدارية               ║
+║                                      ║
+║  📞 الدعم: @https://t.me/K55DD               ║
+║                                      ║
+╚══════════════════════════════════════╝
+        

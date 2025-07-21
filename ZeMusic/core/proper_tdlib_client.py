@@ -75,6 +75,9 @@ class ProperTDLibClient:
             # Start update handler thread (مثل C#)
             self._start_update_handler()
             
+            # Start authorization flow (trigger first update)
+            self._trigger_authorization()
+            
         except Exception as e:
             logger.error(f"❌ Failed to load TDLib: {e}")
             raise
@@ -98,14 +101,34 @@ class ProperTDLibClient:
         thread = threading.Thread(target=update_handler, daemon=True)
         thread.start()
     
+    def _trigger_authorization(self):
+        """بدء تدفق التفويض مثل C#"""
+        try:
+            # Send a simple request to trigger authorization flow
+            # This will cause TDLib to send updateAuthorizationState
+            request = {
+                '@type': 'getAuthorizationState'
+            }
+            self._send_request(request)
+            logger.info("🔄 Authorization flow triggered")
+        except Exception as e:
+            logger.error(f"❌ Failed to trigger authorization: {e}")
+    
     def _handle_update(self, update: Dict[str, Any]):
         """معالج التحديثات مثل UpdateHandler في C#"""
         update_type = update.get('@type', '')
+        logger.debug(f"📥 Received update: {update_type}")
         
         if update_type == 'updateAuthorizationState':
             auth_state = update.get('authorization_state', {})
             auth_type = auth_state.get('@type', '')
+            logger.info(f"🔐 Authorization state update: {auth_type}")
             self._on_authorization_state_updated(auth_type, auth_state)
+        elif update_type == 'authorizationState':
+            # Handle direct authorization state response
+            auth_type = update.get('@type', '')
+            logger.info(f"🔐 Direct authorization state: {auth_type}")
+            self._on_authorization_state_updated(auth_type, update)
         # يمكن إضافة معالجات أخرى هنا
     
     def _on_authorization_state_updated(self, state_type: str, state_data: Dict[str, Any]):
@@ -198,7 +221,10 @@ class ProperTDLibClient:
         """إرسال طلب لـ TDLib مثل _client.Send في C#"""
         if self.client_id:
             request_json = json.dumps(request).encode('utf-8')
+            logger.debug(f"📤 Sending request: {request.get('@type', 'unknown')}")
             self.td_lib.td_send(self.client_id, request_json)
+        else:
+            logger.error("❌ Cannot send request: no client_id")
     
     async def wait_for_authorization(self, timeout: float = 300):
         """انتظار التفويض مثل _gotAuthorization.WaitOne() في C#"""
