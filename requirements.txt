@@ -21,7 +21,7 @@ hachoir
 numpy
 
 # Audio streaming
-py-tgcalls==0.9.7
+py-tgcalls==2.2.5
 
 # Web scraping and search
 beautifulsoup4
