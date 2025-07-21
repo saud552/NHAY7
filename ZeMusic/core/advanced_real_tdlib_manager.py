@@ -248,14 +248,27 @@ class AdvancedRealTDLibAssistantManager:
         
         # تحديث حالة المستخدم
         self.user_states[user_id] = {
-            'state': 'waiting_api_id',
+            'state': 'select_api_method',
             'phone': phone,
-            'step': 'api_credentials'
+            'step': 'api_method_selection'
         }
+        
+        # عرض خيارات API
+        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+        keyboard = [
+            [InlineKeyboardButton("⚡ استخدام الإعدادات الافتراضية", callback_data="use_default_api")],
+            [InlineKeyboardButton("🔧 إدخال API مخصص", callback_data="use_custom_api")],
+            [InlineKeyboardButton("❌ إلغاء", callback_data="cancel_real_tdlib_session")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
         
         await update.message.reply_text(
             f"📱 **تم حفظ الرقم:** `{phone}`\n\n"
-            "🔑 **الآن أدخل API ID:**",
+            "🔑 **اختر طريقة API:**\n\n"
+            "⚡ **الإعدادات الافتراضية:** استخدام API المدمج في البوت\n"
+            "🔧 **API مخصص:** إدخال API ID و Hash الخاص بك\n\n"
+            "🎯 **أيهما تفضل؟**",
+            reply_markup=reply_markup,
             parse_mode='Markdown'
         )
     
@@ -319,6 +332,48 @@ class AdvancedRealTDLibAssistantManager:
             
             # مسح حالة المستخدم بعد المعالجة
             del self.user_states[user_id]
+    
+    async def use_default_api(self, query, context):
+        """استخدام الإعدادات الافتراضية للـ API"""
+        user_id = query.from_user.id
+        
+        if user_id in self.user_states:
+            import config
+            # استخدام API المدمج في البوت
+            api_id = config.API_ID
+            api_hash = config.API_HASH
+            phone = self.user_states[user_id]['phone']
+            
+            # تحديث الحالة للانتقال لكود التحقق
+            self.user_states[user_id].update({
+                'state': 'waiting_code',
+                'api_id': api_id,
+                'api_hash': api_hash
+            })
+            
+            await query.edit_message_text(
+                f"✅ **تم استخدام الإعدادات الافتراضية**\n\n"
+                f"📱 **الرقم:** `{phone}`\n"
+                f"🔑 **API ID:** `{api_id}`\n"
+                f"🔐 **API Hash:** `{api_hash[:10]}...`\n\n"
+                "📟 **سيتم إرسال كود التحقق قريباً...**\n"
+                "أرسل الكود عند وصوله:",
+                parse_mode='Markdown'
+            )
+    
+    async def use_custom_api(self, query, context):
+        """إدخال API مخصص"""
+        user_id = query.from_user.id
+        
+        if user_id in self.user_states:
+            self.user_states[user_id]['state'] = 'waiting_api_id'
+            
+            await query.edit_message_text(
+                f"🔧 **إدخال API مخصص**\n\n"
+                f"📱 **الرقم:** `{self.user_states[user_id]['phone']}`\n\n"
+                "🔑 **أرسل API ID الخاص بك:**",
+                parse_mode='Markdown'
+            )
         
     def setup_database(self):
         """Setup SQLite database for sessions"""

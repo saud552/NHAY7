@@ -525,6 +525,14 @@ class SimpleHandlers:
                         "• نظام المحاكاة",
                         parse_mode='Markdown'
                     )
+            elif callback_data == 'use_default_api':
+                # استخدام الإعدادات الافتراضية لـ API
+                from .advanced_real_tdlib_manager import advanced_real_tdlib_manager
+                await advanced_real_tdlib_manager.use_default_api(query, context)
+            elif callback_data == 'use_custom_api':
+                # إدخال API مخصص
+                from .advanced_real_tdlib_manager import advanced_real_tdlib_manager
+                await advanced_real_tdlib_manager.use_custom_api(query, context)
             elif callback_data == 'real_tdlib_start_simple':
                 # Handle simple TDLib
                 from ZeMusic.core.real_tdlib_assistant_manager import real_tdlib_assistant_manager
