@@ -322,12 +322,12 @@ class AdvancedRealTDLibAssistantManager:
                 parse_mode='Markdown'
             )
             
-            # استخدام النظام الحقيقي المبني على C#
+            # استخدام النظام الرسمي لـ TDLib
             try:
-                from .proper_tdlib_client import tdlib_auth_manager
+                from .official_tdlib_client import official_tdlib_manager
                 
                 # إكمال التفويض باستخدام الكود
-                success = await tdlib_auth_manager.complete_authorization(
+                success = await official_tdlib_manager.complete_authorization(
                     user_id=user_id, 
                     code=code
                 )
@@ -414,11 +414,11 @@ class AdvancedRealTDLibAssistantManager:
                 'api_hash': api_hash
             })
             
-            # إنشاء TDLib Client باستخدام النظام الصحيح (مبني على C#)
+            # إنشاء TDLib Client باستخدام النظام الرسمي
             try:
-                from .proper_tdlib_client import tdlib_auth_manager
-                # إنشاء عميل TDLib صحيح
-                client = await tdlib_auth_manager.create_client(api_id, api_hash, phone, user_id)
+                from .official_tdlib_client import official_tdlib_manager
+                # إنشاء عميل TDLib رسمي
+                client = await official_tdlib_manager.create_client(api_id, api_hash, phone, user_id)
                 client_id = client.client_id if client.client_id else random.randint(1, 1000)
                 
                 await query.edit_message_text(
@@ -706,9 +706,9 @@ class AdvancedRealTDLibAssistantManager:
             api_hash = session['data']['api_hash']
             user_id = update.effective_user.id
             
-            # Create TDLib client using proper system (based on C#)
-            from .proper_tdlib_client import tdlib_auth_manager
-            client = await tdlib_auth_manager.create_client(api_id, api_hash, phone, user_id)
+            # Create TDLib client using official system  
+            from .official_tdlib_client import official_tdlib_manager
+            client = await official_tdlib_manager.create_client(api_id, api_hash, phone, user_id)
             session['client'] = client
             
             # Show initialization status
