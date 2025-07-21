@@ -1,0 +1,20 @@
+[21-Jul-25 04:03:51 - INFO] - ZeMusic.core.tdlib_client - ✅ TDLib loaded successfully from compiled library
+[21-Jul-25 04:03:51 - INFO] - ZeMusic.core.tdlib_client - 🔥 TDLib Manager initialized with real TDLib support
+[21-Jul-25 04:03:51 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 04:03:51 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 04:03:51 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 04:03:51 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 04:03:51 - INFO] - ZeMusic.core.database - ✅ تم إنشاء قاعدة البيانات SQLite بنجاح
+[21-Jul-25 04:03:51 - INFO] - ZeMusic.core.database - ✅ نظام قاعدة البيانات TDLib جاهز للاستخدام
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/workspace/ZeMusic/__main__.py", line 12, in <module>
+    from ZeMusic.core.command_handler import tdlib_command_handler
+  File "/workspace/ZeMusic/core/command_handler.py", line 8, in <module>
+    from ZeMusic.plugins.bot.basic_commands import command_handler as basic_commands
+  File "/workspace/ZeMusic/plugins/bot/basic_commands.py", line 11, in <module>
+    from ZeMusic.plugins.owner.stats_handler import stats_handler
+  File "/workspace/ZeMusic/plugins/owner/stats_handler.py", line 3, in <module>
+    import psutil
+ModuleNotFoundError: No module named 'psutil'

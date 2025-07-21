@@ -1,121 +1,103 @@
-import asyncio
-import logging
-from typing import Optional, Dict, Any
-from telegram import Update
-from telegram.ext import Application
-from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
-import config
-from ZeMusic.logging import LOGGER
+# Simple Bot for ZeMusic
+# Enhanced compatibility with python-telegram-bot
 
-class SimpleBotClient:
-    """عميل بوت بسيط باستخدام python-telegram-bot كبديل لـ TDLib"""
+import logging
+import asyncio
+from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, filters
+from ZeMusic.core.simple_handlers import simple_handlers
+import config
+
+logger = logging.getLogger(__name__)
+
+class SimpleBotManager:
+    """إدارة بوت مبسط باستخدام python-telegram-bot"""
     
     def __init__(self):
-        self.bot = None
         self.application = None
-        self.is_connected = False
+        self.is_running = False
+        self.logger = logging.getLogger(__name__)
         
     async def start(self) -> bool:
-        """بدء البوت البسيط"""
+        """تشغيل البوت"""
         try:
-            # إنشاء التطبيق
+            # إنشاء Application مع توكن البوت
             self.application = Application.builder().token(config.BOT_TOKEN).build()
-            self.bot = self.application.bot
             
-            # تسجيل المعالجات الأساسية
-            self._register_handlers()
+            # إضافة المعالجات
+            self._add_handlers()
             
             # بدء البوت
             await self.application.initialize()
             await self.application.start()
-            await self.application.updater.start_polling()
             
-            self.is_connected = True
-            LOGGER(__name__).info("✅ تم تشغيل البوت البسيط بنجاح")
+            # بدء polling
+            await self.application.updater.start_polling(
+                poll_interval=1.0,
+                timeout=10,
+                bootstrap_retries=-1,
+                read_timeout=10,
+                write_timeout=10,
+                connect_timeout=10,
+                pool_timeout=10,
+            )
+            
+            self.is_running = True
+            self.logger.info("✅ Simple Bot started successfully")
             return True
             
         except Exception as e:
-            LOGGER(__name__).error(f"❌ فشل في تشغيل البوت البسيط: {e}")
+            self.logger.error(f"❌ Failed to start simple bot: {e}")
             return False
     
-    def _register_handlers(self):
-        """تسجيل معالجات الأوامر الأساسية"""
+    def _add_handlers(self):
+        """إضافة المعالجات للبوت"""
         try:
-            from ZeMusic.core.simple_handlers import simple_handlers
-            
-            # معالج الأوامر الأساسية
+            # معالجات الأوامر
             self.application.add_handler(CommandHandler("start", simple_handlers.handle_start))
             self.application.add_handler(CommandHandler("help", simple_handlers.handle_help))
             self.application.add_handler(CommandHandler("owner", simple_handlers.handle_owner))
-            self.application.add_handler(CommandHandler("admin", simple_handlers.handle_admin))
-            self.application.add_handler(CommandHandler("ping", simple_handlers.handle_ping))
             self.application.add_handler(CommandHandler("addassistant", simple_handlers.handle_addassistant))
+            self.application.add_handler(CommandHandler("play", simple_handlers.handle_search_message))
             
-            # معالج الرسائل النصية (للبحث والتفاعل)
-            self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, simple_handlers.handle_search_message))
-            
-            # معالج callback queries
+            # معالج الأزرار (Callback Queries)
             self.application.add_handler(CallbackQueryHandler(simple_handlers.handle_callback_query))
             
-        except Exception as e:
-            LOGGER(__name__).error(f"خطأ في تسجيل المعالجات: {e}")
-    
-
-    
-    async def send_message(self, chat_id: int, text: str, reply_markup=None) -> Optional[Dict]:
-        """إرسال رسالة"""
-        try:
-            if not self.is_connected or not self.bot:
-                return None
+            # معالج الرسائل النصية
+            self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, simple_handlers.handle_message))
             
-            message = await self.bot.send_message(
-                chat_id=chat_id,
-                text=text,
-                reply_markup=reply_markup,
-                parse_mode='HTML'
-            )
-            
-            return {
-                'message_id': message.message_id,
-                'chat': {'id': message.chat.id},
-                'date': message.date.timestamp()
-            }
+            self.logger.info("📝 Bot handlers added successfully")
             
         except Exception as e:
-            LOGGER(__name__).error(f"خطأ في إرسال الرسالة: {e}")
-            return None
-    
-    async def edit_message_text(self, chat_id: int, message_id: int, text: str, reply_markup=None):
-        """تعديل رسالة"""
-        try:
-            if not self.is_connected or not self.bot:
-                return None
-            
-            await self.bot.edit_message_text(
-                chat_id=chat_id,
-                message_id=message_id,
-                text=text,
-                reply_markup=reply_markup,
-                parse_mode='HTML'
-            )
-            
-        except Exception as e:
-            LOGGER(__name__).error(f"خطأ في تعديل الرسالة: {e}")
+            self.logger.error(f"❌ Failed to add handlers: {e}")
     
     async def stop(self):
         """إيقاف البوت"""
         try:
-            if self.application:
+            if self.application and self.is_running:
                 await self.application.updater.stop()
                 await self.application.stop()
                 await self.application.shutdown()
-            
-            self.is_connected = False
-            LOGGER(__name__).info("🛑 تم إيقاف البوت البسيط")
+                self.is_running = False
+                self.logger.info("🛑 Simple bot stopped")
+                
+        except Exception as e:
+            self.logger.error(f"❌ Error stopping simple bot: {e}")
+    
+    async def send_message(self, chat_id: int, text: str, **kwargs):
+        """إرسال رسالة"""
+        try:
+            if self.application and self.is_running:
+                await self.application.bot.send_message(
+                    chat_id=chat_id,
+                    text=text,
+                    **kwargs
+                )
+                return True
+            return False
             
         except Exception as e:
-            LOGGER(__name__).error(f"خطأ في إيقاف البوت البسيط: {e}")
+            self.logger.error(f"❌ Error sending message: {e}")
+            return False
 
-
-# مثيل البوت البسيط
-simple_bot = SimpleBotClient()
+# Global instance
+simple_bot = SimpleBotManager()

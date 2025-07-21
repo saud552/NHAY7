@@ -6,6 +6,14 @@ from telegram.ext import ContextTypes
 import config
 from ZeMusic.logging import LOGGER
 
+# Import advanced real TDLib manager
+try:
+    from .advanced_real_tdlib_manager import get_advanced_real_tdlib_handlers
+    ADVANCED_REAL_TDLIB_AVAILABLE = True
+except ImportError as e:
+    LOGGER(__name__).warning(f"Advanced Real TDLib not available: {e}")
+    ADVANCED_REAL_TDLIB_AVAILABLE = False
+
 class SimpleHandlers:
     """معالجات بسيطة للأوامر الأساسية"""
     
@@ -503,6 +511,25 @@ class SimpleHandlers:
                 await self._handle_use_simulation(query, context)
             elif callback_data.startswith('real_tdlib_'):
                 await self._handle_real_tdlib_callbacks(query, context)
+            elif callback_data == 'start_advanced_real_tdlib_assistant':
+                # Import and handle advanced real TDLib
+                if ADVANCED_REAL_TDLIB_AVAILABLE:
+                    from .advanced_real_tdlib_manager import start_advanced_real_tdlib_assistant
+                    await start_advanced_real_tdlib_assistant(update, context)
+                else:
+                    await query.edit_message_text(
+                        "❌ **النظام المتقدم غير متاح**\n\n"
+                        "🔧 **السبب:** TDLib غير مثبت بشكل صحيح\n\n"
+                        "💡 **استخدم النظام البديل:**\n"
+                        "• TDLib البسيط\n"
+                        "• نظام المحاكاة",
+                        parse_mode='Markdown'
+                    )
+            elif callback_data == 'real_tdlib_start_simple':
+                # Handle simple TDLib
+                from ZeMusic.core.real_tdlib_assistant_manager import real_tdlib_assistant_manager
+                user_id = query.from_user.id
+                await real_tdlib_assistant_manager.start_add_assistant(query, user_id)
             elif callback_data == 'remove_assistant':
                 await self._handle_remove_assistant(query)
             elif callback_data == 'list_assistants':
@@ -1124,12 +1151,31 @@ class SimpleHandlers:
             )
     
     async def _handle_use_real_tdlib(self, query, context):
-        """معالج استخدام النظام الحقيقي TDLib"""
+        """معالج استخدام النظام الحقيقي TDLib - مع خيارات متقدمة"""
         try:
-            from ZeMusic.core.real_tdlib_assistant_manager import real_tdlib_assistant_manager
-            user_id = query.from_user.id
+            # عرض خيارات TDLib المختلفة
+            keyboard = [
+                [InlineKeyboardButton("🔥 TDLib المتقدم الحقيقي", callback_data="start_advanced_real_tdlib_assistant")],
+                [InlineKeyboardButton("⚡ TDLib البسيط", callback_data="real_tdlib_start_simple")],
+                [InlineKeyboardButton("🔙 رجوع", callback_data="add_assistant")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
             
-            await real_tdlib_assistant_manager.start_add_assistant(query, user_id)
+            await query.edit_message_text(
+                "🔥 **اختر إصدار TDLib:**\n\n"
+                "🔥 **TDLib المتقدم الحقيقي:**\n"
+                "• استخدام TDLib المبني حديثاً مع Clang-18\n"
+                "• أداء عالي وأمان متقدم\n"
+                "• تحسينات متطورة للسرعة\n"
+                "• دعم كامل لجميع ميزات Telegram\n\n"
+                "⚡ **TDLib البسيط:**\n"
+                "• نسخة مبسطة من TDLib\n"
+                "• سهل الاستخدام للمبتدئين\n"
+                "• استهلاك ذاكرة أقل\n\n"
+                "🎯 **أيهما تفضل؟**",
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
             
         except Exception as e:
             LOGGER(__name__).error(f"❌ خطأ في بدء النظام الحقيقي: {e}")

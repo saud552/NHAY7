@@ -1,18 +1,0 @@
-nohup: ignoring input
-[21-Jul-25 03:31:13 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
-[21-Jul-25 03:31:13 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
-[21-Jul-25 03:31:13 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
-[21-Jul-25 03:31:13 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
-[21-Jul-25 03:31:13 - INFO] - ZeMusic.core.database - ✅ تم إنشاء قاعدة البيانات SQLite بنجاح
-[21-Jul-25 03:31:13 - INFO] - ZeMusic.core.database - ✅ نظام قاعدة البيانات TDLib جاهز للاستخدام
-[21-Jul-25 03:31:13 - INFO] - ZeMusic.plugins.owner.force_subscribe_handler - تم تحميل إعدادات الاشتراك الإجباري - مفعل: False
-[21-Jul-25 03:31:13 - INFO] - ZeMusic.plugins.owner.assistants_handler - تم تحميل إعدادات المغادرة التلقائية - مفعل: False
-[21-Jul-25 03:31:13 - INFO] - __main__ - 🚀 بدء تهيئة ZeMusic Bot...
-[21-Jul-25 03:31:13 - INFO] - __main__ - 📊 تهيئة قاعدة البيانات...
-[21-Jul-25 03:31:13 - INFO] - __main__ - 📊 قاعدة البيانات جاهزة - 1 مستخدم، 1 مجموعة
-[21-Jul-25 03:31:13 - INFO] - __main__ - 🤖 تشغيل البوت الرئيسي...
-[21-Jul-25 03:31:13 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل تشغيل العميل: name 'TDLIB_IMPORTED' is not defined
-[21-Jul-25 03:31:13 - WARNING] - ZeMusic.core.tdlib_client - ⚠️ TDLib غير متاح: name 'TDLIB_IMPORTED' is not defined
-[21-Jul-25 03:31:13 - ERROR] - ZeMusic.core.tdlib_client - ❌ فشل في تشغيل البوت: cannot import name 'Bot' from 'telegram' (unknown location)
-[21-Jul-25 03:31:13 - ERROR] - __main__ - ❌ فشل في تشغيل البوت الرئيسي
-❌ فشل في تهيئة البوت

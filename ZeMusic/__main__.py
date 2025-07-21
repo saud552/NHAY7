@@ -28,20 +28,30 @@ class ZeMusicBot:
             LOGGER(__name__).info("📊 تهيئة قاعدة البيانات...")
             await self._ensure_database_ready()
             
-            # تهيئة البوت الرئيسي
+            # تهيئة البوت الرئيسي - استخدام البوت البسيط
             LOGGER(__name__).info("🤖 تشغيل البوت الرئيسي...")
-            bot_success = await tdlib_manager.initialize_bot()
-            if not bot_success:
-                LOGGER(__name__).error("❌ فشل في تشغيل البوت الرئيسي")
+            try:
+                from ZeMusic.core.simple_bot import simple_bot
+                bot_success = await simple_bot.start()
+                if not bot_success:
+                    LOGGER(__name__).error("❌ فشل في تشغيل البوت الرئيسي")
+                    return False
+                LOGGER(__name__).info("✅ تم تشغيل البوت البسيط بنجاح")
+            except Exception as e:
+                LOGGER(__name__).error(f"❌ خطأ في تشغيل البوت: {e}")
                 return False
             
             # تحميل الحسابات المساعدة من قاعدة البيانات
             LOGGER(__name__).info("📱 تحميل الحسابات المساعدة...")
-            await tdlib_manager.load_assistants_from_database()
-            
-            # التحقق من وجود حسابات مساعدة
-            assistants_count = tdlib_manager.get_assistants_count()
-            connected_count = tdlib_manager.get_connected_assistants_count()
+            try:
+                # محاولة تحميل حسابات TDLib إذا كانت متاحة
+                assistants_count = tdlib_manager.get_assistants_count()
+                connected_count = tdlib_manager.get_connected_assistants_count()
+                LOGGER(__name__).info(f"📊 حالة الحسابات المساعدة: {assistants_count} إجمالي، {connected_count} متصل")
+            except Exception as e:
+                LOGGER(__name__).warning(f"⚠️ خطأ في تحميل الحسابات المساعدة: {e}")
+                assistants_count = 0
+                connected_count = 0
             
             if assistants_count == 0:
                 LOGGER(__name__).warning("⚠️ لا توجد حسابات مساعدة - البوت سيعمل بوظائف محدودة")
@@ -53,18 +63,30 @@ class ZeMusicBot:
             await self._load_sudoers()
             
             # إعداد معالج الأوامر مع TDLib
-            await self._setup_command_handler()
+            try:
+                await self._setup_command_handler()
+            except Exception as e:
+                LOGGER(__name__).warning(f"⚠️ خطأ في إعداد معالج الأوامر: {e}")
             
             # بدء المهام الدورية
-            await self._start_periodic_tasks()
+            try:
+                await self._start_periodic_tasks()
+            except Exception as e:
+                LOGGER(__name__).warning(f"⚠️ خطأ في المهام الدورية: {e}")
             
             # بدء مهمة تنظيف music_manager
-            from ZeMusic.core.music_manager import start_cleanup_task
-            start_cleanup_task()
+            try:
+                from ZeMusic.core.music_manager import start_cleanup_task
+                start_cleanup_task()
+            except Exception as e:
+                LOGGER(__name__).warning(f"⚠️ خطأ في مهمة التنظيف: {e}")
             
             # بدء مهام assistants_handler
-            from ZeMusic.plugins.owner.assistants_handler import assistants_handler
-            await assistants_handler.start_auto_leave_task()
+            try:
+                from ZeMusic.plugins.owner.assistants_handler import assistants_handler
+                await assistants_handler.start_auto_leave_task()
+            except Exception as e:
+                LOGGER(__name__).warning(f"⚠️ خطأ في مهام المساعدين: {e}")
             
             self.startup_time = asyncio.get_event_loop().time()
             self.is_running = True
