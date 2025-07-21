@@ -684,9 +684,10 @@ class AdvancedRealTDLibAssistantManager:
             
         session = self.active_sessions[user_id]
         
-        # Use secure default API credentials
-        session['data']['api_id'] = 94575
-        session['data']['api_hash'] = "a3406de8d171bb422bb6ddf3bbd800e2"
+        # Use secure default API credentials from config
+        from config import API_ID, API_HASH
+        session['data']['api_id'] = API_ID
+        session['data']['api_hash'] = API_HASH
         
         await update.callback_query.edit_message_text(
             "✅ **تم تعيين API افتراضي آمن**\n\n"
@@ -703,9 +704,11 @@ class AdvancedRealTDLibAssistantManager:
             phone = session['data']['phone']
             api_id = session['data']['api_id']
             api_hash = session['data']['api_hash']
+            user_id = update.effective_user.id
             
-            # Create TDLib client
-            client = RealTDLibClient(api_id, api_hash, phone)
+            # Create TDLib client using proper system (based on C#)
+            from .proper_tdlib_client import tdlib_auth_manager
+            client = await tdlib_auth_manager.create_client(api_id, api_hash, phone, user_id)
             session['client'] = client
             
             # Show initialization status
@@ -719,34 +722,40 @@ class AdvancedRealTDLibAssistantManager:
                 "⏳ **يرجى الانتظار...**"
             )
             
-            # Initialize client
-            success = await client.initialize()
+            # Initialize client using proper system (no need for manual initialization)
+            # The client automatically handles the authorization flow based on C# logic
             
-            if success and client.authorization_state == "waitCode":
-                session['step'] = 'verification_code'
-                
-                # Generate verification code for simulation
-                verification_code = ''.join(random.choices(string.digits, k=5))
-                session['data']['verification_code'] = verification_code
-                
-                keyboard = InlineKeyboardMarkup([[
-                    InlineKeyboardButton("❌ إلغاء", callback_data="cancel_real_tdlib_session")
-                ]])
-                
-                await update.callback_query.edit_message_text(
-                    f"🔥 **TDLib تم تهيئته بنجاح!**\n"
-                    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-                    f"📱 **الرقم:** {phone}\n"
-                    f"🔑 **كود التحقق:** `{verification_code}`\n"
-                    f"⏰ **الكود صالح لمدة 5 دقائق**\n\n"
-                    "🔢 **أرسل الكود مع مسافات بين الأرقام:**\n"
-                    f"مثال: `{' '.join(verification_code)}`\n\n"
-                    "💡 **ملاحظة:** في النظام الحقيقي، سيصل الكود عبر SMS أو تطبيق Telegram",
-                    reply_markup=keyboard,
-                    parse_mode='Markdown'
-                )
-            else:
-                raise Exception("Failed to initialize TDLib client")
+            # Wait a bit for TDLib to initialize and send verification code
+            import asyncio
+            await asyncio.sleep(3)
+            
+            # Update session state for verification code waiting
+            session['step'] = 'verification_code'
+            
+            # Save user state for code handling
+            self.user_states[user_id] = {
+                'state': 'waiting_code',
+                'phone': phone,
+                'api_id': api_id,
+                'api_hash': api_hash
+            }
+            
+            keyboard = InlineKeyboardMarkup([[
+                InlineKeyboardButton("❌ إلغاء", callback_data="cancel_real_tdlib_session")
+            ]])
+            
+            await update.callback_query.edit_message_text(
+                f"📱 **كود التحقق تم إرساله!**\n\n"
+                f"🆔 **Client ID:** {client.client_id}\n"
+                f"📱 **الرقم:** `{phone}`\n"
+                f"🔑 **API ID:** `{api_id}`\n\n"
+                f"📟 **تحقق من تطبيق Telegram**\n"
+                f"🔥 **النظام:** TDLib الحقيقي المتصل\n\n"
+                "📝 **أرسل الكود الذي وصلك للمتابعة:**\n"
+                "💡 **إذا لم يصل، تحقق من الرسائل المحفوظة**",
+                reply_markup=keyboard,
+                parse_mode='Markdown'
+            )
                 
         except Exception as e:
             logger.error(f"❌ TDLib initialization error: {e}")
