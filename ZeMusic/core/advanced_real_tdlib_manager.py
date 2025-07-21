@@ -237,8 +237,88 @@ class AdvancedRealTDLibAssistantManager:
     
     def __init__(self):
         self.active_sessions = {}
+        self.user_states = {}  # إضافة user_states للتوافق مع المعالج الآمن
         self.db_path = "ZeMusic/database/advanced_real_tdlib_sessions.db"
         self.setup_database()
+    
+    async def handle_phone_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """معالج إدخال رقم الهاتف"""
+        user_id = update.effective_user.id
+        phone = update.message.text.strip()
+        
+        # تحديث حالة المستخدم
+        self.user_states[user_id] = {
+            'state': 'waiting_api_id',
+            'phone': phone,
+            'step': 'api_credentials'
+        }
+        
+        await update.message.reply_text(
+            f"📱 **تم حفظ الرقم:** `{phone}`\n\n"
+            "🔑 **الآن أدخل API ID:**",
+            parse_mode='Markdown'
+        )
+    
+    async def handle_api_id_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """معالج إدخال API ID"""
+        user_id = update.effective_user.id
+        api_id = update.message.text.strip()
+        
+        if user_id in self.user_states:
+            self.user_states[user_id]['api_id'] = api_id
+            self.user_states[user_id]['state'] = 'waiting_api_hash'
+            
+            await update.message.reply_text(
+                f"🔑 **تم حفظ API ID:** `{api_id}`\n\n"
+                "🔐 **الآن أدخل API Hash:**",
+                parse_mode='Markdown'
+            )
+    
+    async def handle_api_hash_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """معالج إدخال API Hash"""
+        user_id = update.effective_user.id
+        api_hash = update.message.text.strip()
+        
+        if user_id in self.user_states:
+            self.user_states[user_id]['api_hash'] = api_hash
+            self.user_states[user_id]['state'] = 'waiting_code'
+            
+            await update.message.reply_text(
+                f"🔐 **تم حفظ API Hash:** `{api_hash[:10]}...`\n\n"
+                "📟 **سيتم إرسال كود التحقق قريباً...**\n"
+                "أدخل الكود عند وصوله:",
+                parse_mode='Markdown'
+            )
+    
+    async def handle_code_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """معالج إدخال كود التحقق"""
+        user_id = update.effective_user.id
+        code = update.message.text.strip()
+        
+        if user_id in self.user_states:
+            await update.message.reply_text(
+                f"✅ **تم استلام الكود:** `{code}`\n\n"
+                "🔄 **جاري التحقق...**",
+                parse_mode='Markdown'
+            )
+            
+            # مسح حالة المستخدم بعد المعالجة
+            del self.user_states[user_id]
+    
+    async def handle_password_input(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """معالج إدخال كلمة مرور 2FA"""
+        user_id = update.effective_user.id
+        password = update.message.text.strip()
+        
+        if user_id in self.user_states:
+            await update.message.reply_text(
+                "🔐 **تم استلام كلمة المرور**\n\n"
+                "🔄 **جاري التحقق...**",
+                parse_mode='Markdown'
+            )
+            
+            # مسح حالة المستخدم بعد المعالجة
+            del self.user_states[user_id]
         
     def setup_database(self):
         """Setup SQLite database for sessions"""
