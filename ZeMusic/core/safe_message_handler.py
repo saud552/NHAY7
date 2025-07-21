@@ -50,28 +50,57 @@ class SafeMessageHandler:
     async def _process_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE, user_id: int, message_text: str):
         """معالجة الرسالة الفعلية"""
         
-        # محاولة تحميل المدير الواقعي
+        # محاولة تحميل جميع المدراء المتاحين
         realistic_manager = None
+        real_tdlib_manager = None
+        advanced_real_manager = None
+        
         try:
             from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
             realistic_manager = realistic_assistant_manager
         except ImportError:
-            logger.warning("Realistic assistant manager not available")
+            pass
+            
+        try:
+            from ZeMusic.core.real_tdlib_assistant_manager import real_tdlib_assistant_manager
+            real_tdlib_manager = real_tdlib_assistant_manager
+        except ImportError:
+            pass
+            
+        try:
+            from ZeMusic.core.advanced_real_tdlib_manager import advanced_real_tdlib_manager
+            advanced_real_manager = advanced_real_tdlib_manager
+        except ImportError:
+            pass
         
-        # معالجة الرسائل حسب الحالة
-        if realistic_manager and hasattr(realistic_manager, 'user_states'):
-            if user_id in realistic_manager.user_states:
-                user_state = realistic_manager.user_states[user_id]
+        # فحص جميع المدراء للعثور على حالة المستخدم
+        managers_to_check = [
+            (realistic_manager, 'realistic'),
+            (real_tdlib_manager, 'real_tdlib'),
+            (advanced_real_manager, 'advanced_real')
+        ]
+        
+        for manager, manager_name in managers_to_check:
+            if manager and hasattr(manager, 'user_states') and user_id in manager.user_states:
+                user_state = manager.user_states[user_id]
                 current_state = user_state.get('state', '')
                 
+                logger.info(f"Found user {user_id} state '{current_state}' in {manager_name} manager")
+                
                 if current_state == 'waiting_phone':
-                    await realistic_manager.handle_phone_input(update, context)
+                    await manager.handle_phone_input(update, context)
                     return
                 elif current_state == 'waiting_code':
-                    await realistic_manager.handle_code_input(update, context)
+                    await manager.handle_code_input(update, context)
                     return
                 elif current_state == 'waiting_password':
-                    await realistic_manager.handle_password_input(update, context)
+                    await manager.handle_password_input(update, context)
+                    return
+                elif current_state == 'waiting_api_id':
+                    await manager.handle_api_id_input(update, context)
+                    return
+                elif current_state == 'waiting_api_hash':
+                    await manager.handle_api_hash_input(update, context)
                     return
         
         # رسالة افتراضية للرسائل العادية
