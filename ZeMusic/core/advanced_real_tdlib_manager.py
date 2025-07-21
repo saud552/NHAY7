@@ -333,9 +333,10 @@ class AdvancedRealTDLibAssistantManager:
             # مسح حالة المستخدم بعد المعالجة
             del self.user_states[user_id]
     
-    async def use_default_api(self, query, context):
+    async def use_default_api(self, update, context):
         """استخدام الإعدادات الافتراضية للـ API"""
-        user_id = query.from_user.id if hasattr(query, 'from_user') else query.message.from_user.id
+        query = update.callback_query
+        user_id = update.effective_user.id
         
         if user_id in self.user_states:
             import config
@@ -361,9 +362,10 @@ class AdvancedRealTDLibAssistantManager:
                 parse_mode='Markdown'
             )
     
-    async def use_custom_api(self, query, context):
+    async def use_custom_api(self, update, context):
         """إدخال API مخصص"""
-        user_id = query.from_user.id
+        query = update.callback_query
+        user_id = update.effective_user.id
         
         if user_id in self.user_states:
             self.user_states[user_id]['state'] = 'waiting_api_id'
