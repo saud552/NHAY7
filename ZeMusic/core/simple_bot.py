@@ -40,136 +40,25 @@ class SimpleBotClient:
     def _register_handlers(self):
         """تسجيل معالجات الأوامر الأساسية"""
         try:
-            # معالج الأوامر الأساسية
-            self.application.add_handler(CommandHandler("start", self._handle_start))
-            self.application.add_handler(CommandHandler("help", self._handle_help))
-            self.application.add_handler(CommandHandler("owner", self._handle_owner))
-            self.application.add_handler(CommandHandler("ping", self._handle_ping))
+            from ZeMusic.core.simple_handlers import simple_handlers
             
-            # معالج الرسائل
-            self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self._handle_message))
+            # معالج الأوامر الأساسية
+            self.application.add_handler(CommandHandler("start", simple_handlers.handle_start))
+            self.application.add_handler(CommandHandler("help", simple_handlers.handle_help))
+            self.application.add_handler(CommandHandler("owner", simple_handlers.handle_owner))
+            self.application.add_handler(CommandHandler("admin", simple_handlers.handle_admin))
+            self.application.add_handler(CommandHandler("ping", simple_handlers.handle_ping))
+            
+            # معالج الرسائل النصية (للبحث)
+            self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, simple_handlers.handle_search_message))
             
             # معالج callback queries
-            self.application.add_handler(CallbackQueryHandler(self._handle_callback))
+            self.application.add_handler(CallbackQueryHandler(simple_handlers.handle_callback_query))
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في تسجيل المعالجات: {e}")
     
-    async def _handle_start(self, update: Update, context):
-        """معالج أمر /start"""
-        try:
-            user = update.effective_user
-            
-            # إضافة المستخدم لقاعدة البيانات
-            from ZeMusic.core.database import db
-            await db.add_user(user.id)
-            if update.effective_chat.type != 'private':
-                await db.add_chat(update.effective_chat.id)
-            
-            welcome_text = f"""
-🎵 أهلاً بك في {config.BOT_NAME}!
 
-🤖 حالة البوت: جاهز للعمل
-📱 الحسابات المساعدة: غير مضافة بعد
-
-⚙️ للمالك: استخدم /owner لإضافة الحسابات المساعدة
-📚 للمساعدة: استخدم /help
-
-🎯 ملاحظة: إضافة الحسابات المساعدة مطلوبة لتشغيل الموسيقى
-"""
-            
-            await update.message.reply_text(welcome_text)
-            
-        except Exception as e:
-            LOGGER(__name__).error(f"خطأ في معالج start: {e}")
-    
-    async def _handle_help(self, update: Update, context):
-        """معالج أمر /help"""
-        help_text = f"""
-📚 قائمة أوامر {config.BOT_NAME}:
-
-👤 أوامر عامة:
-/start - بدء البوت
-/help - عرض المساعدة
-/ping - فحص حالة البوت
-
-⚙️ للمالك فقط:
-/owner - لوحة إدارة البوت
-/addassistant - إضافة حساب مساعد
-/removeassistant - إزالة حساب مساعد
-
-🎵 أوامر الموسيقى (تحتاج حسابات مساعدة):
-/play - تشغيل موسيقى
-/stop - إيقاف الموسيقى
-/pause - إيقاف مؤقت
-/resume - استكمال التشغيل
-
-📞 للدعم: @{config.SUPPORT_CHAT or 'YourSupport'}
-"""
-        await update.message.reply_text(help_text)
-    
-    async def _handle_owner(self, update: Update, context):
-        """معالج أمر /owner"""
-        try:
-            user_id = update.effective_user.id
-            
-            # التحقق من صلاحيات المالك
-            if user_id != config.OWNER_ID:
-                await update.message.reply_text("❌ هذا الأمر للمالك فقط!")
-                return
-            
-            # استيراد لوحة المالك
-            from ZeMusic.plugins.owner.owner_panel import owner_panel
-            result = await owner_panel.show_main_panel(user_id)
-            
-            if result:
-                await update.message.reply_text(
-                    result.get('text', 'لوحة التحكم'),
-                    reply_markup=result.get('reply_markup')
-                )
-            else:
-                await update.message.reply_text("⚙️ لوحة التحكم الرئيسية")
-                
-        except Exception as e:
-            LOGGER(__name__).error(f"خطأ في معالج owner: {e}")
-            await update.message.reply_text("❌ حدث خطأ في تحميل لوحة التحكم")
-    
-    async def _handle_ping(self, update: Update, context):
-        """معالج أمر /ping"""
-        await update.message.reply_text("🏓 البوت يعمل بشكل طبيعي!")
-    
-    async def _handle_message(self, update: Update, context):
-        """معالج الرسائل العادية"""
-        try:
-            # يمكن إضافة معالجات للرسائل هنا
-            pass
-        except Exception as e:
-            LOGGER(__name__).error(f"خطأ في معالج الرسائل: {e}")
-    
-    async def _handle_callback(self, update: Update, context):
-        """معالج callback queries"""
-        try:
-            query = update.callback_query
-            await query.answer()
-            
-            # استيراد معالج الأوامر
-            from ZeMusic.core.command_handler import tdlib_command_handler
-            
-            # تحويل للمعالج المناسب
-            callback_data = query.data
-            
-            if callback_data.startswith('owner_'):
-                from ZeMusic.plugins.owner.owner_panel import owner_panel
-                result = await owner_panel.handle_callback(query.from_user.id, callback_data)
-                
-                if result:
-                    await query.edit_message_text(
-                        result.get('text', 'لوحة التحكم'),
-                        reply_markup=result.get('reply_markup')
-                    )
-            
-        except Exception as e:
-            LOGGER(__name__).error(f"خطأ في معالج callback: {e}")
     
     async def send_message(self, chat_id: int, text: str, reply_markup=None) -> Optional[Dict]:
         """إرسال رسالة"""

@@ -97,26 +97,25 @@ class ZeMusicBot:
             LOGGER(__name__).error(f"خطأ في تحميل المديرين: {e}")
     
     async def _setup_command_handler(self):
-        """إعداد معالج الأوامر مع TDLib"""
+        """إعداد معالج الأوامر"""
         try:
-            # ربط معالج الأوامر مع TDLib
-            if tdlib_manager.bot_client:
-                # إعداد معالج الرسائل
+            # التحقق من نوع البوت
+            if hasattr(tdlib_manager.bot_client, 'add_update_handler'):
+                # البوت يستخدم TDLib
                 def message_handler(update):
                     asyncio.create_task(tdlib_command_handler.handle_message(update))
                 
-                # إعداد معالج الcallback queries
                 def callback_handler(update):
                     if update.get('@type') == 'updateNewCallbackQuery':
                         asyncio.create_task(tdlib_command_handler.handle_callback_query(update))
                 
-                # تسجيل المعالجات في TDLib
                 tdlib_manager.bot_client.add_update_handler('updateNewMessage', message_handler)
                 tdlib_manager.bot_client.add_update_handler('updateNewCallbackQuery', callback_handler)
                 
                 LOGGER(__name__).info("🎛️ تم إعداد معالج الأوامر مع TDLib")
             else:
-                LOGGER(__name__).warning("⚠️ البوت الرئيسي غير متصل - لن يتم إعداد معالج الأوامر")
+                # البوت يستخدم python-telegram-bot - المعالجات مسجلة مسبقاً
+                LOGGER(__name__).info("🎛️ معالجات الأوامر جاهزة مع python-telegram-bot")
                 
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في إعداد معالج الأوامر: {e}")
