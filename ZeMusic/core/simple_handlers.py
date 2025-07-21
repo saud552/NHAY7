@@ -417,6 +417,8 @@ class SimpleHandlers:
                 await self._back_to_main_panel(query)
             elif callback_data == 'add_assistant':
                 await self._handle_add_assistant(query)
+            elif callback_data.startswith('realistic_'):
+                await self._handle_realistic_callbacks(query, context)
             elif callback_data == 'remove_assistant':
                 await self._handle_remove_assistant(query)
             elif callback_data == 'list_assistants':
@@ -859,6 +861,233 @@ class SimpleHandlers:
             
         except Exception as e:
             LOGGER(__name__).error(f"خطأ في إلغاء إضافة المساعد: {e}")
+    
+    async def _handle_realistic_callbacks(self, query, context):
+        """معالج الـ Callbacks للنظام الواقعي الجديد"""
+        try:
+            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
+            user_id = query.from_user.id
+            callback_data = query.data
+            
+            if callback_data == "realistic_add_phone":
+                # بدء إضافة حساب برقم الهاتف
+                await query.edit_message_text(
+                    "📱 **إضافة حساب مساعد برقم الهاتف**\n\n"
+                    "📋 **أرسل رقم الهاتف بالصيغة الدولية:**\n\n"
+                    "🔸 **أمثلة صحيحة:**\n"
+                    "• `+966501234567` (السعودية)\n"
+                    "• `+201234567890` (مصر)\n"
+                    "• `+967771234567` (اليمن)\n"
+                    "• `+49123456789` (ألمانيا)\n\n"
+                    "⚡️ **الحسابات التجريبية المتاحة:**\n"
+                    "• `+966501234567` (بدون 2FA - كود: 12345)\n"
+                    "• `+201234567890` (مع 2FA - كود: 54321)\n"
+                    "• `+967771234567` (عادي - كود: 11111)\n"
+                    "• `+49123456789` (مع 2FA - كود: 22222)\n\n"
+                    "💡 **أرسل رقم الهاتف الآن:**\n"
+                    "❌ للإلغاء: /cancel",
+                    parse_mode='Markdown'
+                )
+                
+                # تحديث حالة المستخدم
+                realistic_assistant_manager.user_states[user_id] = {
+                    'state': 'waiting_phone',
+                    'data': {}
+                }
+                
+            elif callback_data == "realistic_add_session":
+                # إضافة حساب بكود الجلسة (للمطورين)
+                await query.edit_message_text(
+                    "🔑 **إضافة حساب بـ Session String**\n\n"
+                    "⚠️ **هذه الميزة للمطورين المتقدمين فقط**\n\n"
+                    "📋 **الخطوات:**\n"
+                    "1️⃣ احصل على Session String من مكتبة Pyrogram/Telethon\n"
+                    "2️⃣ أرسل الـ Session String كاملاً\n"
+                    "3️⃣ سيتم التحقق من صحته وإضافته\n\n"
+                    "🚧 **قيد التطوير حالياً**\n\n"
+                    "💡 **بدلاً من ذلك، استخدم إضافة برقم الهاتف**",
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("🔙 رجوع", callback_data="add_assistant")],
+                        [InlineKeyboardButton("❌ إلغاء", callback_data="realistic_cancel")]
+                    ]),
+                    parse_mode='Markdown'
+                )
+                
+            elif callback_data == "realistic_replace_account":
+                # استبدال الحساب الموجود
+                user_state = realistic_assistant_manager.user_states.get(user_id, {})
+                phone = user_state.get('data', {}).get('phone', '')
+                
+                if phone:
+                    # حذف الحساب القديم من قاعدة البيانات
+                    try:
+                        import sqlite3
+                        with sqlite3.connect("assistant_accounts.db", timeout=20) as conn:
+                            conn.execute("DELETE FROM assistant_accounts WHERE phone = ?", (phone,))
+                            conn.commit()
+                        
+                        await query.edit_message_text(
+                            f"✅ **تم حذف الحساب القديم**\n\n"
+                            f"📱 **الرقم:** {phone}\n\n"
+                            "🔄 **الآن جاري بدء عملية إضافة الحساب الجديد...**",
+                            parse_mode='Markdown'
+                        )
+                        
+                        # بدء عملية التحقق
+                        from ZeMusic.core.realistic_assistant_manager import TelegramSession
+                        import asyncio
+                        await asyncio.sleep(1)
+                        await realistic_assistant_manager._start_phone_verification(query, phone, user_id)
+                        
+                    except Exception as e:
+                        await query.edit_message_text(
+                            f"❌ **خطأ في حذف الحساب القديم:** {str(e)}",
+                            parse_mode='Markdown'
+                        )
+                else:
+                    await query.edit_message_text(
+                        "❌ **خطأ: لم يتم العثور على رقم الهاتف**",
+                        parse_mode='Markdown'
+                    )
+                    
+            elif callback_data == "realistic_use_another":
+                # استخدام رقم آخر
+                await query.edit_message_text(
+                    "📱 **أرسل رقم هاتف جديد:**\n\n"
+                    "📋 **بالصيغة الدولية مع رمز البلد**\n"
+                    "مثال: `+966501234567`\n\n"
+                    "❌ للإلغاء: /cancel",
+                    parse_mode='Markdown'
+                )
+                
+                # العودة لحالة انتظار الهاتف
+                realistic_assistant_manager.user_states[user_id] = {
+                    'state': 'waiting_phone',
+                    'data': {}
+                }
+                
+            elif callback_data == "realistic_cancel":
+                # إلغاء العملية
+                await realistic_assistant_manager.cancel_add_assistant(query, user_id)
+                
+            else:
+                await query.answer("❓ أمر غير معروف", show_alert=True)
+                
+        except Exception as e:
+            LOGGER(__name__).error(f"❌ خطأ في معالج الـ realistic callbacks: {e}")
+            await query.edit_message_text(
+                f"❌ **حدث خطأ:** {str(e)}",
+                parse_mode='Markdown'
+            )
+    
+    async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """معالج الرسائل النصية - مطور للنظام الواقعي الجديد"""
+        try:
+            user_id = update.effective_user.id
+            message_text = update.message.text
+            
+            # معالجة إدخالات المستخدم في عملية إضافة المساعد
+            from ZeMusic.core.realistic_assistant_manager import realistic_assistant_manager
+            
+            # التحقق من حالة المستخدم في النظام الجديد
+            if user_id in realistic_assistant_manager.user_states:
+                user_state = realistic_assistant_manager.user_states[user_id]
+                current_state = user_state.get('state', '')
+                
+                if current_state == 'waiting_phone':
+                    await realistic_assistant_manager.handle_phone_input(update, context)
+                elif current_state == 'waiting_code':
+                    await realistic_assistant_manager.handle_code_input(update, context)
+                elif current_state == 'waiting_password':
+                    await realistic_assistant_manager.handle_password_input(update, context)
+                else:
+                    await update.message.reply_text(
+                        "🔄 **حالة غير معروفة**\n\n"
+                        "الرجاء البدء من جديد: /start",
+                        parse_mode='Markdown'
+                    )
+                return
+            
+            # التحقق من الجلسات المعلقة للتوافق مع النظام القديم
+            if user_id in realistic_assistant_manager.pending_sessions:
+                session_data = realistic_assistant_manager.pending_sessions[user_id]
+                
+                # تحديد الحالة المناسبة بناءً على بيانات الجلسة
+                if 'phone' in session_data and 'session' in session_data:
+                    # في انتظار كود التحقق أو كلمة المرور
+                    phone = session_data['phone']
+                    if phone in realistic_assistant_manager.mock_accounts_db:
+                        account_info = realistic_assistant_manager.mock_accounts_db[phone]
+                        if account_info.get('has_2fa', False) and session_data.get('session', {}).get('is_authorized', False):
+                            # في انتظار كلمة مرور 2FA
+                            await realistic_assistant_manager.handle_password_input(update, context)
+                        else:
+                            # في انتظار كود التحقق
+                            await realistic_assistant_manager.handle_code_input(update, context)
+                    else:
+                        await realistic_assistant_manager.handle_code_input(update, context)
+                else:
+                    # جلسة فاسدة
+                    await update.message.reply_text(
+                        "❌ **جلسة منتهية الصلاحية**\n\n"
+                        "الرجاء البدء من جديد: /start",
+                        parse_mode='Markdown'
+                    )
+                return
+            
+            # التعامل مع أوامر الإلغاء
+            if message_text.lower() in ['/cancel', 'إلغاء', 'cancel']:
+                # تنظيف أي جلسات معلقة
+                if user_id in realistic_assistant_manager.pending_sessions:
+                    try:
+                        session = realistic_assistant_manager.pending_sessions[user_id].get('session')
+                        if session:
+                            await session.stop()
+                    except:
+                        pass
+                    del realistic_assistant_manager.pending_sessions[user_id]
+                
+                if user_id in realistic_assistant_manager.user_states:
+                    del realistic_assistant_manager.user_states[user_id]
+                
+                await update.message.reply_text(
+                    "❌ **تم إلغاء العملية**\n\n"
+                    "يمكنك البدء من جديد: /start",
+                    parse_mode='Markdown'
+                )
+                return
+            
+            # الرسائل العادية الأخرى
+            if message_text.startswith('/'):
+                if message_text == '/start':
+                    await update.message.reply_text(
+                        "👋 **مرحباً في ZeMusic Bot!**\n\n"
+                        "استخدم الأوامر التالية:\n"
+                        "• `/owner` - لوحة تحكم المالك\n"
+                        "• `/play` - تشغيل موسيقى\n"
+                        "• `/help` - المساعدة",
+                        parse_mode='Markdown'
+                    )
+                else:
+                    await update.message.reply_text(
+                        "❓ **أمر غير معروف**\n\n"
+                        "استخدم `/start` للبدء أو `/help` للمساعدة",
+                        parse_mode='Markdown'
+                    )
+            else:
+                await update.message.reply_text(
+                    "💬 **مرحباً!**\n\n"
+                    "استخدم `/start` للدخول إلى القائمة الرئيسية",
+                    parse_mode='Markdown'
+                )
+                
+        except Exception as e:
+            LOGGER(__name__).error(f"❌ خطأ في معالج الرسائل: {e}")
+            await update.message.reply_text(
+                "❌ **حدث خطأ**\n\n"
+                "حاول مرة أخرى أو استخدم `/start`",
+                parse_mode='Markdown'
+            )
 
 # مثيل المعالجات
 simple_handlers = SimpleHandlers()
