@@ -990,3 +990,45 @@ telegram.error.TimedOut: Timed out
 [21-Jul-25 04:08:21 - INFO] - apscheduler.scheduler - Scheduler started
 [21-Jul-25 04:08:21 - INFO] - telegram.ext.Application - Application started
 [21-Jul-25 04:08:21 - ERROR] - ZeMusic.core.simple_bot - ❌ Failed to start simple bot: Updater.start_polling() got an unexpected keyword argument 'read_timeout'
+[21-Jul-25 04:14:11 - INFO] - ZeMusic.core.tdlib_client - ✅ TDLib loaded successfully from compiled library
+[21-Jul-25 04:14:11 - INFO] - ZeMusic.core.tdlib_client - 🔥 TDLib Manager initialized with real TDLib support
+[21-Jul-25 04:14:11 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 04:14:11 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 04:14:11 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 04:14:11 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 04:14:11 - INFO] - ZeMusic.core.simple_bot - 📝 Bot handlers added successfully
+[21-Jul-25 04:14:12 - INFO] - apscheduler.scheduler - Scheduler started
+[21-Jul-25 04:14:12 - INFO] - telegram.ext.Application - Application started
+[21-Jul-25 04:14:12 - INFO] - ZeMusic.core.simple_bot - ✅ Simple Bot started successfully
+[21-Jul-25 04:14:12 - ERROR] - ZeMusic.core.simple_bot - ❌ Error sending message: Chat not found
+[21-Jul-25 04:14:16 - INFO] - telegram.ext.Application - Application is stopping. This might take a moment.
+[21-Jul-25 04:14:16 - INFO] - apscheduler.scheduler - Scheduler has been shut down
+[21-Jul-25 04:14:16 - INFO] - telegram.ext.Application - Application.stop() complete
+[21-Jul-25 04:14:16 - INFO] - ZeMusic.core.simple_bot - 🛑 Simple bot stopped
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.core.tdlib_client - ✅ TDLib loaded successfully from compiled library
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.core.tdlib_client - 🔥 TDLib Manager initialized with real TDLib support
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.compatibility - 🔄 تهيئة عميل التوافق: ZeMusic
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.compatibility - 🔄 تم تحميل طبقة التوافق - الملفات القديمة ستعمل مع TDLib
+[21-Jul-25 04:14:34 - INFO] - ZeMusic - 🔄 استخدام طبقة التوافق TDLib
+[21-Jul-25 04:14:34 - INFO] - ZeMusic - 🎵 تم تحميل ZeMusic Bot بنجاح
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.core.database - ✅ تم إنشاء قاعدة البيانات SQLite بنجاح
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.core.database - ✅ نظام قاعدة البيانات TDLib جاهز للاستخدام
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.plugins.owner.force_subscribe_handler - تم تحميل إعدادات الاشتراك الإجباري - مفعل: False
+[21-Jul-25 04:14:34 - INFO] - ZeMusic.plugins.owner.assistants_handler - تم تحميل إعدادات المغادرة التلقائية - مفعل: False
+[21-Jul-25 04:14:34 - INFO] - __main__ - 🚀 بدء تهيئة ZeMusic Bot...
+[21-Jul-25 04:14:34 - INFO] - __main__ - 📊 تهيئة قاعدة البيانات...
+[21-Jul-25 04:14:34 - INFO] - __main__ - 📊 قاعدة البيانات جاهزة - 1 مستخدم، 1 مجموعة
+[21-Jul-25 04:14:34 - INFO] - __main__ - 🤖 تشغيل البوت الرئيسي...
+[21-Jul-25 04:14:35 - INFO] - ZeMusic.core.simple_bot - 📝 Bot handlers added successfully
+[21-Jul-25 04:14:35 - INFO] - apscheduler.scheduler - Scheduler started
+[21-Jul-25 04:14:35 - INFO] - telegram.ext.Application - Application started
+[21-Jul-25 04:14:35 - INFO] - ZeMusic.core.simple_bot - ✅ Simple Bot started successfully
+[21-Jul-25 04:14:35 - INFO] - __main__ - ✅ تم تشغيل البوت البسيط بنجاح
+[21-Jul-25 04:14:35 - INFO] - __main__ - 📱 تحميل الحسابات المساعدة...
+[21-Jul-25 04:14:35 - INFO] - __main__ - 📊 حالة الحسابات المساعدة: 0 إجمالي، 0 متصل
+[21-Jul-25 04:14:35 - WARNING] - __main__ - ⚠️ لا توجد حسابات مساعدة - البوت سيعمل بوظائف محدودة
+[21-Jul-25 04:14:35 - INFO] - __main__ - 👨‍💼 تم تحميل 0 مدير
+[21-Jul-25 04:14:35 - ERROR] - __main__ - خطأ في إعداد معالج الأوامر: 'TDLibManager' object has no attribute 'bot_client'
+[21-Jul-25 04:14:35 - INFO] - __main__ - ⏰ تم بدء المهام الدورية
+[21-Jul-25 04:14:35 - INFO] - ZeMusic.core.music_manager - 🧹 تم بدء مهمة التنظيف الدورية
+[21-Jul-25 04:14:35 - INFO] - __main__ - 🎵 تم تشغيل ZeMusic Bot بنجاح!
